@@ -1,0 +1,15 @@
+# windows related
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+
+# report related
+
+*.aux
+*.log
+*.out
+
+./*.pdf

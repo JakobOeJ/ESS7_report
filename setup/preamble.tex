@@ -88,7 +88,7 @@
 % Modify how \chapter, \section, etc. look
 % The titlesec package is very configureable
 \usepackage{titlesec}
-\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+%\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
 \titleformat*{\section}{\normalfont\Large\bfseries}
 \titleformat*{\subsection}{\normalfont\large\bfseries}
 \titleformat*{\subsubsection}{\normalfont\normalsize\bfseries}
@@ -166,3 +166,10 @@
 	urlcolor=black,%
 	pdfstartview=FitH%
 }
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {\filright{\color{gray}\MakeUppercase\chaptertitlename\ {\fontsize{54}{54}\selectfont\color{aaublue}\thechapter}}}
+  {20pt}
+  {\fontsize{40}{40}\selectfont\ \hfill}
+  [{\titlerule[0.3mm]}]

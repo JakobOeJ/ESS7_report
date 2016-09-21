@@ -11,7 +11,7 @@ $RECYCLE.BIN/
 *.aux
 *.log
 *.out
-*.dvi 
+*.dvi
 *.toc
 *.bbl
 *.blg
@@ -25,3 +25,7 @@ $RECYCLE.BIN/
 *.run.xml
 /*.bib
 /*.pdf
+
+
+# Atom files
+.atom-build.yml

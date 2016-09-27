@@ -26,7 +26,10 @@ essential for running simple partitions on a single hardware unit.
 
 \subsection{All the details}
 
+
 \section{Hardware}
+\subsection{The rise of embedded devices}
+\todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
 In the world of embedded computing the computing platforms varies a lot more,
 compared to the world of workstations and desktopcomputers.
 Traditionally embedded computers are used for small specialized static tasks and
@@ -39,22 +42,55 @@ Improved technology however, have brought powerful new CPUs of architectures use
 such as MIPS and ARM.
 The latter now being used in all levels of computing, from ultra low power single purpose embedded systems,
 to workstations and supercomputer installations with graphics and highspeed networking requirements.
-For more powerful computers this might represent both a shift from the widely used CISC architectured
-to smaller RISC and a new focus on power efficiency over increased CPU speed.
+For more powerful computers this might represent both a shift from the widely used CISC architecture
+to the smaller RISC architecture and a new focus on power efficiency over increased CPU speed.
 
 For embedded devices this change has ment more capcable systems
 and an increasingly narrowing gap between embedded and workstation computing.
 Capable low power devices and cheap manufacturing of this new generation of RISC based computing systems,
 has made it possible to build computers to solve problems on all scales using the same, or simular, platforms.
-This has brought a surge development for the middle layer of computing,
+This has brought a surge of development for the middle layer of computing,
 a little more capable thán traditional embedded devices and a little less capable than the typical workstation.
 
-This middle layer covers a wide range of devices with different capabilities.
 Developing a system to operate in an embedded environment with real time requirements
 and low overhead peripheral interaction,
 yet with the flexibility and multitasking capabilities of a modern operating system,
-.... bla bla bla
-\missingfigure{We need a figure right here!}
-\todo[inline,color=green]{Hardware analysis.}
+puts some lower limits on the capabilities of the hardware.
+
+\subsection{The lower bound on systems}
+Overall these requirements must to be met by the hardware:
+\begin{itemize}
+	\item Be fast enough to run multiple applications and the operating system below
+	\item Have sufficient main memory to support the stacks for all running applications and the operating system
+	\item Must come with either an MMU or MPU to provide protected regions in memmory for serperate contexts
+\end{itemize}
+
+The first two requirements depends almost entirely on the tasks being solved.
+The more applications being run and the more resource demanding they are,
+the more CPU time and memory they are going to utilize.
+The requirement to provide a MMU or MPU to safely segregate blocks of memmory between applications and the operating system,
+puts a lower bound on the type of hardware required.
+
+\todo{Give a more detailed explanation on the difference between an MPU and MMU}
+More capable systems may provide a MPU for basic memmory protection
+The smallest embedded systems typically do not provide any memmory protection,
+only being required to run single purpose applications where all drivers and interfacing
+are compiled and executed as a single binary image.
+Ever more powerfull systems may come with a MMU,
+providing a uniform picture of the memory-space from the viewpoint of every application.
+
+\subsection{Some of the options out there}
+The best way to decide on a hardware platform to work on is to explore some of the options out there.
+Being a single-semester project with varying degree of experience,
+implementing an operating system from scratch;
+the hardware should not be in the complex end of what is availible.
+
+\paragraph{Creator Ci40}
+\paragraph{MINI-M4 for STM32}
+\paragraph{MINI-M4 for Tiva}
+\paragraph{Raspberry Pi 3}
+
+\subsection{Settleing on a platform}
+
 
 \section{}

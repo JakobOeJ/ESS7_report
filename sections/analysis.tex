@@ -1,16 +1,25 @@
+%! tex root = ../master.tex
+
 \chapter{Analysis}
 \todo[inline,color=green]{Intro for te analysis.}
 
-\section{Realtime systems}
+
+\section{Real-time systems}
+
+A real-time system 
 
 \section{Integrated Modular Avionics}
-This is about the IMA.
+
+Integrated Modular Avionics stands for a network of real-time modules deployed for use in the avionics industry. The main characteristics of such a network are: modularity and keeping track of the time and criticality levels. This implies that the applications running on a system share the resources following a set of well defined rules. There are guidelines of how such a system should be designed and implemented, as well as standards that specify how space and time should be partitioned.
 
 \section{ARINC 653}
 \subsection{Overview}
-ARINC 653 is a standard that was originally designed and created for the avionics industry.
+\todo[inline,color=green]{ARINC 653 is a standard that was originally designed and created for the avionics industry.
 It has been created to work within Integrated Modular Avionics,
-(IMA) which required applications to be processed on single microprocessor module; so ARINC 653 was born.
+(IMA) which required applications to be processed on single microprocessor module; so ARINC 653 was born.}
+
+ARINC 653 is a software specification that car run multiple applications on the same hardware, while providing resources in the context of an IMA system.
+
 ARINC 653 is said to “bring a new quality in real-time systems development“,
 this is achieved through its API (APEX) which interfaces between the OS and the software applications.
 The APEX manages partitions, memory allocation and error handling.

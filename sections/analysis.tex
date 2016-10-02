@@ -101,7 +101,7 @@ providing a uniform picture of the memory-space from the viewpoint of every appl
 The best way to decide on a hardware platform to work on is to explore some of the options out there.
 Being a single-semester project with varying degree of experience,
 implementing an operating system from scratch;
-the hardware should not be in the complex end of what is availible.
+the hardware should not be in the complex end of what is available.
 
 In appendix \ref{app:embedded_devices} is a brief list of hardware platforms listed in no particular order.
 Every unit has been selected on the premise of possessing either an MMU or MPU for the space partitioning feature in the OS.
@@ -169,3 +169,53 @@ on how to setup and Linux based tool-chain.
 That, and the availibility of sample code implementations and a HAL library,
 means that the MINI-M4 for STM32 is the hardware platform being used and refered to
 in the duration of this project.
+
+
+\section{Software}
+\subsection{Overview}
+An ARINC 653 compliant platform has some strict requirements.
+The OS must perform safety critical and time critical tasks that must be separated by space and time.
+There are accompanying standards to test and verify a system to determine how well it meets its requirements.
+
+\subsection{Avionics safety standards}
+
+\subsubsection{DO-178}
+DO-178 is a set of guidelines to be used for software assurance in safety-critical software in avionics systems.
+Use of the standard can determine the reliability of the software in an airborne environment.
+There is a ``safety assessment process'' and ``hazard analysis'' to determine the result of failure conditions on the system.
+The final result of the standard applied to the software system will give the system a ``software level'' of A to E compliance,
+where A is the best level to be achieved and E is the worst.
+A level A compliance mean the system has been verified and validated against catastrophic failures,
+whereas an E compliance has been verified against trivial failures.
+% \subsubsection{DO-254} this standard is the counterpart of DO-178 (seems to do the same thing)
+% \subsubsection{DO-297} cant find much on this standard
+
+\subsection{Alternative ARINC platforms}
+When considering how to implement ARINC 653 we first explored existing platforms that might meet our needs.
+There are COTS (Commerical of the Shelf) OSs, and there are open source OSs.
+An existing platform would save us time to get an ARINC platform running,
+but with varying levels of limitations between the COTS and open source.
+
+\subsubsection{open source OS platforms}
+An existing open source ARINC OS could have potentially worked since its limitations would be minimal
+compared to a COTS solution. %Saving time and money to get an ARINC platform running
+
+\subsubsection{ARLX}
+% http://dornerworks.com/portfolio/arlx-arinc-653-real-time-linux-xen
+% http://genesysideation.com/news/dornerworks-releases-prototype-arinc-653-hypervisor-to-open-source-community/
+ARLX is a prototype hypervisor for ARINC 653 which is an extension to the Xen hypervisor.
+Linux is used to to partition the system.
+It has been developed in accordance with DO-178.
+% \subsubsection{LithOS} http://www.fentiss.com/en/products/arinc653.html
+
+\subsubsection{COTS OS platforms}
+There are several commercial OSs that support ARINC:
+VxWorks, PikeOS, LynksOS, WindowsCE, Linux RTAI and CsLEOS OS to name the main ones.
+%"eliminates the risk of creating and certifying an operating system for new projects"
+
+\subsubsection{VxWorks}
+% important reference1 http://www.windriver.com/products/product-overviews/PO_VxWorks653_Platform_0210.pdf
+% important reference2 https://windriver.com/products/product-overviews/2691-VxWorks-Product-Overview.pdf
+Called VxWorks 653, is it marketed as ``The Industry's Leading Operating System for Embedded devices''.
+It contains an ARINC 653 compliant platform and compliance with DO-178C to level A, DO-254 and DO-297.
+Capable of full virtualization on a shared multi-core processor.

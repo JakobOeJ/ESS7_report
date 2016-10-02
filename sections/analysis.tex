@@ -5,14 +5,25 @@
 
 
 \section{Real-time systems}
+A real-time system is handling data as it comes in.
+Besides the usual computations needed to be done,
+the time until a result generated is also important.
+This means that the applications are scheduled in a manner that would allow them to respond quick and predictable.
+The real-time systems were developed in order to answer the requirements of different fields of work
+where time is critical: military, automotive or aeronautics.
 
-A real-time system
 
 \section{Integrated Modular Avionics}
+In the aeronautic industry, the devices and peripherals used for controlling the machines have to be reliable and operate using the necessary time constraints. Integrated Modular Avionics stands for
+a network of real-time modules deployed for use in the avionics industry.
+The main characteristics of such a network are: modularity and keeping track of the time and criticality levels.
+This implies that the applications running on a system share the resources following a set of well defined rules.
+There are guidelines of how such a system should be designed and implemented,
+as well as standards that specify how space and time should be partitioned.
 
-Integrated Modular Avionics stands for a network of real-time modules deployed for use in the avionics industry. The main characteristics of such a network are: modularity and keeping track of the time and criticality levels. This implies that the applications running on a system share the resources following a set of well defined rules. There are guidelines of how such a system should be designed and implemented, as well as standards that specify how space and time should be partitioned.
 
 \section{ARINC 653}
+
 \subsection{Overview}
 \todo[inline,color=green]{ARINC 653 is a standard that was originally designed and created for the avionics industry.
 It has been created to work within Integrated Modular Avionics,
@@ -33,8 +44,6 @@ working with embedded systems and implementing the parts of the operating system
 essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
 
-\subsection{All the details}
-
 
 \section{Hardware}
 \subsection{The rise of embedded devices}
@@ -54,7 +63,7 @@ to workstations and supercomputer installations with graphics and highspeed netw
 For more powerful computers this might represent both a shift from the widely used CISC architecture
 to the smaller RISC architecture and a new focus on power efficiency over increased CPU speed.
 
-For embedded devices this change has ment more capcable systems
+For embedded devices this change has meant more capable systems
 and an increasingly narrowing gap between embedded and workstation computing.
 Capable low power devices and cheap manufacturing of this new generation of RISC based computing systems,
 has made it possible to build computers to solve problems on all scales using the same, or simular, platforms.
@@ -131,7 +140,6 @@ The Raspberry Pi lacks any comprehensive documentation on its registry layout,
 and being a higher end device compared to MINI-M4 and Creator Ci40,
 it's presumably more complex to work with.
 
-
 \subsection{Settleing on a platform}
 Obviusly a list longer than the one seen above can be compiled.
 Although the hardware used is not the primary concern to the project
@@ -161,5 +169,3 @@ on how to setup and Linux based tool-chain.
 That, and the availibility of sample code implementations and a HAL library,
 means that the MINI-M4 for STM32 is the hardware platform being used and refered to
 in the duration of this project.
-
-\section{}

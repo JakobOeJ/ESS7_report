@@ -7,7 +7,7 @@ $RECYCLE.BIN/
 
 
 # report related
-
+out/
 *.aux
 *.log
 *.out
@@ -29,3 +29,6 @@ $RECYCLE.BIN/
 
 # Atom files
 .atom-build.yml
+
+# Visual Studio Code files
+.vscode/

@@ -1,5 +1,7 @@
 %! tex root = ../master.tex
 
+\newcommand{\arinc}{ARINC 653}
+
 \chapter{Analysis}
 \todo[inline,color=green]{Intro for te analysis.}
 
@@ -43,6 +45,19 @@ To do that in a one semester project, the focus will be on understanding the sta
 working with embedded systems and implementing the parts of the operating system,
 essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
+
+\subsubsection{Interpatition communication}
+The \arinc\ specification defines a way for different partitions to communicate with one another.
+This communication is based on message passing. To transfer messages between partitions the \arinc\ standard
+defines the concepts of channels and ports.
+
+\paragraph{Channels} are logical links spanning partitions. If necessary, as channel might logically span different modules. \todo{Has modules been defined yet?}
+The way for partitions to access a channel, is via ports.
+Channels are defined by the system integrator at configuration time.
+Channels should be transparent to the application programmer.
+
+\paragraph{Ports} allows monodirectional access to a channel.
+A port can either be configured send or receive messages by a partition.
 
 
 \section{Hardware}

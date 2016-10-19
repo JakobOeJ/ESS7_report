@@ -56,9 +56,29 @@ The way for partitions to access a channel, is via ports.
 Channels are defined by the system integrator at configuration time.
 Channels should be transparent to the application programmer.
 
-\paragraph{Ports} allows monodirectional access to a channel.
-A port can either be configured send or receive messages by a partition.
+\paragraph{Ports} allows monodirectional access to a channel;
+a port can either be configured send or receive messages by a partition.
+When a message is written to a port, it will remain in a buffer, until the operating system transmits the message to the destination.\\
 
+Two types of ports exist, sampling ports and queuing ports. 
+\subparagraph{Sampling ports} employ no form of message queuing; if a partition tries to write more than one message to a sampling port
+before they are transmitted through the channel to the destination port, the prior message will be overwritten. Similarly, once a message arrives at the destination port,
+it will override any prior messages, regardless of whether they had been read or not. These ports may be used in situations where only the most recent message is important.
+\subparagraph{Queuing ports} queue messages both at the sender and at the receiver. Ports in queuing mode may employ a queue buffer to keep more than one message at a time.
+When processes send messages they accumulate in the source port queue. At a behest of the operating system, messages in the source port queue will be transmitted to the destination port queue.
+When a process reads a message from the destination port, that message will be cleared from the port queue. If the destination queue is filled, no more messages will be allowed
+in to that queue until it is emptied. If the destination queue is filled, messages may start to accumulate in the source port queue. If a process tries to send a message through a
+source port with a full queue, the process may block until it is cleared, or receive an error.
+Process waiting for a queue to have space (source) or to have content (destination), can either wait in a purely FIFO order or a priority based FIFO order, where processes with high priority
+will be moved up in the FIFO queue.\\
+
+Messages sent through queuing channels should always be sent in a FIFO manner.
+Ports are defined at solely configurationtime and are tied to both a certain channel and a certain partitions.
+It is therefore impossible for application code to define new ports at runtime. 
+For a process to access a port, an object representation must be created. This happens through an APEX system call.
+The location in memory of port buffers is not specified in the \arinc\ specification.
+
+\subsubsection{Intrapartition communication}
 
 \section{Hardware}
 \subsection{The rise of embedded devices}

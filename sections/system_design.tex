@@ -19,7 +19,12 @@ some text what a system overview is \\
 
 \subsection{Drivers}
 \begin{description}[align=left]
-	\item [\textbf{UART driver}] then you can write some text for this.
+	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
+	world. This can either receive or transmit data to another UART device.
+	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
+	in case of a hardware fault or program error. If this happens, the program would be restarted
+	from a safe state. 
+	
 \end{description}
 
 \subsection{OS}

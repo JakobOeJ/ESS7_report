@@ -1,1 +1,18 @@
 \chapter{System Implementation}
+
+\section{Drivers}
+
+\subsection{UART}
+
+\subsection{Watchdog timer}
+% \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
+The STM32 MCU has two watchdog timers ready to reset the program, in case of an error.
+The first one, is the independent watchdog timer, based on an independent oscillator (32 kHz).
+When initialised, the watchdog timer receives a value, from which it starts counting down, using
+the ticks from the crystal. In the meanwhile, the program has to reset this count, by refreshing 
+the timer to the same value it used before. If this fails to happen, when the count reaches zero, 
+the watchdog timer will react by restarting the board.
+\\\\
+The second watchdog timer, is called a window watchdog. In contrast to the independent watchdog, 
+one can provide a time interval in which the timer has to be reset. Resetting the timer outside this interval(as well as not resetting it in the mentioned time window) would restart the program. It uses 
+the system clock, which means that if this fails, the watchdog won't be able to reset the system.

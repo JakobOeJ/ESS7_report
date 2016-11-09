@@ -16,3 +16,11 @@ the watchdog timer will react by restarting the board.
 The second watchdog timer, is called a window watchdog. In contrast to the independent watchdog, 
 one can provide a time interval in which the timer has to be reset. Resetting the timer outside this interval(as well as not resetting it in the mentioned time window) would restart the program. It uses 
 the system clock, which means that if this fails, the watchdog won't be able to reset the system.
+
+\subsection{Specifics}
+The driver for the independent watchdog works by setting a prescaler on the 32kHz crystal to match 
+the time requirements of the program(multiples of milliseconds). The watchdog is then initialised 
+and started using the HAL library specific functions. \\
+When the program is run, the watchdog restarts it after the interval of time set in the initialisation
+phase runs out. In order to have the program running as usual, the refresh function has to be called
+in the infinite loop, at intervals shorter than the inital time span.

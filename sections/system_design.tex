@@ -64,10 +64,32 @@ and the XML.
 \end{description}
 
 \subsection{OS}
-\begin{description}[align=left]
-	\item [\textbf{scheduler}] more text
-	\item [\textbf{scheduler}] a whole lot of words
-\end{description}
+\subsubsection{Scheduler}
+Here we have some nice text about the scheduler(s).
+
+\paragraph{Context switching} is an absolute necessity in a multitasking operating system.
+Context switching works by dumping the CPU registers from one context to memory,
+and then switching to another context by restoring the registers from another dump.
+Since context switching must manipulate registers directly and individually, it is a feature that must be implemented
+on a very low level of abstraction, and it can change significantly from one CPU architecture to another.
+The scope of this project is to only implement an operating system for a Cortex M4. Hence context switching needs only
+to work on the architecture used by this chip.\\
+Context Switching on the Cortex M4 is partially handled by the Nested Vectored Interrupt Controller (NVIC).
+When an exception (this includes interrupts) occurs, the NVIC will change context to an exception handler.
+Upon changing context from regular code to the exception handler, the NVIC will save the registers R0-R3, R12, LR, PC and PSR
+on the stack. These are only some of the registers. Why the decision was made to make the hardware save some of the 
+registers instead of letting software handle all, is unknown. \todo{Research harder the reason why the NVIC saves some register.}
+When the exception handling routine exits, and control is handed back to the NVIC,
+the NVIC will restore these registers again.\\
+If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory 
+pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
+and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context.\\\\
+As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
+The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
+Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
+The way to communicate which stack pointer to use with the NVIC, is to load the Program Counter register with a certain value (see EXC\_RETURN values). 
+
+
 \subsubsection{Interpartition communication}
 
 \section{XML}

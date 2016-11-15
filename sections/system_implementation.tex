@@ -12,15 +12,22 @@ When initialised, the watchdog timer receives a value, from which it starts coun
 the ticks from the crystal. In the meanwhile, the program has to reset this count, by refreshing 
 the timer to the same value it used before. If this fails to happen, when the count reaches zero, 
 the watchdog timer will react by restarting the board.
-\\\\
+\\
 The second watchdog timer, is called a window watchdog. In contrast to the independent watchdog, 
 one can provide a time interval in which the timer has to be reset. Resetting the timer outside this interval(as well as not resetting it in the mentioned time window) would restart the program. It uses 
 the system clock, which means that if this fails, the watchdog won't be able to reset the system.
 
-\subsection{Specifics}
+\subsubsection{Specifics}
 The driver for the independent watchdog works by setting a prescaler on the 32kHz crystal to match 
 the time requirements of the program(multiples of milliseconds). The watchdog is then initialised 
 and started using the HAL library specific functions. \\
 When the program is run, the watchdog restarts it after the interval of time set in the initialisation
-phase runs out. In order to have the program running as usual, the refresh function has to be called
-in the infinite loop, at intervals shorter than the inital time span.
+phase runs out. In order to have the program running as usual, the refresh function has to be called,
+ at intervals shorter than the initial time span.
+
+\subsection{Timing function}
+This driver is used for precise measuring the execution time of different functions. It uses the DWT
+ registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
+ and Trace support. By using one of these counters, one could follow the system's clock ticks. 
+ At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
+In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.

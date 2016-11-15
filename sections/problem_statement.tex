@@ -1,25 +1,32 @@
 \chapter{Problem statement}
 
-\subsection{Problem}
+\section{Problem}
 
-The purpose of this project is to develop an Operating System compliant to the ARINC 653 standard, that would run on a small embedded system. 
+The purpose of this project is to develop an Operating System compliant to the ARINC 653 standard, that would run on a small embedded system. \\
 
 The main characteristic of the OS would be that the application space is a partitioned environment.
-Data exchange should be predictable, that is why the standard defines the APEX.
+The partitions would have to be set up in the beginning using an XML file, which contains their 
+characteristics.
+Each partition is allocated an amount of memory, thus the system should be able to restrict memory 
+space accordingly.
+Furthermore, each partition is allocated a time interval for running its applications. This means
+that the scheduler should have access to time resources. 
+Each partition should have access to the I/O.
+Data exchange should be predictable, that is why the standard defines the APEX. 
 
-The final product would be able to let developers and technicians work on safety critical systems,
- without having to have a deep understanding of the standard.
+\section{Questions}
 
-\subsection{Questions}
-
-The main question to answer is:\\
-How to implement ARINC 653 on the STM32 microcontroller?\\
 
 Questions to be answered in relation to the main goal:\\
-What is ARINC 653?\\
-Main obstacles when developing an OS?\\
-What would be the impact of this system on the developers working in the field?\\
-Is there anybody that looked for a open-source ARINC 653 implementetion?\\
-Where would such a system be used?\\
-How does the standard differentiates between other Operating Systems?\\
-Pros and Cons of the ARINC 653 standard?\\
+\begin{itemize}
+
+	\item Main obstacles when developing an OS?
+	\item What would be the impact of this system on the developers working in the field?
+	\item Is there anybody that looked for a open-source ARINC 653 implementetion?
+	\item Where would such a system be used?
+	\item How does the standard differentiates between other Operating Systems?
+	\item Pros and Cons of the ARINC 653 standard?
+	\item How to convert the XML file, in order to use the settings defined there, at compile time?
+	\item How to implement the system specific functions on top of the HAL library?
+
+\end{itemize}

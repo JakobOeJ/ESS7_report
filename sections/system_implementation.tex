@@ -4,6 +4,9 @@
 
 \subsection{UART}
 
+The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we setted for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
+It is also possible to communicate with the UART using a screen, getting some important output for debugging.
+
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
 The STM32 MCU has two watchdog timers ready to reset the program, in case of an error.

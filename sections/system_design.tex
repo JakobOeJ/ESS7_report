@@ -65,7 +65,11 @@ and the XML.
 
 \subsection{OS}
 \subsubsection{Scheduler}
-Here we have some nice text about the scheduler(s).
+The scheduler decides which process should be executed by the processor avaiable, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
+
+For the first one we used a pre-programmed timed scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution.
+
+The second one is a Round Robin scheduler, based in the processes priority, been executed the one with an higher priority until it loses the processor to other partition or achieves the timeout. In case of reaching the timeout it verifies again which is the process with the higher priority and executes it.
 
 \paragraph{Context switching} is an absolute necessity in a multitasking operating system.
 Context switching works by dumping the CPU registers from one context to memory,

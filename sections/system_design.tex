@@ -67,7 +67,9 @@ and the XML.
 \subsubsection{Scheduler}
 Here we have some nice text about the scheduler(s).
 
-\paragraph{Context switching} is an absolute necessity in a multitasking operating system.
+\paragraph{Context switching} is to switch from executing one block of code $b_1$ to another block of code $b_2$
+with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code. 
+\todo{is an absolute necessity in a multitasking operating system.}
 Context switching works by dumping the CPU registers from one context to memory,
 and then switching to another context by restoring the registers from another dump.
 Since context switching must manipulate registers directly and individually, it is a feature that must be implemented
@@ -88,7 +90,54 @@ As added complexity, the Cortex M4 utilises two different stack pointers, the Ma
 The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
 Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
 The way to communicate which stack pointer to use with the NVIC, is to load the Program Counter register with a certain value (see EXC\_RETURN values). 
-
+\begin{figure}
+	\label{tab:registers}
+	\centering
+	\begin{tabular}{|c|c|p{10cm}|}
+		\hline
+		Register	&	Saved by	&	Purpose\\
+		\hline
+		R0			&	Hardware	&	General purpose (Argument value + return value)\\
+		\hline
+		R1 			&	Hardware	&	General purpose (Argument value)\\
+		\hline
+		R2 			&	Hardware	&	General purpose (Argument value)\\
+		\hline
+		R3 			&	Hardware	&	General purpose (Argument value)\\
+		\hline
+		R4 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R5 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R6 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R7 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R8 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R9 			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R10			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R11			&	Software	&	General purpose (Local variable)\\
+		\hline
+		R12			&	Hardware	&	General purpose (Intra-Procedure-call scratch)\\
+		\hline
+		R13 (SP)	&	Software	&	Stack pointer [Banked]\\
+		MSP			&	Software	&	Master stack pointer (Stack pointer for kernel space)\\
+		PSP			&	Software	&	Process stack pointer (Stack pointer for user space)\\
+		\hline
+		R14 (LR)	&	Hardware	&	Link register\\
+		\hline
+		R15 (PC)	&	Hardware	&	Program Counter\\
+		\hline
+		xPSR		&	Hardware	& 	Special-purpose Program Status Register\\
+		\hline
+	\end{tabular}
+	\caption{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
+	there are separate registers for user space and kernel space.
+	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
+\end{figure}
 
 \subsubsection{Interpartition communication}
 

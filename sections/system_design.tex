@@ -65,17 +65,19 @@ and the XML.
 
 \subsection{OS}
 \subsubsection{Scheduler}
-The scheduler decides which process should be executed by the processor avaiable, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
+The scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
 
 For the first one we used a pre-programmed timed scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution.
 
 The second one is a Round Robin scheduler, based in the processes priority, been executed the one with an higher priority until it loses the processor to other partition or achieves the timeout. In case of reaching the timeout it verifies again which is the process with the higher priority and executes it.
 
 \paragraph{Context switching} is to switch from executing one block of code $b_1$ to another block of code $b_2$
-with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code. 
-\todo{is an absolute necessity in a multitasking operating system.}
-Context switching works by dumping the CPU registers from one context to memory,
-and then switching to another context by restoring the registers from another dump.
+with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code.
+This allows for code to be partitioned into separate independent blocks that can run concurrently.
+This is opposed to monolithic blocks of code that entirely control the flow of execution.
+Therefore, context switching is essential for any operating system that wishes to utilise a scheduler to allow concurrent execution of code.
+Context switching works by saving the state of the CPU registers from one context to memory,
+and then switching to another context by restoring the state of the registers previously saved in memory.
 Since context switching must manipulate registers directly and individually, it is a feature that must be implemented
 on a very low level of abstraction, and it can change significantly from one CPU architecture to another.
 The scope of this project is to only implement an operating system for a Cortex M4. Hence context switching needs only
@@ -89,15 +91,10 @@ When the exception handling routine exits, and control is handed back to the NVI
 the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory 
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
-and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context.\\\\
-As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
-The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
-Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
-The way to communicate which stack pointer to use with the NVIC, is to load the Program Counter register with a certain value (see EXC\_RETURN values). 
+and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
 \begin{figure}
-	\label{tab:registers}
 	\centering
-	\begin{tabular}{|c|c|p{10cm}|}
+	\begin{tabular}{|c|c|p{9.5cm}|}
 		\hline
 		Register	&	Saved by	&	Purpose\\
 		\hline
@@ -141,6 +138,38 @@ The way to communicate which stack pointer to use with the NVIC, is to load the 
 	\caption{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
 	there are separate registers for user space and kernel space.
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
+	\label{tab:registers}
+\end{figure}
+As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
+The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
+Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
+Since the path to the new context goes through the NVIC, the NVIC is also partially responsible setting the state of the processor.
+This is done by loading an EXC\_RETURN value into the Program Counter. See table \ref{tab:exc-return} for the different values.
+To make context switching transparent to the applications running, it's important that the state the processor returns to, is the
+same it earlier came from. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link
+register. This value must be saved by software to assure it can return to the right state.
+\begin{figure}
+	\centering
+	\begin{tabular}{|c|p{10cm}|}
+		\hline
+		Value			&	Description 	\\
+		\hline
+		0xFFFF FFF1 	&	Return to Handler mode, using the Master Stack Pointer, but without the floating point unit.	\\
+		\hline
+		0xFFFF FFF9		&	Return to Thread mode, using the Master Stack Pointer, but without the floating point unit.		\\
+		\hline
+		0xFFFF FFFD		&	Return to Thread mode, using the Process Stack Pointer, but without the floating point unit.	\\
+		\hline
+		0xFFFF FFE1		&	Return to Handler mode, using the Master Stack Pointer, with the floating point unit.			\\
+		\hline
+		0xFFFF FFE9		&	Return to Thread mode, using the Master Stack Pointer, with the floating point unit.			\\
+		\hline
+		0xFFFF FFED		&	Return to Thread mode, using the Process Stack Pointer, with the floating point unit.			\\
+		\hline
+	\end{tabular}
+	\caption{
+		A table of the possible EXC\_RETURN values. An interrupt service routine is exited by loading one of these values into the Program Counter register.	}
+	\label{tab:exc-return}
 \end{figure}
 
 \subsubsection{Interpartition communication}
@@ -149,10 +178,10 @@ The way to communicate which stack pointer to use with the NVIC, is to load the 
 
 
 \section{Memory Management}
-ARINC 653 advertizes time and space seperation covered in (ref to sec in analysis).
-To accommodate for the feature of seperating partitions in space
+ARINC 653 advertizes time and space separation covered in (ref to sec in analysis).
+To accommodate for the feature of separating partitions in space
 this operating system relies on the memory management unit (MPU)
-to manage permissions accross sections of memory
+to manage permissions across sections of memory
 ensuring that partitions stay within a dedicated memory space.
 
 \subsection{something about ARINC on memory management}

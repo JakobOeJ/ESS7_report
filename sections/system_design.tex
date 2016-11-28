@@ -71,6 +71,8 @@ For the first one we used a pre-programmed timed scheduler, that gives a certain
 
 The second one is a Round Robin scheduler, based in the processes priority, been executed the one with an higher priority until it loses the processor to other partition or achieves the timeout. In case of reaching the timeout it verifies again which is the process with the higher priority and executes it.
 
+\todo{Write more about the scheduler in OS design}
+
 \paragraph{Context switching} is to switch from executing one block of code $b_1$ to another block of code $b_2$
 with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code.
 This allows for code to be partitioned into separate independent blocks that can run concurrently.

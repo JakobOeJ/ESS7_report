@@ -1,3 +1,5 @@
+%! tex root = ../master.tex
+
 \chapter{System Implementation}
 
 \section{OS}
@@ -5,13 +7,22 @@
 \subsection{Scheduler}
 
 \subsubsection{Context Switching}
+There are multiple different states the processor can be in, when the context switch from one process to another occurs.
+The state determines whether the Master Stack Pointer or the Process Stack Pointer was used by the process,
+and whether the FPU was used by the process or not. 
+Because of this, the context switch algorithm must start by determining the processor state in order to know which registers
+to save and where to save them to.\\
+The processor state is saved in the Link return register, and it can be one of the possible six
+EXC\_RETURN values (see figure \ref{tab:exc-return}).
+The state is saved entirely on the stack. Therefore, it is important for the software to know which
+stack pointer to use when saving the remaining registers.
 
 
 \section{Drivers}
 
 \subsection{UART}
 
-The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we setted for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
+The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
 
 \subsection{Watchdog timer}

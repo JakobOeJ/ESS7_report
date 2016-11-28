@@ -1,32 +1,26 @@
 \chapter{Problem statement}
 
-\section{Problem}
 
-The purpose of this project is to develop an Operating System compliant to the ARINC 653 standard, that would run on a small embedded system. \\
-
+The purpose of this project is to develop an Operating System compliant to the 
+ARINC 653 standard, that would run on a small embedded system. 
+\todo {partially compliant?}
+The choice of hardware has to be done in the early stages, while the software characteristics
+have to be thought over throughout the process.
+\\\\
 The main characteristic of the OS would be that the application space is a partitioned environment.
 The partitions would have to be set up in the beginning using an XML file, which contains their 
-characteristics.
-Each partition is allocated an amount of memory, thus the system should be able to restrict memory 
-space accordingly.
+characteristics. Each partition is allocated an amount of memory, thus the system should be able to restrict memory space accordingly.
 Furthermore, each partition is allocated a time interval for running its applications. This means
-that the scheduler should have access to time resources. 
-Each partition should have access to the I/O.
-Data exchange should be predictable, that is why the standard defines the APEX. 
-
-\section{Questions}
-
-
-Questions to be answered in relation to the main goal:\\
+that the scheduler should have access to time resources. Each partition should have access to the 
+low level hardware, and data exchange should be predictable through the APEX. 
+\\\\
+From this, the following questions arose, in relation to the main goal:
 \begin{itemize}
-
-	\item Main obstacles when developing an OS?
-	\item What would be the impact of this system on the developers working in the field?
-	\item Is there anybody that looked for a open-source ARINC 653 implementetion?
-	\item Where would such a system be used?
-	\item How does the standard differentiates between other Operating Systems?
-	\item Pros and Cons of the ARINC 653 standard?
-	\item How to convert the XML file, in order to use the settings defined there, at compile time?
-	\item How to implement the system specific functions on top of the HAL library?
+	
+	\item How is this implementation of an Operating System different from other implementations?
+	\item What are the main obstacles when developing such a system?
+	
+	\item Is there a need for an open-source ARINC 653 implementation?
+\todo {Pros and Cons of the ARINC 653 standard?}
 
 \end{itemize}

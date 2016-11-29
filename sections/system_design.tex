@@ -87,11 +87,11 @@ to work on the architecture used by this chip.\\
 Context Switching on the Cortex M4 is partially handled by the Nested Vectored Interrupt Controller (NVIC).
 When an exception (this includes interrupts) occurs, the NVIC will change context to an exception handler.
 Upon changing context from regular code to the exception handler, the NVIC will save the registers R0-R3, R12, LR, PC and PSR
-on the stack. These are only some of the registers. Why the decision was made to make the hardware save some of the 
+on the stack. These are only some of the registers. Why the decision was made to make the hardware save some of the
 registers instead of letting software handle all, is unknown. \todo{Research harder the reason why the NVIC saves some register.}
 When the exception handling routine exits, and control is handed back to the NVIC,
 the NVIC will restore these registers again.\\
-If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory 
+If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
 \begin{figure}
@@ -180,13 +180,30 @@ register. This value must be saved by software to assure it can return to the ri
 
 
 \section{Memory Management}
-ARINC 653 advertizes time and space separation covered in (ref to sec in analysis).
-To accommodate for the feature of separating partitions in space
+ARINC 653 advertizes time and space separation covered in.
+\todo[inline]{ref to sec in analysis}
+To accommodate for the feature of separating partitions in space,
 this operating system relies on the memory management unit (MPU)
-to manage permissions across sections of memory
+to manage permissions across sections of memory,
 ensuring that partitions stay within a dedicated memory space.
 
 \subsection{something about ARINC on memory management}
+The ARINC 653 standard OS, uses a statically allocated memory layout for everything
+that gets compiled.
+\todo[inline]{reference to standard}
+This means that no memory allocation is permitted at runtime
+outside predefined memory sections.
+This policy ensures a fixed and predictable sandboxing environment, where partitions
+can not restrict other parts of the system by occupying memory resources.
+It also gives the system developer a way to ensure that the system has enough memory
+for all processes to function correctly, given that this amount can be predetermined.
+
+Memory regions are declared in the XML file, included at compile time, for a list
+of different system features, like individual partitions and communication buffers.
+All of this information is important for different reasons when setting up the system.
+The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip
+and categorizing and analysing the memory requirements into a single memory strategy to implement in
+\todo[inline]{ref to memory mangement implementation}.
 
 \subsection{the MPU on a STM32F415}
 

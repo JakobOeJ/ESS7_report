@@ -10,7 +10,8 @@
 A real-time system is handling data as it comes in.
 Besides the usual computations needed to be done,
 the time until a result generated is also important.
-This means that the applications are scheduled in a manner that would allow them to respond quick and predictable.
+This means that the applications are scheduled in a manner that would allow them 
+to respond quickly and predictable.
 The real-time systems were developed in order to answer the requirements of different fields of work
 where time is critical: military, automotive or aeronautics.
 
@@ -31,13 +32,13 @@ as well as standards that specify how space and time should be partitioned.
 It has been created to work within Integrated Modular Avionics,
 (IMA) which required applications to be processed on single microprocessor module; so ARINC 653 was born.}
 
-ARINC 653 is a software specification that car run multiple applications on the same hardware, while providing resources in the context of an IMA system.
+ARINC 653 is a software specification that can run multiple applications on the same hardware, while providing resources in the context of an IMA system.
 
 ARINC 653 is said to “bring a new quality in real-time systems development“,
 this is achieved through its API (APEX) which interfaces between the OS and the software applications.
 The APEX manages partitions, memory allocation and error handling.
 Applications are partitioned separately into those partitions with their own memory and scheduled processing time slots.
-These partitions can not interfere with each other and can not take resources from each other.
+These partitions cannot interfere with each other and can not take resources from each other.
 If an error in a partition occurs, it will only crash itself; the remaining partitions will not be affected.
 
 The idea is to bring such an operating system in to the wider embedded world.
@@ -51,7 +52,9 @@ The \arinc\ specification defines a way for different partitions to communicate 
 This communication is based on message passing. To transfer messages between partitions the \arinc\ standard
 defines the concepts of channels and ports.
 
-\paragraph{Channels} are logical links spanning partitions. If necessary, as channel might logically span different modules. \todo{Has modules been defined yet?}
+\paragraph{Channels} are logical links spanning partitions. If necessary, 
+a channel might logically span different modules. 
+\todo{Has modules been defined yet?}
 The way for partitions to access a channel, is via ports.
 Channels are defined by the system integrator at configuration time.
 Channels should be transparent to the application programmer.
@@ -63,7 +66,7 @@ When a message is written to a port, it will remain in a buffer, until the opera
 Two types of ports exist, sampling ports and queuing ports. 
 \subparagraph{Sampling ports} employ no form of message queuing; if a partition tries to write more than one message to a sampling port
 before they are transmitted through the channel to the destination port, the prior message will be overwritten. Similarly, once a message arrives at the destination port,
-it will override any prior messages, regardless of whether they had been read or not. These ports may be used in situations where only the most recent message is important.
+it will override any prior messages, regardless of whether it had been read or not. These ports may be used in situations where only the most recent message is important.
 \subparagraph{Queuing ports} queue messages both at the sender and at the receiver. Ports in queuing mode may employ a queue buffer to keep more than one message at a time.
 When processes send messages they accumulate in the source port queue. At a behest of the operating system, messages in the source port queue will be transmitted to the destination port queue.
 When a process reads a message from the destination port, that message will be cleared from the port queue. If the destination queue is filled, no more messages will be allowed
@@ -73,7 +76,7 @@ Process waiting for a queue to have space (source) or to have content (destinati
 will be moved up in the FIFO queue.\\
 
 Messages sent through queuing channels should always be sent in a FIFO manner.
-Ports are defined at solely configurationtime and are tied to both a certain channel and a certain partitions.
+Ports are defined at solely configuration time and are tied to both a certain channel and a certain partition.
 It is therefore impossible for application code to define new ports at runtime. 
 For a process to access a port, an object representation must be created. This happens through an APEX system call.
 The location in memory of port buffers is not specified in the \arinc\ specification.
@@ -84,11 +87,11 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 \subsection{The rise of embedded devices}
 \todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
 In the world of embedded computing the computing platforms varies a lot more,
-compared to the world of workstations and desktopcomputers.
+compared to the world of workstations and desktop computers.
 Traditionally embedded computers are used for small specialized static tasks and
-not required to run an operatingsystem with multiple processors.
+not required to run an operating system with multiple processes.
 For this reason many embedded systems are arranged as a SoC,
-with limitied amounts of ram, flash and a low cpu clock,
+with limited amounts of ram, flash and a low CPU clock,
 not capable of supporting large computer screens and high speed networking.
 \\\\
 Improved technology however, have brought powerful new CPUs of architectures used in the embedded world
@@ -241,7 +244,7 @@ compared to a COTS solution. %Saving time and money to get an ARINC platform run
 % http://dornerworks.com/portfolio/arlx-arinc-653-real-time-linux-xen
 % http://genesysideation.com/news/dornerworks-releases-prototype-arinc-653-hypervisor-to-open-source-community/
 ARLX is a prototype hypervisor for ARINC 653 which is an extension to the Xen hypervisor.
-Linux is used to to partition the system.
+Linux is used to partition the system.
 It has been developed in accordance with DO-178.
 % \subsubsection{LithOS} http://www.fentiss.com/en/products/arinc653.html
 

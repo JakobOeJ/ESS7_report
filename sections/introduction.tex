@@ -10,38 +10,26 @@ failure of a surgical robot has to be avoided at all costs. These requirements l
 of technical standards to be followed when developing such systems. 
 \\\\
 Some might think that these regulations are unfairly formulated and distributed, and in most
-of the cases they might be right. For example, if we compare the existent standards for the aeronautical industry with the ones in the automotive field, there are quite big discrepancies. The standards 
+of the cases they might be right. For example, if we compare the existing standards for the aeronautical industry with the ones in the automotive field, there are quite big discrepancies. The standards 
 in use in the automotive industry are applying certain rules from the avionics regulations, 
 but only to a certain extent.
-\todo {\url{<http://publica.fraunhofer.de/eprints/urn_nbn_de_0011-n-2485950.pdf>} - Can cars fly?}
+\todo {\url{<http://publica.fraunhofer.de/eprints/urn_nbn_de_0011-n-2485950.pdf>} - Can cars fly?
+ From avionics to automotive: Comparability of domain specific safety standards}
 However, as time goes, these two fields seem to converge in terms of safety requirements. 
 In the past few years there has been done work for mapping and suitable integration 
-of the norms from the aviation line to the automotive field. Just take the new self-driven 
-cars developed by Tesla, and it becomes quite clear why there is need for stricter regulations. 
+of the norms from the aviation to the automotive fields. Just take the new self-driving 
+cars developed by Tesla, and it becomes quite clear why there is a need for stricter regulations. 
 \\\\
-These being said, it seems that the engineers are committed to migrate to the stricter standards. 
+That being said, it seems that the engineers are committed to migrate to the stricter standards. 
 This entails more work in the sense of documentation, design consideration, testing and verification.
 This project aims to look into this type of development process, while following the requirements 
 of a standard specification.
-This project's cornerstone is developing an Operating System, that would run safety critical 
+This project\textquotesingle s cornerstone is developing an Operating System, that would run safety critical 
 applications. The two main areas of interest are:
 \begin{itemize}
 \item the Standard, that specifies how the system should operate
 \item the physical platform that would contain the system
 \end{itemize}
  \todo {Add reference to Analysis}
-The following section provides more details about the software specification that needs to be fulfilled, as well as the different available hardware options.
-
-
-
-\todo {IS THIS ENOUGH? EXPLAIN ABOUT ARINC?}
-\iffalse THE END or else is too much
-In this project the ARINC 653 Standard is used. A typical application for this would be IMAs, which 
-is a network of real-time computers in an aircraft. What makes them special, is the fact that they can
-differentiate between the applications' criticality levels.
-
-Our main goal is to implement ARINC 653 on an STM32 microcontroller.
-
-The final product would be able to let developers and technicians work on safety critical systems,
- without having to have a deep understanding of the standard.
-\fi
+The following section provides more details about the software specification that needs to be fulfilled,
+as well as the different available hardware options.

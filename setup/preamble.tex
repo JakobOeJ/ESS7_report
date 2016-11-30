@@ -54,7 +54,12 @@
 % The standard graphics inclusion package
 \usepackage{graphicx}
 % Set the default path for included graphics
-\graphicspath{ {figures/} }
+\graphicspath{ 
+{figures/}		%here are the pictures
+{visio_drafts/} %here are the pdfs
+}
+%PDF include package 
+\usepackage{pdfpages}
 
 \usepackage{adjustbox}
 % Set up how figure and table captions are displayed

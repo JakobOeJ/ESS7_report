@@ -1,6 +1,7 @@
 \chapter{System Design}
 
-
+In this chapter the project is further analysed, with diagrams, delimitation...
+\todo[inline,color=green]{Maybe write some more.}
 
 \section{System Overview}
 As a means to both explaining the system and as a practical development model,
@@ -44,7 +45,7 @@ of that layer.
 Beneath graphical overview of the different layers with their core components
 is provided.
 
-\includegraphics[width=13cm]{first_draft_sys_design_diag.jpeg}
+\includegraphics[width=3cm]{first_draft_sys_design_diag.jpeg}
 \todo[inline,color=green]{New figure}
 \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{advanced_system_architecture.pdf}
 
@@ -163,7 +164,7 @@ register. This value must be saved by software to assure it can return to the ri
 
 
 \section{Memory Management}
-ARINC 653 advertizes time and space separation covered in.
+ARINC 653 advertises time and space separation covered in.
 \todo[inline]{ref to sec in analysis}
 To accommodate for the feature of separating partitions in space,
 this operating system relies on the memory management unit (MPU)
@@ -186,7 +187,7 @@ of different system features, like individual partitions and communication buffe
 All of this information is important for different reasons when setting up the system.
 The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip
 and categorizing and analysing the memory requirements into a single memory strategy to implement in
-\todo[inline]{ref to memory mangement implementation}.
+\todo[inline]{ref to memory management implementation}.
 
 \subsection{the MPU on a STM32F415}
 

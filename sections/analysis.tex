@@ -12,7 +12,7 @@ as a quick review over the other existing implementations.
 \section{Real-time systems}
 A real-time system is handling data as it comes in.
 Besides the usual computations needed to be done,
-the time until a result generated is also important.
+the time until a result is generated is also important.
 This means that the applications are scheduled in a manner that would allow them 
 to respond quickly and predictable.
 The real-time systems were developed in order to answer the requirements of different fields of work
@@ -31,10 +31,6 @@ as well as standards that specify how space and time should be partitioned.
 \section{ARINC 653}
 
 \subsection{Overview}
-\todo[inline,color=green]{ARINC 653 is a standard that was originally designed and created for the avionics industry.
-It has been created to work within Integrated Modular Avionics,
-(IMA) which required applications to be processed on single microprocessor module; so ARINC 653 was born.}
-
 ARINC 653 is a software specification that can run multiple applications on the same hardware, while providing resources in the context of an IMA system.
 
 ARINC 653 is said to “bring a new quality in real-time systems development“,
@@ -46,7 +42,7 @@ If an error in a partition occurs, it will only crash itself; the remaining part
 
 The idea is to bring such an operating system in to the wider embedded world.
 To do that in a one semester project, the focus will be on understanding the standard,
-working with embedded systems and implementing the parts of the operating system,
+working with embedded systems and implementing the parts of the operating system that are
 essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
 
@@ -91,7 +87,7 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 \todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
 In the world of embedded computing the computing platforms varies a lot more,
 compared to the world of workstations and desktop computers.
-Traditionally embedded computers are used for small specialized static tasks and
+Traditionally, embedded computers are used for small specialized static tasks and
 not required to run an operating system with multiple processes.
 For this reason many embedded systems are arranged as a SoC,
 with limited amounts of ram, flash and a low CPU clock,
@@ -100,16 +96,16 @@ not capable of supporting large computer screens and high speed networking.
 Improved technology however, have brought powerful new CPUs of architectures used in the embedded world
 such as MIPS and ARM.
 The latter now being used in all levels of computing, from ultra low power single purpose embedded systems,
-to workstations and supercomputer installations with graphics and highspeed networking requirements.
+to workstations and supercomputer installations with graphics and high speed networking requirements.
 For more powerful computers this might represent both a shift from the widely used CISC architecture
 to the smaller RISC architecture and a new focus on power efficiency over increased CPU speed.
 \\\\
 For embedded devices this change has meant more capable systems
 and an increasingly narrowing gap between embedded and workstation computing.
 Capable low power devices and cheap manufacturing of this new generation of RISC based computing systems,
-has made it possible to build computers to solve problems on all scales using the same, or simular, platforms.
+has made it possible to build computers to solve problems on all scales using the same, or similar, platforms.
 This has brought a surge of development for the middle layer of computing,
-a little more capable thán traditional embedded devices and a little less capable than the typical workstation.
+a little more capable than traditional embedded devices and a little less capable than the typical workstation.
 \\\\
 Developing a system to operate in an embedded environment with real time requirements
 and low overhead peripheral interaction,
@@ -121,21 +117,21 @@ Overall these requirements must to be met by the hardware:
 \begin{itemize}
 	\item Be fast enough to run multiple applications and the operating system below
 	\item Have sufficient main memory to support the stacks for all running applications and the operating system
-	\item Must come with either an MMU or MPU to provide protected regions in memmory for serperate contexts
+	\item Must come with either an MMU or MPU to provide protected regions in memory for separate contexts
 \end{itemize}
 \noindent
-The first two requirements depends almost entirely on the tasks being solved.
+The first two requirements depend almost entirely on the tasks being solved.
 The more applications being run and the more resource demanding they are,
 the more CPU time and memory they are going to utilize.
-The requirement to provide a MMU or MPU to safely segregate blocks of memmory between applications and the operating system,
+The requirement to provide a MMU or MPU to safely segregate blocks of memory between applications and the operating system,
 puts a lower bound on the type of hardware required.
 \\\\
 \todo{Give a more detailed explanation on the difference between an MPU and MMU}
-More capable systems may provide a MPU for basic memmory protection
-The smallest embedded systems typically do not provide any memmory protection,
+More capable systems may provide a MPU for basic memory protection
+The smallest embedded systems typically do not provide any memory protection,
 only being required to run single purpose applications where all drivers and interfacing
 are compiled and executed as a single binary image.
-Ever more powerfull systems may come with a MMU,
+Ever more powerful systems may come with a MMU,
 providing a uniform picture of the memory-space from the viewpoint of every application.
 
 \subsection{Some of the options out there}
@@ -153,24 +149,24 @@ but more than anything; it was just what we could find with a few Google searche
 Four proposed hardware candidates are listed:
 
 \paragraph{Creator Ci40} is a platform meant for IoT development.
-It comes with easily availible ports and connections for embedded development
+It comes with easily available ports and connections for embedded development
 and networking over protocols like ethernet and bluetooth.
 It is built around the cXT200 chip which is based on a JZ4780 550MHz dual-core MIPS CPU \cite{creator_ci40_specs}.
 It comes with an MMU, is capable of running Linux
-and is generally more powerfull than many low power embedded platforms.
+and is generally more powerful than many low power embedded platforms.
 
 \paragraph{MINI-M4 for STM32} is an ARM Cortex-M4 based development board containing a STM32F415RG microcontroller.
 It provides a simple pin layout and fits well into a breadboard for connecting external devices
 and comes with a single USB port to deliver power and to be programmed through, with an installed bootloader.
 The STM32 chip comes with a MPU and a single core CPU capable of running 168 MHz,
 but limited to 120 MHz using the on-board bootloader \cite{MINI-M4_stm32_specs}.
-Availible is a downloadable hardware abstraction layer (HAL) library from chip manufacturers website,
+Available is a downloadable hardware abstraction layer (HAL) library from chip manufacturers website,
 which comes with a number of implementation examples and documentation \cite{HAL_library}.
 
-\paragraph{MINI-M4 for Tiva} is simular to the MINI-M4 for STM32 above,
+\paragraph{MINI-M4 for Tiva} is similar to the MINI-M4 for STM32 above,
 based on the same ARM Cortex-M4 architecture,
 but using the TM4C123GH6PM chip from Texas Instruments instead.
-It has a pin layout simular to the MINI-M4 for STM32,
+It has a pin layout similar to the MINI-M4 for STM32,
 a USB connection for power and programming and comes with an MPU,
 but only runs at 80 MHz \cite{MINI-M4_tiva_specs}.
 
@@ -182,10 +178,10 @@ and being a higher end device compared to MINI-M4 and Creator Ci40,
 it's presumably more complex to work with.
 
 \subsection{Settleing on a platform}
-Obviusly a list longer than the one seen above can be compiled.
+Obviously a list longer than the one seen above can be compiled.
 Although the hardware used is not the primary concern to the project
 and as such the goal is to show examples of known platforms,
-availible for purchase in Denmark,
+available for purchase in Denmark,
 that all hit within the range of what can be considered embedded devices.
 \\\\
 The two MINI-M4 devices represent a lower, but capable end of the performance spectrum,
@@ -193,22 +189,22 @@ while the Raspberry Pi and the Creator Ci40 are more capable.
 All four devices have the necessary features to run a simple low power OS,
 but building the OS give practical concerns to the complexity and ease of setup.
 \\\\
-Focussing on core OS features, only a few basic periphals
+Focussing on core OS features, only a few basic peripherals
 like timers, MPU/MMU, UART and basic IO are necessary for the project,
 also the ARINC 653 does not provide a solution to scaling the operating system
 or containers across multiple cores,
-hence more capable hardware is likely see a low periphial use.
+hence more capable hardware is likely see a low peripheral use.
 Since the project is focussed on the implementation of an OS
 and less so the containers running on it.
 A low CPU utilization might be seen on more performant systems.
 \\\\
 The MINI-M4 modules are more attractive choices from the utilization standpoint.
-A comprehensive datasheet is availible for both of them,
+A comprehensive datasheet is available for both of them,
 making it easier to program them from the scratch.
 Some experience with the STM32 is present within the project group
 on how to setup and Linux based tool-chain.
-That, and the availibility of sample code implementations and a HAL library,
-means that the MINI-M4 for STM32 is the hardware platform being used and refered to
+That, and the availability of sample code implementations and a HAL library,
+means that the MINI-M4 for STM32 is the hardware platform being used and referred to
 in the duration of this project.
 \todo{leads to the choice...}
 \todo{Why have a HAL, why is it good to have}
@@ -235,7 +231,7 @@ whereas an E compliance has been verified against trivial failures.
 
 \subsection{Alternative ARINC platforms}
 When considering how to implement ARINC 653 we first explored existing platforms that might meet our needs.
-There are COTS (Commerical of the Shelf) OSs, and there are open source OSs.
+There are COTS (Commercial of the Shelf) OSs, and there are open source OSs.
 An existing platform would save us time to get an ARINC platform running,
 but with varying levels of limitations between the COTS and open source.
 

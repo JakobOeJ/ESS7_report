@@ -44,7 +44,6 @@ creating an extra layer of abstraction.
 		includes the actual CPU and its peripherals.
 \end{itemize}
 
-
 \todo[inline, color=green]{An XML file is provided by the system developer
  at compile time.It defines how the top layers interact and set the
   requirements of the drivers and the underlying hardware.
@@ -52,15 +51,67 @@ Every layer contains a list of components, which provides the
  functionalities of that layer.
 Beneath graphical overview of the different layers with their core
  components is provided.}
+ 
 \begin{center}
 \includegraphics[width=4cm,keepaspectratio]{simple_system_architecture.pdf}
 \captionof{figure}{A simple system overview}
 \end{center}
+
 In the rest of the chapter the different layers are described, 
 together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
 \subsection{Hardware}
+As mentioned in the previous chapter, the hardware used for this project 
+is a MINI-M4 board from MikroElectronica. This is build around an
+STM32F415RG microcontroller produced by STMicroelectronics. Besides
+this, the board contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for supplying power via a microUSB connector.
+Some of the GPIOs are break through using external pins.
+\todo{REFERENCes, referenes} 
+These pins were soldered to the board, and this was setup on a breadboard
+for practicality.
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
+  \caption{MINI-M4 before soldernig}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
+  \caption{MINI-M4 on a breadboard}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Preparation of the board}
+\label{fig:test}
+\end{figure}
+
+For programming and debugging the board the JTAG interface was used.
+This had to be connected to certain pins of the board. In order to get 
+feedback from the board, a serial connection was used, which requires two
+more lines to it.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \caption{The JTAG lines}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \caption{Both the JTAG and serial interfaces}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Connecting the board}
+\label{fig:test2}
+\end{figure}
+
 
 \subsection{Drivers}
 \begin{description}[align=left]

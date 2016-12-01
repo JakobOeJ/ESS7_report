@@ -13,7 +13,7 @@ This model is defined by the ARINC 653 standard
 and expanded upon here with drivers being build on top of the HAL library,
 instead of directly on top of the hardware,
 creating an extra layer of abstraction.
-%\todo{Insert ref to analysis of ARINC.}
+\todo{link with figure}
 
 \begin{itemize}
 	\item \textbf{Partitions}
@@ -52,12 +52,14 @@ Every layer contains a list of components, which provides the
 Beneath graphical overview of the different layers with their core
  components is provided.}
  
-\begin{center}
+\begin{figure}[H]
+\centering
 \includegraphics[width=4cm,keepaspectratio]{simple_system_architecture.pdf}
 \captionof{figure}{A simple system overview}
-\end{center}
+\end{figure}
 
-In the rest of the chapter the different layers are described, 
+In the rest of the chapter the different layers are described,
+from bottom up, 
 together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
@@ -70,7 +72,7 @@ button and the peripherals for supplying power via a microUSB connector.
 Some of the GPIOs are break through using external pins.
 \todo{REFERENCes, referenes} 
 These pins were soldered to the board, and this was setup on a breadboard
-for practicality.
+for practicality, as seen in \ref{fig:photo1}.
 
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
@@ -86,13 +88,13 @@ for practicality.
   \label{fig:sub2}
 \end{subfigure}
 \caption{Preparation of the board}
-\label{fig:test}
+\label{fig:photo1}
 \end{figure}
 
 For programming and debugging the board the JTAG interface was used.
 This had to be connected to certain pins of the board. In order to get 
 feedback from the board, a serial connection was used, which requires two
-more lines to it.
+more lines to it. This can be seen in the next figure.
 
 \begin{figure}[H]
 \centering
@@ -109,10 +111,31 @@ more lines to it.
   \label{fig:sub2}
 \end{subfigure}
 \caption{Connecting the board}
-\label{fig:test2}
+\label{fig:photo2}
 \end{figure}
 
+After this, the board was ready to be used in the development process.
+The only drawback of this setup, is that it requires three USB ports:
+power for the board, the JTAG interface, and the serial communication.
 
+\subsection{HAL and CMSIS}
+These two libraries are truly the workhorse when dealing with the 
+board\textquotesingle s peripherals. Basically, the CMSIS library
+is defining the data structure and address mapping on all peripherals.
+This means that the HAL library can then use these definitions for its
+utilities in a more straightforward way. Besides this, CMSIS handles
+all the exceptions occurring in the chip, and the HAL library configures
+the interrupts.
+\todo{IS this understandable?}
+ 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{HAL_CMSIS.pdf}
+\captionof{figure}{The structure of the libraries}
+\end{figure}
+\todo[inline, color=green]{do i need reference for this figure?
+\url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
+}
 \subsection{Drivers}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
@@ -120,6 +143,12 @@ more lines to it.
 	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the program would be restarted
 	from a safe state.
+	\item [\textbf{LEDs}]
+	\item [\textbf{System Clock}]
+	\item [\textbf{RTC}]
+	\item [\textbf{MPU}]
+	\item [\textbf{Delay}]
+	\item [\textbf{Timing}]
 
 \end{description}
 
@@ -154,7 +183,7 @@ the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\begin{tabular}{|c|c|p{9.5cm}|}
 		\hline
@@ -192,7 +221,7 @@ This is done by loading an EXC\_RETURN value into the Program Counter. See table
 To make context switching transparent to the applications running, it's important that the state the processor returns to, is the
 same it earlier came from. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link
 register. This value must be saved by software to assure it can return to the right state.
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\begin{tabular}{|c|p{10cm}|}
 		\hline
@@ -250,3 +279,11 @@ and categorizing and analysing the memory requirements into a single memory stra
 \subsection{the MPU on a STM32F415}
 
 \subsection{memory strategy}
+
+\section{Conclusion - Discussion}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{advanced_system_architecture.pdf}
+\captionof{figure}{An advanced system overview}
+\end{figure}

@@ -67,13 +67,11 @@ and the XML.
 
 \subsection{OS}
 \subsubsection{Scheduler}
-The scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
+A scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
 
-For the first one we used a pre-programmed timed scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution.
+For the first one we used a Manual Scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution. Every milisecond we verify if the time of the partition running has reached the timeout, if so, we switch the context for the next partition. And the new partition gets the processor.
 
-The second one is a Round Robin scheduler, based in the processes priority, been executed the one with an higher priority until it loses the processor to other partition or achieves the timeout. In case of reaching the timeout it verifies again which is the process with the higher priority and executes it.
-
-\todo{Write more about the scheduler in OS design}
+The second one is a Preemtive Priority Scheduler, based on the processes' priority, in which is executed the one with the highest priority until it loses the processor to other partition. Every milisecond we pick the process, from the array of processes of that partition, with the highest priority and run in the processor.
 
 \paragraph{Context switching} is to switch from executing one block of code $b_1$ to another block of code $b_2$
 with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code.

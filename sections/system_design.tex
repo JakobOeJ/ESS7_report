@@ -137,18 +137,34 @@ the interrupts.
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
 \subsection{Drivers}
+\todo{this kind of lists do not fit very well the purpose}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.
 	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the program would be restarted
 	from a safe state.
-	\item [\textbf{LEDs}]
-	\item [\textbf{System Clock}]
-	\item [\textbf{RTC}]
-	\item [\textbf{MPU}]
-	\item [\textbf{Delay}]
-	\item [\textbf{Timing}]
+	\item [\textbf{LEDs}]The LEDs are mainly used for debugging. They are
+	are connected to two GPIO pins.
+	\item [\textbf{System Clock}]The system clock needs to be initialised 
+	in order to provide a clock source for the CPU and the peripherals.
+	there is a multitude of choices, ranging from internal or external
+	oscillators, to high or low speed crystals. Besides this, certain
+	peripherals can use their own, individual clock source that also has
+	to be configured.
+	\item [\textbf{RTC}]This is the real time clock implemented in the 
+	chip. The purpose of this is to keep track of time accurately. This 
+	is why it uses a 32,768kHz oscillator as a clock source, which is 
+	the standard in the field.
+	\item [\textbf{MPU}]The Memory protection unit is required by the
+	ARINC 653 standard, since the system should have a way to manage its
+	memory.
+	\item [\textbf{Delay}]This is just a simple function, based on a call
+	for another function from the HAL library. It delays the execution 
+	of the program by a factor of milliseconds.
+	\item [\textbf{Timing}]This driver has the purpose to keep track of 
+	relative time. As the standard specifies, it should be counting in 
+	nanoseconds.
 
 \end{description}
 

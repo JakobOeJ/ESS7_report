@@ -58,12 +58,16 @@
 {figures/}		%here are the pictures
 {visio_drafts/} %here are the pdfs
 }
+%set the position of a image in a fixed place
+\usepackage{float}
 %PDF include package 
 \usepackage{pdfpages}
 
 \usepackage{adjustbox}
 % Set up how figure and table captions are displayed
 \usepackage{caption}
+%Set up for subcaptions and sub figures
+\usepackage{subcaption}
 \captionsetup{%
   font=footnotesize,% set font size to footnotesize
   labelfont=bf % bold label (e.g., Figure 3.2) font

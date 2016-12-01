@@ -1,57 +1,64 @@
 \chapter{System Design}
 
-In this chapter the project is further analysed, with diagrams, delimitation...
-\todo[inline,color=green]{Maybe write some more.}
+In this chapter the project is further analysed, by providing diagrams 
+and describing basic notions, setting up the premises for implementing
+the ARINC 653 standard.
 
 \section{System Overview}
-As a means to both explaining the system and as a practical development model,
-the system can be thought of as being made up of layers.
+As a means to both explaining the system and as a practical development
+model, the system can be thought of as being made up of layers.
 Each layer being an abstraction of workings in the layers beneath it,
 with the partitions at the top and the hardware at the bottom.
 This model is defined by the ARINC 653 standard
-\todo[inline,color=green]{Insert ref to analysis of ARINC.}
 and expanded upon here with drivers being build on top of the HAL library,
 instead of directly on top of the hardware,
 creating an extra layer of abstraction.
+%\todo{Insert ref to analysis of ARINC.}
 
 \begin{itemize}
 	\item \textbf{Partitions}
-		are running the applications which defines how the system interacts
-		with the system around it.
-		Doing so in complete isolation from one another.
+		are independent program units that contain applications. These
+		applications can in turn interact with other systems. The
+		partitions are achieving this  in complete isolation from 
+		one another.
 	\item \textbf{APEX}
 		defines the methods by which the partitions talk to the world and
-		interacts with other partitions or systems, running
-		on the same chip or otherwise connected.
+		interact with other partitions or the OS, running
+		on the same core module or connected to other ARINC systems.
 	\item \textbf{OS}
-		provides the infrastructure of partitions to operate and
-		including scheduling.
+		provides the infrastructure for partitions to operate. This 
+		includes their scheduling, message passing and processes 
+		the APEX calls.
 	\item \textbf{Drivers}
-		serves the OS with methods to create an enviroment in which partitions
-		can be run and scheduled without affection one another.
-	\item \textbf{HAL}
-		An abstraction layer provided by the chip manufacturer,
-		to make setting up the hardware easier on developers.
+		define the way the hardware should run.	
+		They serve the OS with methods to create an environment in which
+		partitions can be run and scheduled without influencing one
+		another.
+	\item \textbf{HAL and CMSIS}
+		are hardware abstraction layers that make setting up the hardware
+		easier for developers. HAL is provided by the chip manufacturer - 
+		STMicroelectronics. CMSIS is provided by ARM the company that
+		developed the chip architecture.
 	\item \textbf{Hardware}
-		The physical platform on which everything is executed.
+		is the physical platform on which everything is executed. This 
+		includes the actual CPU and its peripherals.
 \end{itemize}
 
-An XML file is provided by the system developer at compile time.
-It defines how the top layers interact and set the requirements of the drivers
-and the underlying hardware.
 
-Every layer contains a list of components, which provides the functionalities
-of that layer.
-Beneath graphical overview of the different layers with their core components
-is provided.
-
-\includegraphics[width=3cm]{first_draft_sys_design_diag.jpeg}
-\todo[inline,color=green]{New figure}
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{advanced_system_architecture.pdf}
-
-In the rest of the chapter the different layers are described with their core
-components together with an overall view in the specifications for the hardware
-and the XML.
+\todo[inline, color=green]{An XML file is provided by the system developer
+ at compile time.It defines how the top layers interact and set the
+  requirements of the drivers and the underlying hardware.
+Every layer contains a list of components, which provides the
+ functionalities of that layer.
+Beneath graphical overview of the different layers with their core
+ components is provided.}
+\begin{center}
+\includegraphics[width=4cm,keepaspectratio]{simple_system_architecture.pdf}
+\captionof{figure}{A simple system overview}
+\end{center}
+In the rest of the chapter the different layers are described, 
+together with their core components.The hardware specifications
+are outlined, as well as explaining how the system is initialised.
 
 \subsection{Hardware}
 
@@ -121,7 +128,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 		xPSR		&	Hardware	& 	Special-purpose Program Status Register\\
 		\hline
 	\end{tabular}
-	\caption{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
+	\captionof{table}{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
 	there are separate registers for user space and kernel space.
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
@@ -153,7 +160,7 @@ register. This value must be saved by software to assure it can return to the ri
 		0xFFFF FFED		&	Return to Thread mode, using the Process Stack Pointer, with the floating point unit.			\\
 		\hline
 	\end{tabular}
-	\caption{
+	\captionof{table}{
 		A table of the possible EXC\_RETURN values. An interrupt service routine is exited by loading one of these values into the Program Counter register.	}
 	\label{tab:exc-return}
 \end{figure}

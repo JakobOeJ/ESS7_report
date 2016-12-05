@@ -75,7 +75,7 @@ to save and where to save them to.\\
 The processor state is saved in the Link return register, and it can be one of
 the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).\\
 If the pre-empted process used the FPU, the FPU registers S16 to S31
-should also be saved by software in addtion to the general purpose regisers.
+should also be saved by software in addition to the general purpose regisers.
 Because of time constraint, this was not implemented.\\
 The registers are saved entirely on the stack. Therefore, it is important for
 the software to know which

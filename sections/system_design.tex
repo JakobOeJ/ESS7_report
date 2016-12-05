@@ -24,8 +24,16 @@ creating an extra layer of abstraction.
 		interacts with other partitions or systems, running
 		on the same chip or otherwise connected.
 	\item \textbf{OS}
+<<<<<<< HEAD
 		provides the infrastructure of partitions to operate and
 		including scheduling.
+=======
+		provides the infrastructure for partitions to operate. This 
+		includes their scheduling, message passing and processes 
+		the APEX calls.
+	\item \textbf{XML}
+		contains the data necessary for the system initialisation.
+>>>>>>> 0a234b3176a492d6162286dda28287cb71baa917
 	\item \textbf{Drivers}
 		serves the OS with methods to create an enviroment in which partitions
 		can be run and scheduled without affection one another.
@@ -36,14 +44,54 @@ creating an extra layer of abstraction.
 		The physical platform on which everything is executed.
 \end{itemize}
 
-An XML file is provided by the system developer at compile time.
-It defines how the top layers interact and set the requirements of the drivers
-and the underlying hardware.
 
-Every layer contains a list of components, which provides the functionalities
-of that layer.
-Beneath graphical overview of the different layers with their core components
-is provided.
+\todo[inline, color=green]{An XML file is provided by the system developer
+ at compile time.It defines how the top layers interact and set the
+  requirements of the drivers and the underlying hardware.
+Every layer contains a list of components, which provides the
+ functionalities of that layer.
+Beneath graphical overview of the different layers with their core
+ components is provided.}
+ 
+\begin{figure}[H]
+\centering
+\includegraphics[width=7cm,keepaspectratio]{simple_system_architecture.pdf}
+\captionof{figure}{A simple system overview}
+\end{figure}
+
+In the rest of the chapter the different layers are described,
+from bottom up, 
+together with their core components.The hardware specifications
+are outlined, as well as explaining how the system is initialised.
+
+\section{Hardware}
+As mentioned in the previous chapter, the hardware used for this project 
+is a MINI-M4 board from MikroElectronica. This is build around an
+STM32F415RG microcontroller produced by STMicroelectronics. Besides
+this, the board contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for supplying power via a microUSB connector.
+Some of the GPIOs are break through using external pins.
+\todo{REFERENCes, referenes} 
+These pins were soldered to the board, and this was setup on a breadboard
+for practicality, as seen in \ref{fig:photo1}.
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
+  \caption{MINI-M4 before soldernig}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
+  \caption{MINI-M4 on a breadboard}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Preparation of the board}
+\label{fig:photo1}
+\end{figure}
+
 
 \includegraphics[width=3cm]{first_draft_sys_design_diag.jpeg}
 \todo[inline,color=green]{New figure}
@@ -55,7 +103,28 @@ and the XML.
 
 \subsection{Hardware}
 
-\subsection{Drivers}
+
+\section{HAL and CMSIS}
+These two libraries are truly the workhorse when dealing with the 
+board\textquotesingle s peripherals. Basically, the CMSIS library
+is defining the data structure and address mapping on all peripherals.
+This means that the HAL library can then use these definitions for its
+utilities in a more straightforward way. Besides this, CMSIS handles
+all the exceptions occurring in the chip, and the HAL library configures
+the interrupts.
+\todo{IS this understandable?}
+ 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{HAL_CMSIS.pdf}
+\captionof{figure}{The structure of the libraries}
+\end{figure}
+\todo[inline, color=green]{do i need reference for this figure?
+\url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
+}
+
+\section{Drivers}
+\todo{this kind of lists do not fit very well the purpose}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.
@@ -63,15 +132,37 @@ and the XML.
 	in case of a hardware fault or program error. If this happens, the program would be restarted
 	from a safe state.
 
+	\item [\textbf{LEDs}]The LEDs are mainly used for debugging. They are
+	are connected to two GPIO pins.
+	\item [\textbf{System Clock}]The system clock needs to be initialised 
+	in order to provide a clock source for the CPU and the peripherals.
+	there is a multitude of choices, ranging from internal or external
+	oscillators, to high or low speed crystals. Besides this, certain
+	peripherals can use their own, individual clock source that also has
+	to be configured.
+	\item [\textbf{RTC}]This is the real time clock implemented in the 
+	chip. The purpose of this is to keep track of time accurately. This 
+	is why it uses a 32,768kHz oscillator as a clock source, which is 
+	the standard in the field.
+	\item [\textbf{MPU}]The Memory protection unit is required by the
+	ARINC 653 standard, since the system should have a way to manage its
+	memory.
+	\item [\textbf{Delay}]This is just a simple function, based on a call
+	for another function from the HAL library. It delays the execution 
+	of the program by a factor of milliseconds.
+	\item [\textbf{Timing}]This driver has the purpose to keep track of 
+	relative time. As the standard specifies, it should be counting in 
+	nanoseconds.
+
 \end{description}
 
-\subsection{OS}
-\subsubsection{Scheduler}
+\section{OS}
+\subsection{Scheduler}
 A scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
 
 For the first one we used a Manual Scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution. Every milisecond we verify if the time of the partition running has reached the timeout, if so, we switch the context for the next partition. And the new partition gets the processor.
 
-The second one is a Preemtive Priority Scheduler, based on the processes' priority, in which is executed the one with the highest priority until it loses the processor to other partition. Every milisecond we pick the process, from the array of processes of that partition, with the highest priority and run in the processor.
+The second one is a Pre-emptive Priority Scheduler, based on the processes' priority, in which is executed the one with the highest priority until it loses the processor to other partition. Every milisecond we pick the process, from the array of processes of that partition, with the highest priority and run in the processor.
 
 \paragraph{Context switching} is to switch from executing one block of code $b_1$ to another block of code $b_2$
 with the intend to eventually return to $b_1$ in a way that is transparent to the blocks of code.
@@ -94,7 +185,11 @@ the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
+<<<<<<< HEAD
 \begin{figure}
+=======
+\begin{table}[H]
+>>>>>>> 0a234b3176a492d6162286dda28287cb71baa917
 	\centering
 	\begin{tabular}{|c|c|p{9.5cm}|}
 		\hline
@@ -123,7 +218,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 	there are separate registers for user space and kernel space.
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
-\end{figure}
+\end{table}
 As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
 The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
 Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
@@ -132,7 +227,8 @@ This is done by loading an EXC\_RETURN value into the Program Counter. See table
 To make context switching transparent to the applications running, it's important that the state the processor returns to, is the
 same it earlier came from. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link
 register. This value must be saved by software to assure it can return to the right state.
-\begin{figure}
+
+\begin{table}[H]
 	\centering
 	\begin{tabular}{|c|p{10cm}|}
 		\hline
@@ -154,14 +250,12 @@ register. This value must be saved by software to assure it can return to the ri
 	\caption{
 		A table of the possible EXC\_RETURN values. An interrupt service routine is exited by loading one of these values into the Program Counter register.	}
 	\label{tab:exc-return}
-\end{figure}
+\end{table}
 
-\subsubsection{Interpartition communication}
-
-\section{XML}
+\subsection{Interpartition communication}
 
 
-\section{Memory Management}
+\subsection{Memory Management}
 ARINC 653 advertises time and space separation covered in.
 \todo[inline]{ref to sec in analysis}
 To accommodate for the feature of separating partitions in space,
@@ -191,3 +285,25 @@ Each region is splited in 8 subregions, in which, some of those subregions are g
 \subsection{the MPU on a STM32F415}
 
 \subsection{memory strategy}
+
+
+\section{XML}
+
+\section{APEX}
+
+\section{Partitions and processes}
+
+\section{Discussion}
+
+Figure \ref{fig:advanced_system} presents the system in its entirety,
+with all the components organised in the corresponding layers.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{advanced_system_architecture.pdf}
+\caption{An advanced system overview}
+\label{fig:advanced_system}
+\end{figure}
+
+The following chapter will go through how all these components,
+features and functionalities has been implemented.

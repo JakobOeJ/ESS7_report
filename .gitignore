@@ -8,6 +8,7 @@ $RECYCLE.BIN/
 
 # report related
 out/
+aux-dir/
 *.aux
 *.log
 *.out

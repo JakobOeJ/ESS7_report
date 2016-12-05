@@ -29,9 +29,8 @@ will be reviewed and compared with the actual requirements of the standard.
 
 \subsection{UART}
 
-The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
+The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
-In this case we are using the UART4, in a frequence from 25Mz to 100Mz, 
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg

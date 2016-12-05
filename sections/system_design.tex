@@ -1,28 +1,30 @@
 \chapter{System Design}
 
-In this chapter the project is further analysed, with diagrams, delimitation...
-\todo[inline,color=green]{Maybe write some more.}
+In this chapter the project is further analysed, by providing diagrams 
+and describing basic notions, setting up the premises for implementing
+the ARINC 653 standard.
 
 \section{System Overview}
-As a means to both explaining the system and as a practical development model,
-the system can be thought of as being made up of layers.
+As a means to both explaining the system and as a practical development
+model, the system can be thought of as being made up of layers.
 Each layer being an abstraction of workings in the layers beneath it,
 with the partitions at the top and the hardware at the bottom.
 This model is defined by the ARINC 653 standard
-\todo[inline,color=green]{Insert ref to analysis of ARINC.}
 and expanded upon here with drivers being build on top of the HAL library,
 instead of directly on top of the hardware,
 creating an extra layer of abstraction.
+\todo{link with figure}
 
 \begin{itemize}
 	\item \textbf{Partitions}
-		are running the applications which defines how the system interacts
-		with the system around it.
-		Doing so in complete isolation from one another.
+		are independent program units that contain applications. These
+		applications can in turn interact with other systems. The
+		partitions are achieving this  in complete isolation from 
+		one another.
 	\item \textbf{APEX}
 		defines the methods by which the partitions talk to the world and
-		interacts with other partitions or systems, running
-		on the same chip or otherwise connected.
+		interact with other partitions or the OS, running
+		on the same core module or connected to other ARINC systems.
 	\item \textbf{OS}
 		provides the infrastructure for partitions to operate. This 
 		includes their scheduling, message passing and processes 
@@ -30,14 +32,20 @@ creating an extra layer of abstraction.
 	\item \textbf{XML}
 		contains the data necessary for the system initialisation.
 	\item \textbf{Drivers}
-		serves the OS with methods to create an enviroment in which partitions
-		can be run and scheduled without affection one another.
-	\item \textbf{HAL}
-		An abstraction layer provided by the chip manufacturer,
-		to make setting up the hardware easier on developers.
+		define the way the hardware should run.	
+		They serve the OS with methods to create an environment in which
+		partitions can be run and scheduled without influencing one
+		another.
+	\item \textbf{HAL and CMSIS}
+		are hardware abstraction layers that make setting up the hardware
+		easier for developers. HAL is provided by the chip manufacturer - 
+		STMicroelectronics. CMSIS is provided by ARM the company that
+		developed the chip architecture.
 	\item \textbf{Hardware}
-		The physical platform on which everything is executed.
+		is the physical platform on which everything is executed. This 
+		includes the actual CPU and its peripherals.
 \end{itemize}
+
 
 
 \todo[inline, color=green]{An XML file is provided by the system developer
@@ -54,12 +62,14 @@ Beneath graphical overview of the different layers with their core
 \captionof{figure}{A simple system overview}
 \end{figure}
 
+
 In the rest of the chapter the different layers are described,
 from bottom up, 
 together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
-\section{Hardware}
+
+\subsection{Hardware}
 As mentioned in the previous chapter, the hardware used for this project 
 is a MINI-M4 board from MikroElectronica. This is build around an
 STM32F415RG microcontroller produced by STMicroelectronics. Besides
@@ -87,19 +97,34 @@ for practicality, as seen in \ref{fig:photo1}.
 \label{fig:photo1}
 \end{figure}
 
+For programming and debugging the board the JTAG interface was used.
+This had to be connected to certain pins of the board. In order to get 
+feedback from the board, a serial connection was used, which requires two
+more lines to it. This can be seen in the next figure.
 
-\includegraphics[width=3cm]{first_draft_sys_design_diag.jpeg}
-\todo[inline,color=green]{New figure}
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{advanced_system_architecture.pdf}
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \caption{The JTAG lines}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \caption{Both the JTAG and serial interfaces}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Connecting the board}
+\label{fig:photo2}
+\end{figure}
 
-In the rest of the chapter the different layers are described with their core
-components together with an overall view in the specifications for the hardware
-and the XML.
+After this, the board was ready to be used in the development process.
+The only drawback of this setup, is that it requires three USB ports:
+power for the board, the JTAG interface, and the serial communication.
 
-\subsection{Hardware}
-
-
-\section{HAL and CMSIS}
+\subsection{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
 is defining the data structure and address mapping on all peripherals.
@@ -118,14 +143,13 @@ the interrupts.
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
 
-\section{Drivers}
-\todo{this kind of lists do not fit very well the purpose}
+\subsection{Drivers}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.
 	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the program would be restarted
-	from a safe state.
+	from a safe state
 
 	\item [\textbf{LEDs}]The LEDs are mainly used for debugging. They are
 	are connected to two GPIO pins.
@@ -181,6 +205,7 @@ If the operating system wishes to switch context, it must save the remaining reg
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
 
+
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|p{9.5cm}|}
@@ -206,7 +231,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 		xPSR		&	Hardware	& 	Special-purpose Program Status Register\\
 		\hline
 	\end{tabular}
-	\caption{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
+	\captionof{table}{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
 	there are separate registers for user space and kernel space.
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
@@ -220,7 +245,9 @@ To make context switching transparent to the applications running, it's importan
 same it earlier came from. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link
 register. This value must be saved by software to assure it can return to the right state.
 
+
 \begin{table}[H]
+
 	\centering
 	\begin{tabular}{|c|p{10cm}|}
 		\hline
@@ -239,7 +266,7 @@ register. This value must be saved by software to assure it can return to the ri
 		0xFFFF FFED		&	Return to Thread mode, using the Process Stack Pointer, with the floating point unit.			\\
 		\hline
 	\end{tabular}
-	\caption{
+	\captionof{table}{
 		A table of the possible EXC\_RETURN values. An interrupt service routine is exited by loading one of these values into the Program Counter register.	}
 	\label{tab:exc-return}
 \end{table}
@@ -270,8 +297,7 @@ Memory regions are declared in the XML file, included at compile time, for a lis
 of different system features, like individual partitions and communication buffers.
 All of this information is important for different reasons when setting up the system.
 The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip
-and categorizing and analysing the memory requirements into a single memory strategy to implement in.
-Each region is splited in 8 subregions, in which, some of those subregions are given to a specific partition. In order to optimize the memory used we can insert different partitions in the same region. When we define the memory for 1 partition we can try to fit more smaller partitions if there are some free sub regions so we have less non used memory.
+and categorizing and analysing the memory requirements into a single memory strategy to implement in
 \todo[inline]{ref to memory management implementation}.
 
 \subsection{the MPU on a STM32F415}
@@ -290,12 +316,15 @@ Each region is splited in 8 subregions, in which, some of those subregions are g
 Figure \ref{fig:advanced_system} presents the system in its entirety,
 with all the components organised in the corresponding layers.
 
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{advanced_system_architecture.pdf}
+
 \caption{An advanced system overview}
 \label{fig:advanced_system}
 \end{figure}
 
 The following chapter will go through how all these components,
 features and functionalities has been implemented.
+

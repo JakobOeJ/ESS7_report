@@ -2,21 +2,10 @@
 
 \chapter{System Implementation}
 
-\section{OS}
+\todo[inline, color=green]
+{INTRO}
 
-\subsection{Scheduler}
-
-\subsubsection{Context Switching}
-There are multiple different states the processor can be in, when the context switch from one process to another occurs.
-The state determines whether the Master Stack Pointer or the Process Stack Pointer was used by the process,
-and whether the FPU was used by the process or not. 
-Because of this, the context switch algorithm must start by determining the processor state in order to know which registers
-to save and where to save them to.\\
-The processor state is saved in the Link return register, and it can be one of the possible six
-EXC\_RETURN values (see figure \ref{tab:exc-return}).
-The state is saved entirely on the stack. Therefore, it is important for the software to know which
-stack pointer to use when saving the remaining registers.
-
+\section{Hardware}
 
 \section{Drivers}
 
@@ -52,3 +41,24 @@ This driver is used for precise measuring the execution time of different functi
  and Trace support. By using one of these counters, one could follow the system's clock ticks. 
  At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
 In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
+
+\section{OS}
+
+\subsection{Scheduler}
+
+\subsubsection{Context Switching}
+There are multiple different states the processor can be in, when the context switch from one process to another occurs.
+The state determines whether the Master Stack Pointer or the Process Stack Pointer was used by the process,
+and whether the FPU was used by the process or not. 
+Because of this, the context switch algorithm must start by determining the processor state in order to know which registers
+to save and where to save them to.\\
+The processor state is saved in the Link return register, and it can be one of the possible six
+EXC\_RETURN values (see figure \ref{tab:exc-return}).
+The state is saved entirely on the stack. Therefore, it is important for the software to know which
+stack pointer to use when saving the remaining registers.
+
+
+\section{APEX}
+
+\section{Partitions}
+

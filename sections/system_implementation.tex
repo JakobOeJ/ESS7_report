@@ -1,5 +1,7 @@
 %! tex root = ../master.tex
 
+\newcommand{\excreturn}{EXC\_RETURN}
+
 \chapter{System Implementation}
 
 \todo[inline, color=green]
@@ -48,15 +50,45 @@ In order to do this, the DWT\textunderscore CONTROL register is set to a value t
 \subsection{Scheduler}
 
 \subsubsection{Context Switching}
-There are multiple different states the processor can be in, when the context switch from one process to another occurs.
-The state determines whether the Master Stack Pointer or the Process Stack Pointer was used by the process,
-and whether the FPU was used by the process or not. 
-Because of this, the context switch algorithm must start by determining the processor state in order to know which registers
+There are multiple different states the processor can be in, when a context 
+switch from one process to another occurs. The state determines whether the
+Master Stack Pointer or the Process Stack Pointer was used by the process,
+and whether the FPU was used by the process or not. Because of this, the context
+switch algorithm must start by determining the processor state in order to know
+which registers
 to save and where to save them to.\\
-The processor state is saved in the Link return register, and it can be one of the possible six
-EXC\_RETURN values (see figure \ref{tab:exc-return}).
-The state is saved entirely on the stack. Therefore, it is important for the software to know which
-stack pointer to use when saving the remaining registers.
+The processor state is saved in the Link return register, and it can be one of
+the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).
+The registers are saved entirely on the stack. Therefore, it is important for
+the software to know which
+stack pointer to use when saving the remaining registers. So the very first
+thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
+the \excreturn\ value in the LR register to determine wether to use the 
+Master Stack Pointer or the Process Stack Pointer. The software must then, at 
+the address denoted by the stack pointer, save the registers that have yet to be
+saved, and update the stack pointer, before saving both the stack pointer and
+the \excreturn\ value to the process structure elsewhere in memory. This is all
+done in assembly to make sure that there is complete control over which
+registers are used, so as to avoid overwriting any registers that have yet to be
+saved. This is absolutely necessary, as otherwise the state of register for a
+process might be corrupted during a context switch. Additionally, any ISR used
+for scheduling must be declared as naked\footnote{A naked function has no
+compiler generated prologue and epilogue. This means that the compiler does not
+save any registers on the stack before using them, and it does not restore them
+before ending a function.}, to avoid the compiler changing registers before the
+context can be saved, and to give complete control over which value is pushed to
+the PC register at the end of the ISR.\\
+After the context has been saved, control is handed over to the scheduler, which
+can then decide which process should be running next.\\
+Once all the operations the ISR has completed, the context of the process
+selected by the scheduler must be restored. From this point, the code must once
+again be written in assembly to avoid overwriting a register after it has been 
+restored. First, the registers saved by software on the stack must be restored,
+then based on the \excreturn\ value the process interrupted with, it can be 
+determined to which stack pointer register the new stack pointer must be pushed
+to. Lastly, execution must return to the process by pushing the \excreturn value
+to the PC register. The \excreturn value pushed to the PC register must be the
+same as that read from the LR register when the process was interrupted.
 
 
 \section{APEX}

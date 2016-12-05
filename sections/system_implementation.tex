@@ -104,7 +104,12 @@ determined to which stack pointer register the new stack pointer must be pushed
 to. Lastly, execution must return to the process by pushing the \excreturn value
 to the PC register. The \excreturn value pushed to the PC register must be the
 same as that read from the LR register when the process was interrupted.
-
+Figure \ref{fig:flowchart_contextswitch}\todo{Write caption for this figure.} shows the flow when switching contexts.
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/flowchart_contextswitch.png}
+    \caption{This is just a placeholder.}
+    \label{fig:flowchart_contextswitch}
+\end{figure}
 
 \section{APEX}
 

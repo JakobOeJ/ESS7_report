@@ -24,16 +24,11 @@ creating an extra layer of abstraction.
 		interacts with other partitions or systems, running
 		on the same chip or otherwise connected.
 	\item \textbf{OS}
-<<<<<<< HEAD
-		provides the infrastructure of partitions to operate and
-		including scheduling.
-=======
 		provides the infrastructure for partitions to operate. This 
 		includes their scheduling, message passing and processes 
 		the APEX calls.
 	\item \textbf{XML}
 		contains the data necessary for the system initialisation.
->>>>>>> 0a234b3176a492d6162286dda28287cb71baa917
 	\item \textbf{Drivers}
 		serves the OS with methods to create an enviroment in which partitions
 		can be run and scheduled without affection one another.
@@ -185,11 +180,8 @@ the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
-<<<<<<< HEAD
-\begin{figure}
-=======
+
 \begin{table}[H]
->>>>>>> 0a234b3176a492d6162286dda28287cb71baa917
 	\centering
 	\begin{tabular}{|c|c|p{9.5cm}|}
 		\hline

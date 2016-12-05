@@ -29,6 +29,8 @@ creating an extra layer of abstraction.
 		provides the infrastructure for partitions to operate. This 
 		includes their scheduling, message passing and processes 
 		the APEX calls.
+	\item \textbf{XML}
+		contains the data necessary for the system initialisation.
 	\item \textbf{Drivers}
 		define the way the hardware should run.	
 		They serve the OS with methods to create an environment in which
@@ -54,7 +56,7 @@ Beneath graphical overview of the different layers with their core
  
 \begin{figure}[H]
 \centering
-\includegraphics[width=4cm,keepaspectratio]{simple_system_architecture.pdf}
+\includegraphics[width=7cm,keepaspectratio]{simple_system_architecture.pdf}
 \captionof{figure}{A simple system overview}
 \end{figure}
 
@@ -63,7 +65,7 @@ from bottom up,
 together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
-\subsection{Hardware}
+\section{Hardware}
 As mentioned in the previous chapter, the hardware used for this project 
 is a MINI-M4 board from MikroElectronica. This is build around an
 STM32F415RG microcontroller produced by STMicroelectronics. Besides
@@ -118,7 +120,7 @@ After this, the board was ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
 power for the board, the JTAG interface, and the serial communication.
 
-\subsection{HAL and CMSIS}
+\section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
 is defining the data structure and address mapping on all peripherals.
@@ -136,7 +138,8 @@ the interrupts.
 \todo[inline, color=green]{do i need reference for this figure?
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
-\subsection{Drivers}
+
+\section{Drivers}
 \todo{this kind of lists do not fit very well the purpose}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
@@ -168,8 +171,8 @@ the interrupts.
 
 \end{description}
 
-\subsection{OS}
-\subsubsection{Scheduler}
+\section{OS}
+\subsection{Scheduler}
 A scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
 
 For the first one we used a Manual Scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution. Every milisecond we verify if the time of the partition running has reached the timeout, if so, we switch the context for the next partition. And the new partition gets the processor.
@@ -259,12 +262,10 @@ register. This value must be saved by software to assure it can return to the ri
 	\label{tab:exc-return}
 \end{table}
 
-\subsubsection{Interpartition communication}
-
-\section{XML}
+\subsection{Interpartition communication}
 
 
-\section{Memory Management}
+\subsection{Memory Management}
 ARINC 653 advertises time and space separation covered in.
 \todo[inline]{ref to sec in analysis}
 To accommodate for the feature of separating partitions in space,
@@ -294,7 +295,13 @@ and categorizing and analysing the memory requirements into a single memory stra
 
 \subsection{memory strategy}
 
-\section{Conclusion - Discussion}
+\section{XML}
+
+\section{APEX}
+
+\section{Partitions and processes}
+
+\section{Discussion}
 
 Figure \ref{fig:advanced_system} presents the system in its entirety,
 with all the components organised in the corresponding layers.

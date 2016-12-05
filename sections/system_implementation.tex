@@ -101,8 +101,8 @@ again be written in assembly to avoid overwriting a register after it has been
 restored. First, the registers saved by software on the stack must be restored,
 then based on the \excreturn\ value the process interrupted with, it can be 
 determined to which stack pointer register the new stack pointer must be pushed
-to. Lastly, execution must return to the process by pushing the \excreturn value
-to the PC register. The \excreturn value pushed to the PC register must be the
+to. Lastly, execution must return to the process by pushing the \excreturn\ value
+to the PC register. The \excreturn\ value pushed to the PC register must be the
 same as that read from the LR register when the process was interrupted.
 Figure \ref{fig:flowchart_contextswitch}\todo{Write caption for this figure.} shows the flow when switching contexts.
 \begin{figure}

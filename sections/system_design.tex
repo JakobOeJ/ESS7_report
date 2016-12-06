@@ -259,7 +259,8 @@ register. This value must be saved by software to assure it can return to the ri
 		\hline
 	\end{tabular}
 	\caption{
-		A table of the possible EXC\_RETURN values. An interrupt service routine is exited by loading one of these values into the Program Counter register.	}
+		A table of the possible EXC\_RETURN values. An interrupt service routine
+		 is exited by loading one of these values into the Program Counter register.	}
 	\label{tab:exc-return}
 \end{table}
 
@@ -295,6 +296,23 @@ and categorizing and analysing the memory requirements into a single memory stra
 \subsection{the MPU on a STM32F415}
 
 \subsection{memory strategy}
+
+\subsection{System calls}
+To improve security and robustness, many modern operating systems make clear 
+distinctions between the kernel and applications, and they restrict application
+code from accessing hardware 
+
+// This was an earlier version, but it needed rephrasing //
+Because ARINC 653 requires strict time and space separation between partitions,
+it is very important that partitions cannot modify the time and space constraints.
+Therefore, all partitions should be running in an unprivileged mode\todo{Write something about privilege in ARM in analysis.}.
+This will prevent partition level software from accessing control registers on
+the chip, which will prevent it from change time and space constraints.
+This, however, will also prevent partition level software from accessing
+peripheral devices, such as LEDs, as well most APEX functions.
+Instead, for partition level software to access these, it must ask the kernel to
+do it. 
+// End //
 
 \section{XML}
 

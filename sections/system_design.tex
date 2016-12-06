@@ -46,6 +46,8 @@ creating an extra layer of abstraction.
 		includes the actual CPU and its peripherals.
 \end{itemize}
 
+
+
 \todo[inline, color=green]{An XML file is provided by the system developer
  at compile time.It defines how the top layers interact and set the
   requirements of the drivers and the underlying hardware.
@@ -60,12 +62,14 @@ Beneath graphical overview of the different layers with their core
 \captionof{figure}{A simple system overview}
 \end{figure}
 
+
 In the rest of the chapter the different layers are described,
 from bottom up, 
 together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
-\section{Hardware}
+
+\subsection{Hardware}
 As mentioned in the previous chapter, the hardware used for this project 
 is a MINI-M4 board from MikroElectronica. This is build around an
 STM32F415RG microcontroller produced by STMicroelectronics. Besides
@@ -120,7 +124,7 @@ After this, the board was ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
 power for the board, the JTAG interface, and the serial communication.
 
-\section{HAL and CMSIS}
+\subsection{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
 is defining the data structure and address mapping on all peripherals.
@@ -139,14 +143,14 @@ the interrupts.
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
 
-\section{Drivers}
-\todo{this kind of lists do not fit very well the purpose}
+\subsection{Drivers}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.
 	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the program would be restarted
-	from a safe state.
+	from a safe state
+
 	\item [\textbf{LEDs}]The LEDs are mainly used for debugging. They are
 	are connected to two GPIO pins.
 	\item [\textbf{System Clock}]The system clock needs to be initialised 
@@ -201,6 +205,8 @@ the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
+
+
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|p{9.5cm}|}
@@ -226,7 +232,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 		xPSR		&	Hardware	& 	Special-purpose Program Status Register\\
 		\hline
 	\end{tabular}
-	\caption{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
+	\captionof{table}{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
 	there are separate registers for user space and kernel space.
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
@@ -239,7 +245,10 @@ This is done by loading an EXC\_RETURN value into the Program Counter. See table
 To make context switching transparent to the applications running, it's important that the state the processor returns to, is the
 same it earlier came from. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link
 register. This value must be saved by software to assure it can return to the right state.
+
+
 \begin{table}[H]
+
 	\centering
 	\begin{tabular}{|c|p{10cm}|}
 		\hline
@@ -258,7 +267,7 @@ register. This value must be saved by software to assure it can return to the ri
 		0xFFFF FFED		&	Return to Thread mode, using the Process Stack Pointer, with the floating point unit.			\\
 		\hline
 	\end{tabular}
-	\caption{
+	\captionof{table}{
 		A table of the possible EXC\_RETURN values. An interrupt service routine
 		 is exited by loading one of these values into the Program Counter register.	}
 	\label{tab:exc-return}
@@ -314,6 +323,7 @@ Instead, for partition level software to access these, it must ask the kernel to
 do it. 
 // End //
 
+
 \section{XML}
 
 \section{APEX}
@@ -325,12 +335,15 @@ do it.
 Figure \ref{fig:advanced_system} presents the system in its entirety,
 with all the components organised in the corresponding layers.
 
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{advanced_system_architecture.pdf}
+
 \caption{An advanced system overview}
 \label{fig:advanced_system}
 \end{figure}
 
 The following chapter will go through how all these components,
 features and functionalities has been implemented.
+

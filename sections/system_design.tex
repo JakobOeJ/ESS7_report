@@ -48,7 +48,7 @@ creating an extra layer of abstraction.
 
 
 
-\todo[inline, color=green]{An XML file is provided by the system developer
+\todo[inline, color=green]{TO BE MOVED: An XML file is provided by the system developer
  at compile time.It defines how the top layers interact and set the
   requirements of the drivers and the underlying hardware.
 Every layer contains a list of components, which provides the
@@ -69,7 +69,7 @@ together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
 
-\subsection{Hardware}
+\section{Hardware}
 As mentioned in the previous chapter, the hardware used for this project 
 is a MINI-M4 board from MikroElectronica. This is build around an
 STM32F415RG microcontroller produced by STMicroelectronics. Besides
@@ -124,7 +124,7 @@ After this, the board was ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
 power for the board, the JTAG interface, and the serial communication.
 
-\subsection{HAL and CMSIS}
+\section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
 is defining the data structure and address mapping on all peripherals.
@@ -143,7 +143,7 @@ the interrupts.
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
 
-\subsection{Drivers}
+\section{Drivers}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.

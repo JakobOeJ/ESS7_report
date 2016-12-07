@@ -304,7 +304,19 @@ and categorizing and analysing the memory requirements into a single memory stra
 
 \subsection{the MPU on a STM32F415}
 
+
+
 \subsection{memory strategy}
+To allocate all the partitions in the most optimized way we try to have the less spare memory possible. As
+ the biggest partitions are less likely to perfectly fit in a region, since the regions are power of 2,
+  the biggest the power the biggest the jumps of size, we start by allocating them. Then, if there are
+   empty subregions, we try to fit in the other partitions in the best combination possible, trying
+    different possibilities with the non allocated ones. In case that a certain partition doesn't full
+    fill the last subregion we update the partition size with that free space, so that empty space can be
+    used by the partition too, instead of being empty always. That can also help to avoid some errors, 
+    for example if the initial partition size wasn't enough.
+
+
 
 \subsection{System calls}
 To improve security and robustness, many modern operating systems make clear 

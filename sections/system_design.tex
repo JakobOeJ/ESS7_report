@@ -124,6 +124,8 @@ After this, the board was ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
 power for the board, the JTAG interface, and the serial communication.
 
+\section{Memory Map}
+
 \section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
@@ -275,6 +277,10 @@ register. This value must be saved by software to assure it can return to the ri
 
 \subsection{Interpartition communication}
 
+\subsubsection{Queuing Ports}
+
+\subsubsection{Sampling Ports}
+
 
 \subsection{Memory Management}
 ARINC 653 advertises time and space separation covered in.
@@ -345,6 +351,9 @@ do it.
 \subsection{Partitions}
 
 \subsection{Processes}
+
+\subsection{Error Handling}
+
 
 \section{Discussion}
 

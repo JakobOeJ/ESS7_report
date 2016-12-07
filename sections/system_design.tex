@@ -309,19 +309,26 @@ and categorizing and analysing the memory requirements into a single memory stra
 \subsection{System calls}
 To improve security and robustness, many modern operating systems make clear 
 distinctions between the kernel and applications, and they restrict application
-code from accessing hardware 
-
-// This was an earlier version, but it needed rephrasing //
-Because ARINC 653 requires strict time and space separation between partitions,
-it is very important that partitions cannot modify the time and space constraints.
-Therefore, all partitions should be running in an unprivileged mode\todo{Write something about privilege in ARM in analysis.}.
-This will prevent partition level software from accessing control registers on
-the chip, which will prevent it from change time and space constraints.
-This, however, will also prevent partition level software from accessing
-peripheral devices, such as LEDs, as well most APEX functions.
-Instead, for partition level software to access these, it must ask the kernel to
-do it. 
-// End //
+code from accessing certain periphrial hardware (e.g. storage devices, I/O
+devices, etc.) as well as control registers of the CPU. 
+To restrict only certain code from certain features requires hardware support.
+To accomplish this, many modern CPUs contain two or more different execution
+levels. Normally, the kernel will run in the most privileged execution level
+while application code runs in a more restricted execution level. This prevents
+application code from changing the state of any resources shared with other
+application. This is critical to accomplish ARINC 653's strict space and time 
+seperation. If partition level code is not run in an unprivileged mode, it will
+be able to directly change the CPU time and memory space allocated to it. This
+would negatively affect the partition the resources were stolen from. However,
+since partition level code does on occation need access to some shared resources,
+yet is unable to do so directly, it must request the kernel do it. To do this,
+partition level code must preload the general purpose CPU registers, and if
+necessary the stack, with a value to identify what the partition wishes the
+kernel do, as well as call arguments, then generate an interrupt which will be
+caught by the kernel. Based on the content of the general purpose CPU registers
+and the stack, the kernel determines what the partition level code requested,
+executes the necessary functions and returns the result in the general purpose 
+CPU registers and the stack.
 
 
 \section{XML}

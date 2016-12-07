@@ -51,6 +51,12 @@ CMake when compiling is used as an intermediate layer when
 \label{fig:advanced_system}
 \end{figure}
 
+
+\subsection{Other peripherals}
+
+\section{Drivers}
+
+
 \subsection{UART}
 The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
@@ -82,6 +88,12 @@ This driver is used for precise measuring the execution time of different functi
  and Trace support. By using one of these counters, one could follow the system's clock ticks. 
  At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
 In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
+
+\subsection{LEDs}
+
+\subsection{RTC}
+
+\subsection{MPU}
 
 
 \section{XML}
@@ -174,7 +186,11 @@ Figure \ref{fig:flowchart_contextswitch}\todo{Write caption for this figure.} sh
 \subsection{Error Handling}
 
 
-\section{Partitions}
+\section{Partitions and processes}
+
+\subsection{Partitions}
+
+\subsection{Processes}
 
 \subsection{idle\_sys}
 

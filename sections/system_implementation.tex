@@ -81,7 +81,6 @@ CMake is used to setup construct the makefiles for the project.
 It's of little benefit comparing to write the makefiles from scratch,
 but has been adopted in (this OS), since it came with the toolchain.
 
-	
 \begin{displayquote}
 CMake is an open-source, cross-platform family of tools designed to build, test and package software. CMake is used to control the software compilation process using simple platform and compiler independent configuration files, and generate native makefiles and workspaces that can be used in the compiler environment of your choice.(ref)
 \end{displayquote}
@@ -99,6 +98,9 @@ While the specific targets are specified in sub-files in the folders \texttt{\/E
 	\item a command to flash the target device using OpenOCD(ref)
 \end{itemize}
 
+using CMake followed by Make gives a tree of makefiles and objects which can be contained by running CMake and Make from within a build folder.
+A complete tutorial on how to get started using the build system can be found in (ref).
+
 \subsection{GCC}
 
 \subsubsection{Compiler Flags}
@@ -108,8 +110,6 @@ While the specific targets are specified in sub-files in the folders \texttt{\/E
 \subsection{OpenOCD}
 
 \subsection{GDB}
-
-\subsection{Compiling the Code}
 
 
 \section{Source Structure}

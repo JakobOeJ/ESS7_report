@@ -1,16 +1,28 @@
 \chapter{Conclusion}\label{ch:conclusion}
 
+In this chapter the system developed in this project is reviewed and conclued if the aproach to the problem
+ statement from chapter ... on page ... was successful and are the possible uses in the future.\\
+
 \section{Discussion}
 The main concerns presented by the forums communities were the security levels of the implementation of this 
-OS. The two main topics were how to identify an error and what caused it and how the system will react to
- different levels of failure, from small to fatal errors.\\
-The idea of an OpenSource implementation like this was unanimously well accepted due to the lack of examples
-avaiable.
+OS. The two main topics were how to identify an error and how to track it to the origin and how the system
+ will react to different levels of failure, from small to fatal errors. If the entire system would reboot,
+  only restart the partition or block it.\\
+ Other problems suggested were related to the interrupts, when context switching if the next partition would 
+ also have acess to all them, and how the control is made to prevent any errors related.\\
+The idea of an OpenSource implementation like this was well accepted due to the lack of examples avaiable. 
+It was given an example of an implementation in the USA, of a similar system and that is still used for
+communication infrastructures.
+https://www.embeddedrelated.com/thread/1326/
 \todo[inline, color=green]{Include the refrences and the sites or posts maybe}
-\todo{desenvolver mais detalhadamente}
 
 \section{Perspective}
 
+As this implementation can save the amount of the hardware needed for multiple processes, saving than
+ companies' money, it can have a wide usage in the future. It can be used in car's industries, telecommunication, distributed systems and other embedded environments. 
+ As the OS has ports for communication it allows the creation of a web of processes's communicating with 
+ each other using the same protocols and avoiding hardware or software problems.
+\\
 \section{The actual conclusion}
 
 \todo[inline, color=green] {could be a different chapter if it fits our needs}

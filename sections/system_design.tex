@@ -48,7 +48,7 @@ creating an extra layer of abstraction.
 
 
 
-\todo[inline, color=green]{An XML file is provided by the system developer
+\todo[inline, color=green]{TO BE MOVED: An XML file is provided by the system developer
  at compile time.It defines how the top layers interact and set the
   requirements of the drivers and the underlying hardware.
 Every layer contains a list of components, which provides the
@@ -69,7 +69,7 @@ together with their core components.The hardware specifications
 are outlined, as well as explaining how the system is initialised.
 
 
-\subsection{Hardware}
+\section{Hardware}
 As mentioned in the previous chapter, the hardware used for this project 
 is a MINI-M4 board from MikroElectronica. This is build around an
 STM32F415RG microcontroller produced by STMicroelectronics. Besides
@@ -124,7 +124,9 @@ After this, the board was ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
 power for the board, the JTAG interface, and the serial communication.
 
-\subsection{HAL and CMSIS}
+\section{Memory Map}
+
+\section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
 board\textquotesingle s peripherals. Basically, the CMSIS library
 is defining the data structure and address mapping on all peripherals.
@@ -143,7 +145,7 @@ the interrupts.
 \url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
 }
 
-\subsection{Drivers}
+\section{Drivers}
 \begin{description}[align=left]
 	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device.
@@ -275,6 +277,10 @@ register. This value must be saved by software to assure it can return to the ri
 
 \subsection{Interpartition communication}
 
+\subsubsection{Queuing Ports}
+
+\subsubsection{Sampling Ports}
+
 
 \subsection{Memory Management}
 ARINC 653 advertises time and space separation covered in.
@@ -304,7 +310,19 @@ and categorizing and analysing the memory requirements into a single memory stra
 
 \subsection{the MPU on a STM32F415}
 
+
+
 \subsection{memory strategy}
+To allocate all the partitions in the most optimized way we try to have the less spare memory possible. As
+ the biggest partitions are less likely to perfectly fit in a region, since the regions are power of 2,
+  the biggest the power the biggest the jumps of size, we start by allocating them. Then, if there are
+   empty subregions, we try to fit in the other partitions in the best combination possible, trying
+    different possibilities with the non allocated ones. In case that a certain partition doesn't full
+    fill the last subregion we update the partition size with that free space, so that empty space can be
+    used by the partition too, instead of being empty always. That can also help to avoid some errors, 
+    for example if the initial partition size wasn't enough.
+
+
 
 \subsection{System calls}
 To improve security and robustness, many modern operating systems make clear 
@@ -336,6 +354,13 @@ CPU registers and the stack.
 \section{APEX}
 
 \section{Partitions and processes}
+
+\subsection{Partitions}
+
+\subsection{Processes}
+
+\subsection{Error Handling}
+
 
 \section{Discussion}
 

@@ -3,7 +3,6 @@
 \newcommand{\excreturn}{EXC\_RETURN}
 
 \chapter{System Implementation}
-
 \todo[inline, color=green]
 {INTRO, to be reviewed}
 This chapter deals with how the system\textquotesingle s functionalities 
@@ -14,10 +13,37 @@ will be reviewed and compared with the actual requirements of the standard.
 
 \section{Hardware}
 
-\subsection{JTAG interface}
+\subsection{JTAG Interface}
+\label{ssec:JTAG_Interface}
+
+
+\section{Toolchain}
+To write, compile and load code to the embedded platform, a regular computer is used with an editor of ones own choice, a compiler running on Linux and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
+Even though Linux is used in the process, compiling and loading the code from Windows is also supported. OSX should also work with only small ajustments, being a UNIX system compatible with many Linux tools.
+In the rest of the section the toolchain and source structure is explained.
+
+\subsection{CMAKE}
+CMake when compiling is used as an intermediate layer when
+
+\subsection{GCC}
+
+\subsubsection{Compiler Flags}
+
+\subsubsection{Linker Script}
+
+\subsection{OpenOCD}
+
+\subsection{GDB}
+
+\subsection{Compiling the Code}
+
+
+\section{Source Structure}
+
+
+\section{Drivers}
 
 \subsection{System clock}
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{system_clock.pdf}
@@ -25,10 +51,13 @@ will be reviewed and compared with the actual requirements of the standard.
 \label{fig:advanced_system}
 \end{figure}
 
+
+\subsection{Other peripherals}
+
 \section{Drivers}
 
-\subsection{UART}
 
+\subsection{UART}
 The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
 
@@ -60,9 +89,31 @@ This driver is used for precise measuring the execution time of different functi
  At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
 In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
 
+\subsection{LEDs}
+
+\subsection{RTC}
+
+\subsection{MPU}
+
+
+\section{XML}
+
+\subsection{XML Parser}
+
+\subsection{C Structures}
+
+
 \section{OS}
 
-\subsection{Scheduler}
+\subsection{Init\/main}
+
+\subsubsection{MPU Setup}
+\subsubsection{Partition Setup}
+\subsubsection{Process Setup}
+
+\subsection{Scheduling}
+
+\subsubsection{SysTick}
 
 \subsubsection{Context Switching}
 There are multiple different states the processor can be in, when a context 
@@ -114,9 +165,43 @@ Figure \ref{fig:flowchart_contextswitch}\todo{Write caption for this figure.} sh
     \label{fig:flowchart_contextswitch}
 \end{figure}
 
-\section{APEX}
+\subsubsection{windows}
 
-\section{Partitions}
+\subsubsection{Partition Scheduler}
+
+\subsubsection{Process scheduler}
+
+
+\subsection{Ports}
+
+\subsubsection{Queuing Ports}
+\subsubsection{Sampling Ports}
+
+
+\subsection{APEX}
+
+\subsubsection{Syscalls}
+
+
+\subsection{Error Handling}
+
+
+\section{Partitions and processes}
+
+\subsection{Partitions}
+
+\subsection{Processes}
+
+\subsection{idle\_sys}
+
+\subsection{stdio\_sys}
+
+\subsection{dummy1}
+
+\subsection{dummy2}
+
+\subsection{evil}
+
 
 \section{Features of the system}
 \todo[inline, color=green]{Here we can have a table showing what features

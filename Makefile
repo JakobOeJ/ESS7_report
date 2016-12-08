@@ -16,6 +16,10 @@ pdflatex: master.tex
 	pdflatex --synctex=1 master.tex
 	pdflatex --synctex=1 master.tex
 	#rm -f $(OTHER) $(PS)
+	
+quick: master.tex
+	bibtex master.aux
+	pdflatex --synctex=1 master.tex
 
 clean:
 	rm -f $(OTHER) $(PS)

@@ -13,6 +13,59 @@ will be reviewed and compared with the actual requirements of the standard.
 
 \section{Hardware}
 
+As mentioned in the previous chapter, the hardware used for this project 
+is a MINI-M4 board from MikroElectronica. This is build around an
+STM32F415RG microcontroller produced by STMicroelectronics. Besides
+this, the board contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for supplying power via a microUSB connector.
+Some of the GPIOs are break through using external pins.
+These pins were soldered to the board, and this was setup on a breadboard
+for practicality, as seen in \ref{fig:photo1}.
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
+  \caption{MINI-M4 before soldernig}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
+  \caption{MINI-M4 on a breadboard}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Preparation of the board}
+\label{fig:photo1}
+\end{figure}
+
+For programming and debugging the board the JTAG interface was used.
+This had to be connected to certain pins of the board. In order to get 
+feedback from the board, a serial connection was used, which requires two
+more lines to it. This can be seen in the next figure.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \caption{The JTAG lines}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \caption{Both the JTAG and serial interfaces}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Connecting the board}
+\label{fig:photo2}
+\end{figure}
+
+After this, the board was ready to be used in the development process.
+The only drawback of this setup, is that it requires three USB ports:
+power for the board, the JTAG interface, and the serial communication.
+
 \subsection{JTAG Interface}
 \label{ssec:JTAG_Interface}
 

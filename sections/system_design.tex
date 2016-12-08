@@ -1,7 +1,7 @@
 \chapter{System Design}
 
-In this chapter the project is further analysed, by providing diagrams 
-and describing basic notions, setting up the premises for implementing
+In this chapter the project is further analysed. Diagrams are given
+and other notions are described, setting up the premises for implementing
 the ARINC 653 standard.
 
 \section{System Overview}
@@ -48,13 +48,6 @@ creating an extra layer of abstraction.
 
 
 
-\todo[inline, color=green]{TO BE MOVED: An XML file is provided by the system developer
- at compile time.It defines how the top layers interact and set the
-  requirements of the drivers and the underlying hardware.
-Every layer contains a list of components, which provides the
- functionalities of that layer.
-Beneath graphical overview of the different layers with their core
- components is provided.}
  
 \begin{figure}[H]
 \centering
@@ -70,59 +63,7 @@ are outlined, as well as explaining how the system is initialised.
 
 
 \section{Hardware}
-As mentioned in the previous chapter, the hardware used for this project 
-is a MINI-M4 board from MikroElectronica. This is build around an
-STM32F415RG microcontroller produced by STMicroelectronics. Besides
-this, the board contains two crystal oscillators, two LEDs, a reset 
-button and the peripherals for supplying power via a microUSB connector.
-Some of the GPIOs are break through using external pins.
-\todo{REFERENCes, referenes} 
-These pins were soldered to the board, and this was setup on a breadboard
-for practicality, as seen in \ref{fig:photo1}.
 
-\begin{figure}[H]
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
-  \caption{MINI-M4 before soldernig}
-  \label{fig:sub1}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-  \centering
-  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
-  \caption{MINI-M4 on a breadboard}
-  \label{fig:sub2}
-\end{subfigure}
-\caption{Preparation of the board}
-\label{fig:photo1}
-\end{figure}
-
-For programming and debugging the board the JTAG interface was used.
-This had to be connected to certain pins of the board. In order to get 
-feedback from the board, a serial connection was used, which requires two
-more lines to it. This can be seen in the next figure.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
-  \caption{The JTAG lines}
-  \label{fig:sub1}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
-  \caption{Both the JTAG and serial interfaces}
-  \label{fig:sub2}
-\end{subfigure}
-\caption{Connecting the board}
-\label{fig:photo2}
-\end{figure}
-
-After this, the board was ready to be used in the development process.
-The only drawback of this setup, is that it requires three USB ports:
-power for the board, the JTAG interface, and the serial communication.
 
 \section{Memory Map}
 
@@ -139,11 +80,10 @@ the interrupts.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{HAL_CMSIS.pdf}
-\captionof{figure}{The structure of the libraries}
+\captionof{figure}{The structure of the libraries inspired by: 
+\protect\cite{cmsis}}
 \end{figure}
-\todo[inline, color=green]{do i need reference for this figure?
-\url{<http://www.keil.com/pack/doc/CMSIS/General/html/CMSISv4_small.png>}
-}
+\todo[inline,color=green]{reference not working}
 
 \section{Drivers}
 \begin{description}[align=left]
@@ -179,6 +119,7 @@ the interrupts.
 
 \section{OS}
 \subsection{Scheduler}
+\todo {line formatting, add some returns}
 A scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
 
 For the first one we used a Manual Scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution. Every milisecond we verify if the time of the partition running has reached the timeout, if so, we switch the context for the next partition. And the new partition gets the processor.
@@ -350,6 +291,14 @@ CPU registers and the stack.
 
 
 \section{XML}
+
+\todo[inline, color=green]{TO BE MOVED: An XML file is provided by the system developer
+ at compile time.It defines how the top layers interact and set the
+  requirements of the drivers and the underlying hardware.
+Every layer contains a list of components, which provides the
+ functionalities of that layer.
+Beneath graphical overview of the different layers with their core
+ components is provided.}
 
 \section{APEX}
 

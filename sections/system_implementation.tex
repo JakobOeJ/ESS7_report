@@ -18,12 +18,33 @@ will be reviewed and compared with the actual requirements of the standard.
 
 
 \section{Toolchain}
-To write, compile and load code to the embedded platform, a regular computer is used with an editor of ones own choice, a compiler running on Linux and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
-Even though Linux is used in the process, compiling and loading the code from Windows is also supported. OSX should also work with only small ajustments, being a UNIX system compatible with many Linux tools.
-In the rest of the section the toolchain and source structure is explained.
+To write, compile and load code to the embedded platform, a regular computer is used with ones editor of choice, a C compiler and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
+The toolchain is adopted from AAURacing(ref) which uses a simular chip and develop on Linux\/OSX.
+For this project the toolchain has been generalized to also work in windows 10 (later edition?).
+In the rest of the section the toolchain and source code(one or two words?) structure is explained.
 
 \subsection{CMAKE}
-CMake when compiling is used as an intermediate layer when
+CMake is used to setup construct the makefiles for the project.
+It's of little benefit comparing to write the makefiles from scratch,
+but has been adopted in (this OS), since it came with the toolchain.
+
+	
+\begin{displayquote}
+CMake is an open-source, cross-platform family of tools designed to build, test and package software. CMake is used to control the software compilation process using simple platform and compiler independent configuration files, and generate native makefiles and workspaces that can be used in the compiler environment of your choice.(ref)
+\end{displayquote}
+
+Like Make, CMake is run from a file containing a set instructions on a project. The instructions can be seperated in a nested structure of files to contain complexity (can you say that?).
+The file is named CMakeLists.txt and is placed in the root-folder of the project \texttt{\/ESS7\_project\/CMakeLists.txt}.
+As denoted by the first line of the file, no less than version 2.8.8 of CMake is required.
+While the specific targets are specified in sub-files in the folders \texttt{\/ESS7\_project\/src} and \texttt{\/ESS7\_project\/third\_party}, the root file defines:
+
+\begin{itemize}
+	\item the compiler to use
+	\item a list of compiler flags(ref)
+	\item commonly used include paths
+	\item two required defines (ref)
+	\item a command to flash the target device using OpenOCD(ref)
+\end{itemize}
 
 \subsection{GCC}
 

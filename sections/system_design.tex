@@ -105,6 +105,9 @@ these interrupts.
 
 \section{Drivers}
 
+The drivers controlling the hardware would have to be implemented at an 
+early stage of the project, in order to have access to the low level
+subsystems.
 The following list contains the drivers that would provide the OS a basic
 interface to access the hardware.
 
@@ -138,7 +141,17 @@ interface to access the hardware.
 	of the program by a factor of milliseconds. Mainly used in debugging
 	\item [\textbf{LEDs}] mainly used for debugging. They are
 	are connected to two of the GPIO pins
-	\end{labeling}
+\end{labeling}
+
+These drivers should be implemented as standalone .c files. They could then
+be used by including their header files where needed and calling their
+functions.
+The basic functionalities of a driver are:
+\begin{itemize}[noitemsep]
+	\item initialisation of the peripheral
+	\item usage of its resources
+	\item de initialisation (if needed) \todo {spelling}
+\end{itemize}
 
 \section{OS}
 \subsection{Scheduler}
@@ -333,6 +346,7 @@ Beneath graphical overview of the different layers with their core
 
 \subsection{Error Handling}
 
+\section{Agile development}
 
 \section{Discussion}
 

@@ -2,64 +2,61 @@
 
 In this chapter the project is further analysed. Diagrams are given
 and other notions are described, setting up the premises for implementing
-the ARINC 653 standard.
-
+the OSname based on the ARINC 653 standard.
+\todo[inline, color=green]{define an OS name somewhere to be used throughout
+the report}
 \section{System Overview}
 As a means to both explaining the system and as a practical development
 model, the system can be thought of as being made up of layers.
 Each layer being an abstraction of workings in the layers beneath it,
 with the partitions at the top and the hardware at the bottom.
-This model is defined by the ARINC 653 standard
+The model in \ref{fig:simple_system} is defined by the ARINC 653 standard
 and expanded upon here with drivers being build on top of the HAL library,
-instead of directly on top of the hardware,
-creating an extra layer of abstraction.
-\todo{link with figure}
+instead of directly on top of the hardware, creating an extra layer of
+ abstraction.
 
-\begin{itemize}
-	\item \textbf{Partitions}
-		are independent program units that contain applications. These
+\begin{labeling}{Partitions}
+	\item [\textbf{Partitions}]
+		independent program units that contain applications. These
 		applications can in turn interact with other systems. The
-		partitions are achieving this  in complete isolation from 
+		partitions are achieving this in complete isolation from 
 		one another.
-	\item \textbf{APEX}
-		defines the methods by which the partitions talk to the world and
+	\item [\textbf{APEX}]
+		defines the methods by which the partitions talk to other 
+		modules and
 		interact with other partitions or the OS, running
 		on the same core module or connected to other ARINC systems.
-	\item \textbf{OS}
+	\item [\textbf{OS}]
 		provides the infrastructure for partitions to operate. This 
 		includes their scheduling, message passing and processes 
 		the APEX calls.
-	\item \textbf{XML}
+	\item [\textbf{XML}]
 		contains the data necessary for the system initialisation.
-	\item \textbf{Drivers}
+	\item [\textbf{Drivers}]
 		define the way the hardware should run.	
 		They serve the OS with methods to create an environment in which
 		partitions can be run and scheduled without influencing one
 		another.
-	\item \textbf{HAL and CMSIS}
-		are hardware abstraction layers that make setting up the hardware
-		easier for developers. HAL is provided by the chip manufacturer - 
-		STMicroelectronics. CMSIS is provided by ARM the company that
-		developed the chip architecture.
-	\item \textbf{Hardware}
-		is the physical platform on which everything is executed. This 
-		includes the actual CPU and its peripherals.
-\end{itemize}
+	\item [\textbf{HAL and CMSIS}]
+		are libraries that provide hardware abstraction layers for
+		setting up the hardware. 
+	\item [\textbf{Hardware}]
+		the physical platform on which the OS is run. This 
+		includes the CPU and its peripherals.
+\end{labeling}
 
-
-
- 
 \begin{figure}[H]
 \centering
 \includegraphics[width=7cm,keepaspectratio]{simple_system_architecture.pdf}
 \captionof{figure}{A simple system overview}
+\label{fig:simple_system}
 \end{figure}
-
 
 In the rest of the chapter the different layers are described,
 from bottom up, 
 together with their core components.The hardware specifications
-are outlined, as well as explaining how the system is initialised.
+are outlined, as well as explaining how the rest of the system is
+set up.
 
 
 \section{Hardware}
@@ -69,53 +66,72 @@ are outlined, as well as explaining how the system is initialised.
 
 \section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 
-board\textquotesingle s peripherals. Basically, the CMSIS library
-is defining the data structure and address mapping on all peripherals.
-This means that the HAL library can then use these definitions for its
-utilities in a more straightforward way. Besides this, CMSIS handles
-all the exceptions occurring in the chip, and the HAL library configures
-the interrupts.
-\todo{IS this understandable?}
+board\textquotesingle s peripherals. By using them, the development
+process usually has a quick start, removing the steepness of the 
+learning curve.	\\
+HAL stands for Hardware Abstraction layer and is provided by the chip manufacturer - STMicroelectronics. The source files are available at
+their website, along with its documentation \cite{HAL_library}.
+The CMSIS (Cortex Microcontroller Software Interface Standard)
+can be seen more as a framework, than a library
+ \cite{CMSIS_core_library}. It is provided
+by ARM, the company that developed the chip architecture.
+
+
+As seen in figure \ref{fig:CMSIS_HAL}, CMSIS
+is defining the data structures and address mapping of all peripherals.
+Besides this, it can be used to configure the microcontroller
+oscillators, ad well as providing support for the instrumentation trace during debug sessions \cite{cmsis_reference}.
+The HAL library can then use these definitions for implementing its
+utilities. One could easily say that HAL is build on top of CMSIS.
+This can be further understood by looking at the way CMSIS handles
+the exceptions occurring in the chip, while the HAL library configures
+these interrupts.
+
  
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{HAL_CMSIS.pdf}
-\captionof{figure}{The structure of the libraries inspired by: 
-\protect\cite{cmsis}}
+\captionof{figure}{The structure of the libraries (inspired by: 
+\cite{cmsis_picture})}
+\label{fig:CMSIS_HAL}
 \end{figure}
-\todo[inline,color=green]{reference not working}
 
 \section{Drivers}
-\begin{description}[align=left]
-	\item [\textbf{UART driver}] The UART is used by the system to communicate with the outside
-	world. This can either receive or transmit data to another UART device.
-	\item [\textbf{Watchdog timer driver}] The watchdog timer is necessary to ensure recovery
-	in case of a hardware fault or program error. If this happens, the program would be restarted
-	from a safe state
 
-	\item [\textbf{LEDs}]The LEDs are mainly used for debugging. They are
-	are connected to two GPIO pins.
-	\item [\textbf{System Clock}]The system clock needs to be initialised 
-	in order to provide a clock source for the CPU and the peripherals.
-	there is a multitude of choices, ranging from internal or external
-	oscillators, to high or low speed crystals. Besides this, certain
-	peripherals can use their own, individual clock source that also has
-	to be configured.
-	\item [\textbf{RTC}]This is the real time clock implemented in the 
-	chip. The purpose of this is to keep track of time accurately. This 
-	is why it uses a 32,768kHz oscillator as a clock source, which is 
-	the standard in the field.
-	\item [\textbf{MPU}]The Memory protection unit is required by the
-	ARINC 653 standard, since the system should have a way to manage its
-	memory.
-	\item [\textbf{Delay}]This is just a simple function, based on a call
-	for another function from the HAL library. It delays the execution 
-	of the program by a factor of milliseconds.
-	\item [\textbf{Timing}]This driver has the purpose to keep track of 
-	relative time. As the standard specifies, it should be counting in 
-	nanoseconds.
+The following list contains the drivers that would provide the OS a basic
+interface to access the hardware.
 
-\end{description}
+\begin{labeling}{UART}
+	\item [\textbf{UART}] used by the system to communicate with the outside
+	world. This can either receive or transmit data to another UART device
+	\item [\textbf{Watchdog timer}] necessary to ensure recovery
+	in case of a hardware fault or program error. If this happens, the
+	program would be restarted from a safe state
+	\item [\textbf{System Clock}] provide the frequency at which the
+	peripherals are synchronised. This can be later on scaled up or down
+	to generate the CPU\textquotesingle s and peripherals\textquotesingle
+	clock.
+	The system clock relies on an oscillator.
+	There is a multitude of choices, ranging from internal or external
+	oscillators, to high or low speed crystals. In some cases, certain
+	peripherals can use their own, independent clock sources that also have
+	to be configured
+	\item [\textbf{MPU}] provides the system a way to manage its
+	memory. This is required by the ARINC 653 standard. 
+	Operating systems built on more advanced processors generally use 
+	an MMU
+	\item [\textbf{RTC}] has purpose of this is to keep track of 
+	time accurately. Usually it uses  a 32,768kHz oscillator as a 
+	clock source, which is the standard in the field
+	\item [\textbf{Timing}] has the purpose of keep track of 
+	relative time. As the standard specifies, it should be counting 
+	nanoseconds
+	\item [\textbf{Delay}] is a simple function, based on a calling another
+	function from the HAL library. It delays the execution 
+	of the program by a factor of milliseconds. Mainly used in debugging
+	\item [\textbf{LEDs}] mainly used for debugging. They are
+	are connected to two of the GPIO pins
+	\end{labeling}
 
 \section{OS}
 \subsection{Scheduler}

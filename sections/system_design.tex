@@ -67,9 +67,42 @@ board. It is build around the STM32F415RG microcontroller, based on
 an ARM Cortex-M4 core. This is a 32-bit RISC architecture CPU using 
 the ARM intruction set \cite{arm_architecture}. Additional information
 was found in the ARM technical reference \cite{arm_technical} 
-
+\\
+The chip provides two interfaces for debugging:
+%page 1683 reference manual
+\begin{itemize}[noitemsep]
+	\item JTAG Debug Port (JTAG-DP)
+	\item Serial Wire Debug Port (SW-DP)
+\end{itemize}
+There was no thought process involved in choosing one of the two.
+The JTAG interface is enabled by default, and worked right from the
+early phases of the project. In some situations, SW would have been
+preferred to JTAG, due to space(2 pins instead of 5) constraints
+ or the IDE used.
+\\ 
+JTAG is actually an association that develops standards about how 
+physical circuit boards should be tested. However, for the rest of
+the document, JTAG will be referred to as the main communication interface
+to the Mini-M4 board. This will mainly be used for flashing the program
+on the chip and debugging it. In order for a computer to access this
+interface, there is need the STLINK-V2, that would 
+use the USB as a mean to communicate with the JTAG port on the chip.
+\\\\
+Another way of communicating to the chip is the serial communication.
+For this purpose the UART will be used. This is common peripheral for 
+embedded devices, and it needs to be set up before it can be used. This
+involves initialising the UART, configuring the data format and the
+transmission speed and sending the actual data. In order to see this data
+on a computer, one could use an USB-to-serial adapter. This would then
+create a vitual COM (Communication port), that could be accessed using
+a serial console such as PuTTY.
+\\\\
+The Mini-M4 board would have to accommodate the 5 wires from the JTAG,
+the 2 wires from the UART, and to receive power through the built-in
+mini USB port, in order to be ready for the development process.
 
 \section{Memory Map}
+%http://preshing.com/20120930/weak-vs-strong-memory-models/
 
 \section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 

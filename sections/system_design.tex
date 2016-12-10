@@ -103,6 +103,32 @@ mini USB port, in order to be ready for the development process.
 
 \section{Memory Map}
 %http://preshing.com/20120930/weak-vs-strong-memory-models/
+The STM32F415RG microcontroller has 1 Mb of flash memory and 192
+Kb of RAM. The flash is non-volatile memory used for storing programs and
+data. The other 192 kb are divided into 128 kb of SRAM and 64 kb of CCMRAM.
+The SRAM is volatile memory, that does no need to be refreshed in order to
+keep its state. This is divided furthermore into a section of 112 kb, and 
+another of 16 kb, which can be useful if one needs to boot from RAM. Anyway,
+these are adjacent in address space and can be treated as one block (REFERENCE)
+These sections use a technique called bit band, in order to let the system
+to perform atomical operations on bits.
+The other 64 kb of CCMRAM are always ready for access by the CPU, but
+cannot be accessed by the peripherals through DMA.
+Beside the 192kb of SRAM, there are 4 kb of SRAM used for backup purposes.
+These won't be used, since they not represent the scope of the project.
+%http://hackaday.com/2012/11/15/in-depth-comparison-at-stm32-f3-and-f4-discovery-boards/
+%http://electronics.stackexchange.com/questions/27550/what-is-bit-banding
+%http://libopencm3.org/wiki/Run_From_RAM
+%stm32f4415 pag 74 figure 18
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{memory_model.pdf}
+\captionof{figure}{The memory map (inspired by: 
+)}
+\label{fig:CMSIS_HAL}
+\end{figure}
+\todo{REFERENCE PAGE 74}
 
 \section{HAL and CMSIS}
 These two libraries are truly the workhorse when dealing with the 

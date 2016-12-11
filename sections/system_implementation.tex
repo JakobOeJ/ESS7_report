@@ -394,9 +394,46 @@ does not clear the registers before entering the \texttt{SVC\_Handler} function,
 and thus all the general purpose registers may contain the same values as when
 the \texttt{SVC} instruction was executed, but their consistency is not
 garantued, as other interrupt service routines could have run before the
-\texttt{SVC\_Handler} function started execution.
+\texttt{SVC\_Handler} function started execution.\\
 To avoid rescheduling occuring during a system call, the SysTick interrupt is
-turned off during the execution of the \texttt{SVC\_Handler} function.
+turned off during the execution of the \texttt{SVC\_Handler} function.\\
+Each system call is identified by the number the caller has moved into the R0
+register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
+instruction does supply a way to embed this number directly as a part of the
+instruction as an immediate value, instead of using a seperate register, but
+dedicating a register to this was chosen for two reason: One, it is poorly
+documented how software can read the value embedded in the instruction, and two,
+to keep it consistent with how system calls are handled on other architectures
+such as x86.\\
+Table \ref{tab:syscalls} shows all the implemented system calls and their
+identifier.
+
+\begin{table}
+\centering
+	\begin{tabular}{| l | l |}
+		\hline
+		Identifier		&	Name \\
+		\hline
+		0xc0ffee0a		&	CREATE\_PROCESS 			\\
+		\hline
+		0xc0ffee0b		&	GET\_TIME					\\
+		\hline
+		0xc0ffee0c		&	CREATE\_QUEUING\_PORT 		\\
+		\hline
+		0xc0ffee0d		&	RECEIVE\_QUEUING\_PORT 		\\
+		\hline
+		0xc0ffee0e		&	SEND\_QUEUING\_PORT 		\\
+		\hline
+		0xc0ffee0f		&	GET\_QUEUING\_PORT\_ID 		\\
+		\hline
+		0xc0ffee10		&	GET\_QUEUING\_PORT\_STATUS	\\
+		\hline
+		0xc0ffee11		&	PROCESS\_STOP\_SELF 		\\
+		\hline		
+	\end{tabular}
+\caption{A table of tje implemented system calls and their identifier.}
+\label{tab:syscalls}
+\end{table}
 
 \section{XML}
 

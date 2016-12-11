@@ -95,6 +95,51 @@ In order to do this, the DWT\textunderscore CONTROL register is set to a value t
 
 \subsection{MPU}
 
+\subsection{System Calls}
+System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
+Call). When this instruction is executed, a interrupt will be triggered. Already
+set up by the CMSIS library, any SVC interrupts will trap into the function
+named \texttt{SVC\_Handler}.
+In order to avoid having to deal with assembly\footnote{It is necessary to use
+assembly code to issue an \texttt{SVC} instruction} code in partition level
+software, system call functions (including the APEX functions) are implemented
+as a library that entirely handles the system call.
+The sequence of steps for making a system call is a follows:\\
+\begin{tabular}{ r l p{11cm} }
+    1. & Userspace & Partition code calls one of the system call wrapper
+    functions.\\
+    2. & Userspace & The wrapper function moves the number denoting the system
+    call function into register R0.\\
+    3. & Userspace & The wrapper function moves any input arguments into the
+    registers R1-R3 and R12. If the function has more than four input arguments,
+    those must be stacked.\\
+    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
+    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
+    branches to the \texttt{SVC\_Handler} function.\\
+    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
+    stacked value of register R0 to determine which function the partition level
+    code wished to execute.\\
+    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
+    function with the input arguments from the stacked registers.\\
+    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
+    function in the stacked registers. The return code is moved to R0, and
+    additional output is put in the registers R1-R3 and R12. If necessary, more
+    output is put in the stack.\\
+    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
+    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
+    the stack and returns execution to the system call wrapper function.\\
+    11. & Userspace & The wrapper function returns the output from the system
+    call as stored in the registers to the calling partition code.\\
+\end{tabular}
+Only the registers R0-R3 and R12 are available for argument passing, as these
+are the only general purpose registers that are stacked by the NVIC. The NVIC
+does not clear the registers before entering the \texttt{SVC\_Handler} function,
+and thus all the general purpose registers may contain the same values as when
+the \texttt{SVC} instruction was executed, but their consistency is not
+garantued, as other interrupt service routines could have run before the
+\texttt{SVC\_Handler} function started execution.
+To avoid rescheduling occuring during a system call, the SysTick interrupt is
+turned off during the execution of the \texttt{SVC\_Handler} function.
 
 \section{XML}
 

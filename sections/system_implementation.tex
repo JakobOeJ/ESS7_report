@@ -13,29 +13,252 @@ will be reviewed and compared with the actual requirements of the standard.
 
 \section{Hardware}
 
+As mentioned in the previous chapter, the hardware used for this project 
+is a MINI-M4 board from MikroElectronica. This is build around an
+STM32F415RG microcontroller produced by STMicroelectronics. Besides
+this, the board contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for supplying power via a microUSB connector.
+Some of the GPIOs are break through using external pins.
+These pins were soldered to the board, and this was setup on a breadboard
+for practicality, as seen in \ref{fig:photo1}.
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
+  \caption{MINI-M4 before soldernig}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
+  \caption{MINI-M4 on a breadboard}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Preparation of the board}
+\label{fig:photo1}
+\end{figure}
+
+For programming and debugging the board the JTAG interface was used.
+This had to be connected to certain pins of the board. In order to get 
+feedback from the board, a serial connection was used, which requires two
+more lines to it. This can be seen in the next figure.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \caption{The JTAG lines}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \caption{Both the JTAG and serial interfaces}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Connecting the board}
+\label{fig:photo2}
+\end{figure}
+
+After this, the board was ready to be used in the development process.
+The only drawback of this setup, is that it requires three USB ports:
+power for the board, the JTAG interface, and the serial communication.
+
 \subsection{JTAG Interface}
 \label{ssec:JTAG_Interface}
 
 
+\section{Source Structure}
+The following sections describes different aspects the software used and
+the source code located in the project root directory (ESS7\_project) denoted as `/'.
+Below the root folder,
+all the source code and compiled binaries are roughly structured as listed
+in figure \ref{fig:source_structure}:
+
+\begin{figure}[H]
+	\dirtree{%
+.1 /.
+	.2 build.
+		.3 ....
+	.2 src.
+		.3 drivers.
+			.4 ....
+		.3 kernel.
+			.4 ....
+		.3 partitions.
+			.4 ....
+			.4 utils.
+	.2 third\_party.
+		.3 ARINC.
+			.4 APEX.
+				.5 ....
+		.3 CMSIS.
+			.4 ....
+		.3 linker\_scripts.
+		.3 STM32F4xx\_HAL\_Driver.
+			.4 ....
+	.2 ....
+	}
+	\caption{A rough depiction of the source file structure.}
+	\label{fig:source_structure}
+\end{figure}
+
+
 \section{Toolchain}
-To write, compile and load code to the embedded platform, a regular computer is used with an editor of ones own choice, a compiler running on Linux and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
-Even though Linux is used in the process, compiling and loading the code from Windows is also supported. OSX should also work with only small ajustments, being a UNIX system compatible with many Linux tools.
-In the rest of the section the toolchain and source structure is explained.
+To write, compile and load code to the embedded platform,
+a regular computer is used with ones editor of choice,
+a C compiler and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
+The toolchain is adopted from AAURacing\cite{aauracing} which uses a similar chip and develop on Linux\/OSX.
+For this project the toolchain has been generalized to also work in windows 10 (later edition?).
+In the rest of the section the toolchain and source code(one or two words?) structure is explained.
 
 \subsection{CMAKE}
-CMake when compiling is used as an intermediate layer when
+\label{ssec:cmake}
+CMake is used to setup construct the makefiles for the project.
+It's of little benefit comparing to write the makefiles from scratch,
+but has been adopted in (this OS), since it came with the toolchain.
+
+\begin{displayquote}
+CMake is an open-source, cross-platform family of tools designed to build,
+test and package software.
+CMake is used to control the software compilation process
+using simple platform and compiler independent configuration files,
+and generate native makefiles and workspaces
+that can be used in the compiler environment of your choice\cite{cmake}.
+\end{displayquote}
+
+Like Make, CMake is run from a file containing a set instructions on a project.
+The instructions can be seperated in a nested structure of files to contain complexity (can you say that?).
+A project can have multiple CMake files,
+they all have to be named CMakeLists.txt and hence are placed in seperate folders.
+The main CMake file is placed in the root-folder of the project and contains the main compiler information.
+Specific information about compile targets and their files
+are placed in sub files in folders as depicted in figure \ref{fig:cmake_files}.
+
+\begin{figure}[H]
+	\dirtree{%
+.1 /.
+	.2 src.
+		.3 CMakeLists.txt.
+	.2 third\_party.
+		.3 CMakeLists.txt.
+	.2 CMakeLists.txt.
+	}
+	\caption{Placement of CMakeLists.txt files in source directory.}
+	\label{fig:cmake_files}
+\end{figure}
+
+As denoted by the first line of the CMakeLists.txt file in `/', no less than version 2.8.8 of CMake is required.
+The rest of the file set up:
+
+\begin{itemize}
+	\item the compiler to use
+	\item a list of compiler flags (section \ref{sssec:compiler_flags})
+	\item commonly used include paths
+	\item two required defines (section \ref{ssec:gcc})
+	\item a command to flash the target device using OpenOCD (section \ref{ssec:openocd})
+\end{itemize}
+
+Using CMake followed by Make results in a tree of makefiles and objects,
+which can be contained by running CMake and Make from within a build folder.
+A complete tutorial on how to get started using the build system can be found in Appendix \ref{app:tutorial}.
+
+Make is a UNIX tool\cite{gnu_make} often used to order many calls to GCC in C language projects.
+Objects are compiled in separate calls to GCC and
+Make provides features to set up a dependency tree of calls when many objects are linked together in a target.
 
 \subsection{GCC}
+\label{ssec:gcc}
+The GNU C Compiler or GCC is used for compiling and linking the C files into a target called `OS'.
+Compiling to the ARM architecture a cross compiled version of GCC is necessary,
+in this case the arm-none-eabi-gcc compiler which is available in all never Ubuntu versions\cite{arm_gcc}.
 
 \subsubsection{Compiler Flags}
+\label{sssec:compiler_flags}
+The compiler relies on a list of flags to compile the code to the programmers liking.
+The sub section will cover the necessary or otherwise important flags for compiling the (OS).
+The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as referred to in section \ref{ssec:cmake}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|p{10cm}|}
+		\multicolumn{2}{c}{\textbf{MCU flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_arm_options}.} \\
+		\hline
+		-mcpu=cortex-m4   &
+		This specifies the name of the target ARM processor. \\
+		\hline
+		-mtune=cortex-m4  &
+		This option specifies the name of the target ARM processor for which GCC should tune the performance of the code. \\
+		\hline
+		-mthumb           &
+		Generate code that executes in Thumb state. \\
+		\hline
+		-mlittle-endian   &
+		Generate code for a processor running in little-endian mode. \\
+		\hline
+		-mfpu=fpv4-sp-d16 &
+		This specifies what floating-point hardware is available on the target. \\
+		\hline
+		-mfloat-abi=hard  &
+		Specifies which floating-point ABI to use.
+		`hard' allows generation of FPU-specific floating-point instructions. \\
+		\hline
+		-mthumb-interwork &
+		Generate code that supports calling between the ARM and Thumb instruction sets. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{Linker flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_linking_options}.} \\
+		\hline
+		-Wl, -T.../file.ld &
+		Use the linker-script STM32F415RG\_FLASH.ld in the folder
+		/third\_party/linker\_scipts (section \ref{ssec:linker_script}). \\
+		\hline
+		-nostartfiles   &
+		Do not use the standard system startup files when linking.
+		Used to force GCC to use a custom implementation of Newlibc implemented functions. \\
+		\hline
+		-Map=./result.map &
+		Print a link map to the file result.map showing where object files and symbols are mapped into memory. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{Debugging flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_debug_options}.} \\
+		\hline
+		-g &
+		Produce debugging information. \\
+		\hline
+		-ggdb &
+		Produce debugging information for use by GDB. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{C flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_c_dialects}.} \\
+		\hline
+		-std=c99 &
+		Determine the language standard to be ISO C99. \\
+		\hline
+		-fms-extensions &
+		Accept some non-standard constructs, useful in some static structures (section ref). \\
+		\hline
+	\end{tabular}
+	\caption{Showing the important GCC flags used to compile the OS.}
+	\label{tab:gcc_flags}
+\end{table}
 
 \subsubsection{Linker Script}
+\label{ssec:linker_script}
 
 \subsection{OpenOCD}
+\label{ssec:openocd}
 
 \subsection{GDB}
-
-\subsection{Compiling the Code}
 
 
 \section{Source Structure}

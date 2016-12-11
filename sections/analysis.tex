@@ -1,7 +1,7 @@
 
 \newcommand{\arinc}{ARINC 653}
 
-\chapter{Analysis}
+\chapter{Analysis}\label{chap:analysis}
 This chapter includes information about the standard that is going to be
 implemented and the different pieces of hardware suitable for the purpose.
 After this, the arguments for choosing one platform are presented, as well
@@ -179,7 +179,7 @@ The Raspberry Pi lacks any comprehensive documentation on its register layout,
 and being a higher end device compared to MINI-M4 and Creator Ci40,
 it's presumably more complex to work with.
 
-\subsection{Settleing on a platform}
+\subsection{Settleing on a platform}\label{section:settleing_platform}
 Obviously a list longer than the one seen above can be compiled.
 Although the hardware used is not the primary concern to the project
 and as such the goal is to show examples of known platforms,
@@ -210,6 +210,20 @@ means that the MINI-M4 for STM32 is the hardware platform being used and referre
 in the duration of this project.
 \todo{leads to the choice...}
 \todo{Why have a HAL, why is it good to have}
+
+\subsection{Communication with the board}
+In order to get started with the development of the OS, there is need for
+a way to communicate with the board. Due to previous experience with
+this type of hardware, the following components have been ordered:
+
+\begin{itemize}[noitemsep]
+	\item ST-LINK/V2 in-circuit debugger/programmer for STM8 and STM32
+	\cite{st_link} - to give acces to the JTAG port
+	\item FTDI TTL-232R-3V3 cable \cite{ttl_usb} - to create a communication
+	port
+\end{itemize}
+
+
 
 \subsection{The legacy from the race car project}
 

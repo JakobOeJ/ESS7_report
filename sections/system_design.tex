@@ -15,7 +15,7 @@ and expanded upon here with drivers being build on top of the HAL library,
 instead of directly on top of the hardware, creating an extra layer of
  abstraction.
 
-\begin{labeling}{Partitions}
+\begin{labeling}{HAL and CMSIS}
 	\item [\textbf{Partitions}]
 		independent program units that contain applications. These
 		applications can in turn interact with other systems. The
@@ -144,7 +144,7 @@ REFERENCE PAGE 74)}
 \todo{REFERENCE PAGE 74}
 
 The input/output are mapped as well in the memory. This can be seen in
-the upper two blocks of memory space, where there are the 
+the upper two blocks of the memory map, where there are the 
 microcontroller\textquotesingle s peripherals, as well as the Cortex-M4
 specifics.
 
@@ -187,7 +187,7 @@ subsystems.
 The following list contains the drivers that would provide the OS a basic
 interface to access the hardware.
 
-\begin{labeling}{UART}
+\begin{labeling}{Watchdog timer}
 	\item [\textbf{UART}] used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device
 	\item [\textbf{Watchdog timer}] necessary to ensure recovery

@@ -42,7 +42,7 @@ for practicality, as seen in \ref{fig:photo1}.
 For programming and debugging the board the JTAG interface was used.
 This had to be connected to certain pins of the board. In order to get 
 feedback from the board, a serial connection was used, which requires two
-more lines to it. This can be seen in the next figure.
+more lines to it. The final setup can be seen in the next figures.
 
 \begin{figure}[H]
 \centering
@@ -68,8 +68,42 @@ power for the board, the JTAG interface, and the serial communication.
 
 \subsection{JTAG Interface}
 \label{ssec:JTAG_Interface}
+Figure \ref{fig:sub1} represents the physical layout of the JTAG interface.
+Since the JTAG connector has 20 pins, and only some of these are required
+to communicate with the board, the set up process took some time to figure
+out. The following diagram, shows the pinout of the JTAG and the 
+corresponding pins on the microcontroller\textquotesingle s JTAG port.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{jtag_interface.pdf}
+\captionof{figure}{The connection of the JTAG interface}
+\label{fig:jtag_interface}
+\end{figure}
 
+The tags on the upper part of figure \ref{fig:jtag_interface}, are
+JTAG specific:
+\begin{labeling}{RESET}
+	\item [\textbf{TDI}]
+		Test Data In pin
+	\item [\textbf{TMS}]
+		Test Mode State pin
+	\item [\textbf{TCK}]
+		Test Clock pin
+	\item [\textbf{TDO}]
+		Test Data Out pin
+	\item [\textbf{RESET}]
+		used for resetting the target device. This is connected to the 
+		MCLR (Master Clear or Reset) pin of the board
+\end{labeling}
+
+The tags on the lower part of the figure represent the pins of the 
+microcontroller, where 'P' stand for port, 'A' or 'B' for the port
+identity (PORTA) and the number isthe individual GPIO needed.
+
+A driver is needed to be installed on Windows machines, in order to
+recognize and program using STLINK/v2.
+\todo{What about LINUX} 
 \section{Source Structure}
 The following sections describes different aspects the software used and
 the source code located in the project root directory (ESS7\_project) denoted as `/'.

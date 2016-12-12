@@ -376,10 +376,13 @@ The CMakeLists.txt file in project root defines a function running the following
 
 Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
 
-After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to (see section ref).
+After execution of this command, OpenOCD will remain open and connected to the
+chip and it will accept incoming connections on port 3333 for
+GDB debugging as a GDB server (see more in \ref{ssec:gdb}.
 
 \subsection{GDB}
 \label{ssec:gdb}
+\todo{Write GDB version}
 The GNU Project debugger\cite{gdb}, GDB, is an open source software debugger
 built to compliment the GNU Project compilers, GCC (see \ref{ssec:gcc}). It
 allows programmers to more intelligently debug their applications.
@@ -400,6 +403,13 @@ This feature set, makes GDB especially useful for tracking down complex bugs and
 bugs in otherwise inaccessible systems, e.g. systems with no screen to directly 
 print to. GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
+Many advanced text editors and integrated development environments feature
+direct seamless GDB integration. Outside of such programs, GDB can be run in 
+command line.
+
+To debug the code running on the chip, an active OpenOCD connection to the chip
+is required. When OpenOCD is connected, it will act as a GDB server. GDB can
+be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
 
 \section{Drivers}
 

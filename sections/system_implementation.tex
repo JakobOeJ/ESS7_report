@@ -303,13 +303,22 @@ It's used by the HAL library to determine which processor to set up for.
 A linker script is used by the compiler to determine where to place different sections of the compiled binary.
 Because of this, everything in the output binary gets an offset that matches the memory layout described in section \ref{sec:memory_map}.
 The file \texttt{result.map} (table \ref{tab:gcc_flags}) can be used post compilation to determine the location of all symbols in the binary,
-as a way to debug the linker-script.
+as a way to debug the linker-script.\\
 
 The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to edit to fit any member of the STM32F4 family.
 In this project the only necessary change is the definition of flash to be 1MB of size.
-Beyond that, the changes depends on the partition requirements on the system.
+Beyond that, the changes depends on the partition requirements on the system.\\
 
-\begin{lstlisting}[firstnumber=40,
+Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linkerscript.
+While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
+\texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
+In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memmory
+and \texttt{LENGTH} denotes the size of the section.\\
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=40,
+	label=linker_mem_overview,
 	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
 /* Specify the memory areas */
 MEMORY
@@ -323,8 +332,22 @@ MEMORY
   CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH =   64K
 }
 \end{lstlisting}
+\end{minipage}
 
-\begin{lstlisting}[firstnumber=77,
+By default all symbols and associated memory goes into the \texttt{OS},
+Only when a partition is specifically defined to a location in the linker-script,
+can it be seperated from the OS.
+Listing \ref{linker_example} shows how to allocate a specific partition.
+The linker-script uses the fact that every partition is compiled as a library,
+and the library name is added in the listed format under its corresponding label
+(in this example: \texttt{STDIO\_SYS}).
+This scheme insures the code is separated from the kernel in flash.
+It does not, however, separate the statically allocated variables and structures in RAM.\\
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=77,
+	label=linker_example,
 	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
 .stdio_sys :
 {
@@ -333,6 +356,11 @@ MEMORY
   . = ALIGN(4);
 } >STDIO_SYS
 \end{lstlisting}
+\end{minipage}
+
+Simular to listing \ref{linker_example},
+the other partitions compiled libraries are confined to a space in flash,
+as defined by their labels in \ref{linker_mem_overview}.
 
 \subsection{OpenOCD}
 \label{ssec:openocd}

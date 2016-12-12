@@ -419,16 +419,43 @@ and the stack, the kernel determines what the partition level code requested,
 executes the necessary functions and returns the result in the general purpose 
 CPU registers and the stack.
 
+\section{Schema}
 
-\section{XML}
+An ARINC 653 schema specifies the requirements to configure the core module to be compliant with the standard. The schema is to be implemented in a static structured document, which defines *. You may extend the document to include additional features not required by ARINC 653.
 
-\todo[inline, color=green]{TO BE MOVED: An XML file is provided by the system developer
- at compile time.It defines how the top layers interact and set the
-  requirements of the drivers and the underlying hardware.
-Every layer contains a list of components, which provides the
- functionalities of that layer.
-Beneath graphical overview of the different layers with their core
- components is provided.}
+The schema defined was not the complete ARINC 653 schema, though it can be extended into the full schema with some more work. The scope was limited to deliver a working product that covered the core functionality.
+
+The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
+
+\TODO{expand on what the attributes do}
+Each partition has five attributes, and zero or more sampling and queuing port elements. 
+%In addition there is an optional Process element and its associated attributes.
+
+Sampling or queuing ports each have a unique attribute, and share common attributes defined by PortType.  
+
+
+Each Partition_Memory has two attributes, and one or more Memory_Requirements.
+
+Memory_Requirements each have five attributes.
+
+
+Module_Schedule is made up of one or more Partition_Schedule elements, which in turn are made up of one or more Window_Schedule elements. Module_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
+
+Partition_Schedule has four attributes
+
+Window_Schedule has four attributes
+
+
+A Connection_Table has no attributes and one or more channels.
+
+A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard_Partition.  
+
+\subsection{Schema usage}
+
+\TODO{explain xml alternatives?}
+
+XML is the chosen configuration file format, a tool has not been used to generate the configuration file. The XML file was written by hand in accordance with the schema, therefore the instance must be modified by hand. XML was chosen as opposed to alternatives do to its easy to read and write nature, and ARINC's XML example providing guidance.
+
 
 \section{APEX}
 

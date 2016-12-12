@@ -232,11 +232,28 @@ The basic functionalities of a driver are:
 \section{OS}
 \subsection{Scheduler}
 \todo {line formatting, add some returns}
-A scheduler decides which process should be executed by the processor available, according to some rules. In this implementation we have 2 levels of scheduling, one to switch between partitions and a second one for processing the processes of each partition.
+A scheduler decides which process should be executed by the processor available,
+according to predefined rules. The ARINC 653 specification defines 2 levels of
+scheduling, a partitions level scheduler and a process level scheduler, and the
+algorithms for both are strictly defined.\\
 
-For the first one we used a Manual Scheduler, that gives a certain amount of time of processor to each partition, according to its demand and importance. Those values can't be changed in running time, following the same rules during the whole execution. Every milisecond we verify if the time of the partition running has reached the timeout, if so, we switch the context for the next partition. And the new partition gets the processor.
+The partition level scheduler uses a manual scheduling. Time is split into fixed
+length intervals, major frames. Each partition is given one or more windows
+(i.e. time slices) in each the major frame. Each window has a start time
+relative to the time of the major frame and a duration. Windows are set up by
+the system integrator in the XML file.\cite{arinc_part_scheduling}
+When a partition has run for the duration its' specified, the scheduler will
+switch to the partition of the next window. The switch will happen regardless of
+what the partition is doing at that time, so a partition cannot overrun its'
+allotted time and cause other partitions to overrun their deadlines.\\
 
-The second one is a Pre-emptive Priority Scheduler, based on the processes' priority, in which is executed the one with the highest priority until it loses the processor to other partition. Every milisecond we pick the process, from the array of processes of that partition, with the highest priority and run in the processor.
+The process level scheduler is a pre-emptive priority scheduler. All processes 
+will at all time have a priority. Processes can only be scheduled when the
+partition they belong to is scheduled by the partition level scheduler. The
+process scheduler selects the process with the highest priority that is also
+in the ready state. If two or more processes have the same priority, the one
+that first became ready is scheduled.\cite{arinc_pro_scheduling}  
+
 
 \subsubsection{Context switching}
 Context switching is to switch from executing one block of code $b_1$ to another block of code $b_2$

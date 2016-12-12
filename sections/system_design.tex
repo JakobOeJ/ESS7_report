@@ -431,9 +431,9 @@ The schema defined was not the complete ARINC 653 schema, though it can be exten
 
 \begin{figure}[H]
 	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653.pdf}
-	\caption{Insert text here!}
-	\label{fig:open653}
-\end{figure}\todo{Srsly, insert text!}
+	\caption{open653 schema design}
+	\label{fig:open653schema}
+\end{figure}
 
 
 The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
@@ -460,6 +460,17 @@ Window\_Schedule has four attributes
 A Connection\_Table has no attributes and one or more channels.
 
 A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition.  
+
+\subsection{Full ARINC 653 schema}
+
+\begin{figure}[H]
+	\includegraphics{figures/originalschema.png}
+	\caption{full ARINC 653 schema}
+	\label{fig:arinc653schema}
+\end{figure}
+
+\todo{add ARINC standard reference}
+The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented. 
 
 \subsection{Schema translation}
 

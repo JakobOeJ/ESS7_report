@@ -376,10 +376,13 @@ The CMakeLists.txt file in project root defines a function running the following
 
 Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
 
-After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to (see section ref).
+After execution of this command, OpenOCD will remain open and connected to the
+chip and it will accept incoming connections on port 3333 for
+GDB debugging as a GDB server (see more in \ref{ssec:gdb}.
 
 \subsection{GDB}
 \label{ssec:gdb}
+\todo{Write GDB version}
 The GNU Project debugger\cite{gdb}, GDB, is an open source software debugger
 built to compliment the GNU Project compilers, GCC (see \ref{ssec:gcc}). It
 allows programmers to more intelligently debug their applications.
@@ -400,6 +403,13 @@ This feature set, makes GDB especially useful for tracking down complex bugs and
 bugs in otherwise inaccessible systems, e.g. systems with no screen to directly 
 print to. GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
+Many advanced text editors and integrated development environments feature
+direct seamless GDB integration. Outside of such programs, GDB can be run in 
+command line.
+
+To debug the code running on the chip, an active OpenOCD connection to the chip
+is required. When OpenOCD is connected, it will act as a GDB server. GDB can
+be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
 
 \section{Drivers}
 
@@ -538,12 +548,18 @@ identifier.
 \label{tab:syscalls}
 \end{table}
 
-\section{XML}
+\section{XML configuration file}
+\todo{Write about the manual writing of the XML config file?}
 
 \subsection{XML Parser}
 
-\subsection{C Structures}
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to generate C structs from the XML.
+\todo{reference for xmltodict}
+Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure with lists.
+The generation of the structs is handled as two seperate file writes. xml\_data.h is mostly statically defined as it contains the declarations for the C structs. The majority of the content of that file is read and re-written into the file from another file called xml\_data\_template.h. The rest of the file is written dynamically from the configuration data as references to its content.
+xml\_data.c is fully dynamic and generated from the elements in the XML. The four major elements (partitions, partition\_memory, module\_schedule and connection\_table) are looped through, populating formatted strings, and then are written to the file.
 
+\subsection{C Structures}
 
 \section{OS}
 

@@ -1,3 +1,5 @@
+%! tex root = ../master.tex
+
 \chapter{System Design}
 
 In this chapter the project is further analysed. Diagrams are given
@@ -232,7 +234,6 @@ The basic functionalities of a driver are:
 
 \section{OS}
 \subsection{Scheduler}
-\todo {line formatting, add some returns}
 A scheduler decides which process should be executed by the processor available,
 according to predefined rules. The ARINC 653 specification defines 2 levels of
 scheduling, a partitions level scheduler and a process level scheduler, and the
@@ -253,8 +254,14 @@ will at all time have a priority. Processes can only be scheduled when the
 partition they belong to is scheduled by the partition level scheduler. The
 process scheduler selects the process with the highest priority that is also
 in the ready state. If two or more processes have the same priority, the one
-that first became ready is scheduled.\cite{arinc_pro_scheduling}  
+that first became ready is scheduled.\cite{arinc_pro_scheduling}\\
 
+The ARMv7M architecture has two special interrupts that are especially useful
+for scheduling: SysTick interrupt and PendSV interrupt. The SysTick interrupt is
+triggered in a regular interval, and can be used for time based scheduling. The
+PendSV interrupt is triggered by software itself and it can be used to trigger 
+scheduling from other interrupt service routines, e.g. when a process blocks to
+wait for something.
 
 \subsubsection{Context switching}
 Context switching is to switch from executing one block of code $b_1$ to another block of code $b_2$
@@ -427,30 +434,38 @@ An ARINC 653 schema specifies the requirements to configure the core module to b
 
 The schema defined was not the complete ARINC 653 schema, though it can be extended into the full schema with some more work. The scope was limited to deliver a working product that covered the core functionality.
 
-The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
+\begin{figure}[H]
+	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653.pdf}
+	\caption{open653 schema design}
+	\label{fig:open653schema}
+\end{figure}
 
+The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
 \todo{expand on what the attributes do}
 Each partition has five attributes, and zero or more sampling and queuing port elements. 
 %In addition there is an optional Process element and its associated attributes.
-
 Sampling or queuing ports each have a unique attribute, and share common attributes defined by PortType.  
 
-
 Each Partition\_Memory has two attributes, and one or more Memory\_Requirements.
-
 Memory\_Requirements each have five attributes.
 
-
 Module\_Schedule is made up of one or more Partition\_Schedule elements, which in turn are made up of one or more Window\_Schedule elements. Module\_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
-
 Partition\_Schedule has four attributes
-
 Window\_Schedule has four attributes
 
-
 A Connection\_Table has no attributes and one or more channels.
-
 A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition.  
+
+\subsection{Full ARINC 653 schema}
+
+\begin{figure}[H]
+	\includegraphics{figures/originalschema.png}
+	\caption{full ARINC 653 schema}
+	\label{fig:arinc653schema}
+\end{figure}
+
+\todo{add ARINC standard reference}
+The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented. 
 
 \subsection{Schema translation}
 

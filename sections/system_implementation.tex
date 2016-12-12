@@ -401,7 +401,6 @@ bugs in otherwise inaccessible systems, e.g. systems with no screen to directly
 print to. GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
 
-
 \section{Drivers}
 
 \subsection{System clock}
@@ -412,10 +411,22 @@ running, as opposed to after-the-fact debugging of logging, printing, etc.
 \label{fig:advanced_system}
 \end{figure}
 
-
 \subsection{UART}
 The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
+
+\subsection{LEDs}
+
+\subsection{Delay}
+
+\subsection{MPU}
+
+\subsection{Timing function}
+This driver is used for precise measuring the execution time of different functions. It uses the DWT
+ registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
+ and Trace support. By using one of these counters, one could follow the system's clock ticks. 
+ At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
+In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
@@ -438,20 +449,10 @@ When the program is run, the watchdog restarts it after the interval of time set
 phase runs out. In order to have the program running as usual, the refresh function has to be called,
  at intervals shorter than the initial time span.
 
-\subsection{Timing function}
-This driver is used for precise measuring the execution time of different functions. It uses the DWT
- registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
- and Trace support. By using one of these counters, one could follow the system's clock ticks. 
- At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
-In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
-
-\subsection{LEDs}
-
 \subsection{RTC}
 
-\subsection{MPU}
-
-\subsection{System Calls}
+\section{System Calls}
+\todo[inline,color=green]{needs to be moved}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function

@@ -300,7 +300,16 @@ It's used by the HAL library to determine which processor to set up for.
 
 \subsubsection{Linker Script}
 \label{ssec:linker_script}
+A linker script is used by the compiler to determine where to place different sections of the compiled binary.
+Because of this, everything in the output binary gets an offset that matches the memory layout described in section \ref{sec:memory_map}.
+The file \texttt{result.map} (table \ref{tab:gcc_flags}) can be used post compilation to determine the location of all symbols in the binary,
+as a way to debug the linker-script.
 
+The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to edit to fit any member of the STM32F4 family.
+In this project the only necessary change is the definition of flash to be 1MB of size.
+Beyond that, the changes depends on the partition requirements on the system.
+
+\todo{Specifically how is the linker-file written?}
 
 \subsection{OpenOCD}
 \label{ssec:openocd}

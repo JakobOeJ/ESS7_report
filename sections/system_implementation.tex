@@ -313,6 +313,19 @@ Beyond that, the changes depends on the partition requirements on the system.
 
 \subsection{OpenOCD}
 \label{ssec:openocd}
+Open On-Chip Debugger or OpenOCD \cite{openocd} is used together with the (hardware goes here) to program the chip and create a channel for GDB to debug the system on-chip.
+The CMakeLists.txt file in project root defines a function running the following commands using OpenOCD:
+
+\begin{itemize}
+	\item \texttt{init} - Initialize connection
+	\item \texttt{reset halt} - Reset and halt the system
+	\item \texttt{flash write\_image erase \$\{elf\_file\}} - Write binary image to chip
+	\item \texttt{reset run} - Reset chip and start normal execution
+\end{itemize}
+
+Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
+
+After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to.
 
 \subsection{GDB}
 

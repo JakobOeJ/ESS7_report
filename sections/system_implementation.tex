@@ -104,6 +104,8 @@ identity (PORTA) and the number is the individual GPIO needed.
 A driver is needed to be installed on Windows machines, in order to
 recognize and program using STLINK/v2.
 \todo{What about LINUX} 
+
+
 \section{Source Structure}
 The following sections describes different aspects the software used and
 the source code located in the project root directory (ESS7\_project) denoted as `/'.
@@ -286,11 +288,44 @@ The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as
 	\label{tab:gcc_flags}
 \end{table}
 
+There are two important flags, which haven't been mentioned in table \ref{tab:gcc_flags}.
+the \texttt{-DHSE\_VALUE=16000000} and \texttt{-DSTM32F415xx} aren't compiler options but definitions passed to GCC to use at compile-time.
+
+\texttt{-DHSE\_VALUE=16000000} defines the value of the external oscillator in hertz.
+Specifically it defines \texttt{HSE\_VALUE} to be 16 million hertz as is specified in \cite{hse_value}.
+The input of the external oscillator is used as the source for the main clock (some ref to clock setup?).
+
+\texttt{-DSTM32F415xx} simply adds \texttt{STM32F415xx} as a definition at compile-time.
+It's used by the HAL library to determine which processor to set up for.
+
 \subsubsection{Linker Script}
 \label{ssec:linker_script}
+A linker script is used by the compiler to determine where to place different sections of the compiled binary.
+Because of this, everything in the output binary gets an offset that matches the memory layout described in section \ref{sec:memory_map}.
+The file \texttt{result.map} (table \ref{tab:gcc_flags}) can be used post compilation to determine the location of all symbols in the binary,
+as a way to debug the linker-script.
+
+The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to edit to fit any member of the STM32F4 family.
+In this project the only necessary change is the definition of flash to be 1MB of size.
+Beyond that, the changes depends on the partition requirements on the system.
+
+\todo{Specifically how is the linker-file written?}
 
 \subsection{OpenOCD}
 \label{ssec:openocd}
+Open On-Chip Debugger or OpenOCD \cite{openocd} is used together with the (hardware goes here) to program the chip and create a channel for GDB to debug the system on-chip.
+The CMakeLists.txt file in project root defines a function running the following commands using OpenOCD:
+
+\begin{itemize}
+	\item \texttt{init} - Initialize connection
+	\item \texttt{reset halt} - Reset and halt the system
+	\item \texttt{flash write\_image erase \$\{elf\_file\}} - Write binary image to chip
+	\item \texttt{reset run} - Reset chip and start normal execution
+\end{itemize}
+
+Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
+
+After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to.
 
 \subsection{GDB}
 

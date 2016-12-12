@@ -309,7 +309,30 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.
 
-\todo{Specifically how is the linker-file written?}
+\begin{lstlisting}[firstnumber=40,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+/* Specify the memory areas */
+MEMORY
+{
+  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 1024K
+  OS (rx)        : ORIGIN = 0x08000000, LENGTH =   64K
+  DUMMY1 (rx)    : ORIGIN = 0x08010000, LENGTH =    8K
+  DUMMY2 (rx)    : ORIGIN = 0x08012000, LENGTH =    8K
+  STDIO_SYS (rx) : ORIGIN = 0x08014000, LENGTH =    8K
+  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH =  128K
+  CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH =   64K
+}
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=77,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+.stdio_sys :
+{
+  . = ALIGN(4);
+  libstdio_sys.a:*
+  . = ALIGN(4);
+} >STDIO_SYS
+\end{lstlisting}
 
 \subsection{OpenOCD}
 \label{ssec:openocd}
@@ -325,7 +348,7 @@ The CMakeLists.txt file in project root defines a function running the following
 
 Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
 
-After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to.
+After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to (see section ref).
 
 \subsection{GDB}
 \label{ssec:gdb}

@@ -254,8 +254,14 @@ will at all time have a priority. Processes can only be scheduled when the
 partition they belong to is scheduled by the partition level scheduler. The
 process scheduler selects the process with the highest priority that is also
 in the ready state. If two or more processes have the same priority, the one
-that first became ready is scheduled.\cite{arinc_pro_scheduling}  
+that first became ready is scheduled.\cite{arinc_pro_scheduling}\\
 
+The ARMv7M architecture has two special interrupts that are especially useful
+for scheduling: SysTick interrupt and PendSV interrupt. The SysTick interrupt is
+triggered in a regular interval, and can be used for time based scheduling. The
+PendSV interrupt is triggered by software itself and it can be used to trigger 
+scheduling from other interrupt service routines, e.g. when a process blocks to
+wait for something.
 
 \subsubsection{Context switching}
 Context switching is to switch from executing one block of code $b_1$ to another block of code $b_2$

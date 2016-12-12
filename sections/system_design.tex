@@ -188,11 +188,6 @@ The following list contains the drivers that would provide the OS a basic
 interface to access the hardware.
 
 \begin{labeling}{Watchdog timer}
-	\item [\textbf{UART}] used by the system to communicate with the outside
-	world. This can either receive or transmit data to another UART device
-	\item [\textbf{Watchdog timer}] necessary to ensure recovery
-	in case of a hardware fault or program error. If this happens, the
-	program would be restarted from a safe state
 	\item [\textbf{System Clock}] provide the frequency at which the
 	peripherals are synchronised. This can be later on scaled up or down
 	to generate the CPU\textquotesingle s and peripherals\textquotesingle
@@ -202,21 +197,27 @@ interface to access the hardware.
 	oscillators, to high or low speed crystals. In some cases, certain
 	peripherals can use their own, independent clock sources that also have
 	to be configured
+	\item [\textbf{UART}] used by the system to communicate with the outside
+	world. This can either receive or transmit data to another UART device
+	\item [\textbf{LEDs}] mainly used for debugging. They are
+	are connected to two of the GPIO pins
+	\item [\textbf{Delay}] is a simple function, based on a calling another
+	function from the HAL library. It delays the execution 
+	of the program by a factor of milliseconds. Mainly used in debugging
 	\item [\textbf{MPU}] provides the system a way to manage its
 	memory. This is required by the ARINC 653 standard. 
 	Operating systems built on more advanced processors generally use 
 	an MMU
-	\item [\textbf{RTC}] has purpose of this is to keep track of 
-	time accurately. Usually it uses  a 32,768kHz oscillator as a 
-	clock source, which is the standard in the field
 	\item [\textbf{Timing}] has the purpose of keep track of 
 	relative time. As the standard specifies, it should be counting 
 	nanoseconds
-	\item [\textbf{Delay}] is a simple function, based on a calling another
-	function from the HAL library. It delays the execution 
-	of the program by a factor of milliseconds. Mainly used in debugging
-	\item [\textbf{LEDs}] mainly used for debugging. They are
-	are connected to two of the GPIO pins
+	\item [\textbf{Watchdog timer}] necessary to ensure recovery
+	in case of a hardware fault or program error. If this happens, the
+	program would be restarted from a safe state
+	\item [\textbf{RTC}] has purpose of this is to keep track of 
+	time accurately. Usually it uses  a 32,768kHz oscillator as a 
+	clock source, which is the standard in the field
+	
 \end{labeling}
 
 These drivers should be implemented as standalone .c files. They could then

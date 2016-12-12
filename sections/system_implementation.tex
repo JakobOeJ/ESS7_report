@@ -99,7 +99,7 @@ JTAG specific:
 
 The tags on the lower part of the figure represent the pins of the 
 microcontroller, where 'P' stand for port, 'A' or 'B' for the port
-identity (PORTA) and the number isthe individual GPIO needed.
+identity (PORTA) and the number is the individual GPIO needed.
 
 A driver is needed to be installed on Windows machines, in order to
 recognize and program using STLINK/v2.
@@ -207,7 +207,7 @@ Make provides features to set up a dependency tree of calls when many objects ar
 
 \subsection{GCC}
 \label{ssec:gcc}
-The GNU C Compiler or GCC is used for compiling and linking the C files into a target called `OS'.
+The GNU Compiler Collection or GCC is used for compiling and linking the C files into a target called `OS'.
 Compiling to the ARM architecture a cross compiled version of GCC is necessary,
 in this case the arm-none-eabi-gcc compiler which is available in all never Ubuntu versions\cite{arm_gcc}.
 
@@ -351,9 +351,27 @@ Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
 After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to (see section ref).
 
 \subsection{GDB}
-
-
-\section{Source Structure}
+\label{ssec:gdb}
+The GNU Project debugger\cite{gdb}, GDB, is an open source software debugger
+built to compliment the GNU Project compilers, GCC (see \ref{ssec:gcc}). It
+allows programmers to more intelligently debug their applications.
+GDB can\\
+\begin{itemize}
+	\item attach to a remote program, even running on a different piece of
+	hardware. 
+	\item pause execution of a program at specified lines of code with
+	breakpoints.
+	\item show the content of memory, either by direct a addressing or by
+	variable name.
+	\item if the hardware supports it, show the value of each CPU register.
+	\item execute code line by line, letting the programmer see how each line
+	affects the state of the program, and in case of crashing code, which line
+	of code crashes the program.
+\end{itemize}
+This featureset, makes GDB especially useful for tracking down complex bugs and
+bugs in otherwise inaccessible systems, e.g. systems with no screen to directly 
+print to. GDB also allows programmers to investigate buggy code while it is
+running, as opposed to after-the-fact debugging of logging, printing, etc.
 
 
 \section{Drivers}
@@ -365,11 +383,6 @@ After execution of this command, OpenOCD stays open and connected to the chip an
 \captionof{figure}{An advanced system overview}
 \label{fig:advanced_system}
 \end{figure}
-
-
-\subsection{Other peripherals}
-
-\section{Drivers}
 
 
 \subsection{UART}
@@ -420,7 +433,7 @@ assembly code to issue an \texttt{SVC} instruction} code in partition level
 software, system call functions (including the APEX functions) are implemented
 as a library that entirely handles the system call.
 The sequence of steps for making a system call is a follows:\\
-\begin{tabular}{ r l p{11cm} }
+\begin{tabular}{ r l p{10.5cm} }
     1. & Userspace & Partition code calls one of the system call wrapper
     functions.\\
     2. & Userspace & The wrapper function moves the number denoting the system
@@ -445,7 +458,9 @@ The sequence of steps for making a system call is a follows:\\
     the stack and returns execution to the system call wrapper function.\\
     11. & Userspace & The wrapper function returns the output from the system
     call as stored in the registers to the calling partition code.\\
-\end{tabular}
+\end{tabular}\\
+
+
 Only the registers R0-R3 and R12 are available for argument passing, as these
 are the only general purpose registers that are stacked by the NVIC. The NVIC
 does not clear the registers before entering the \texttt{SVC\_Handler} function,

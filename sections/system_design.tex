@@ -2,9 +2,8 @@
 
 In this chapter the project is further analysed. Diagrams are given
 and other notions are described, setting up the premises for implementing
-the OSname based on the ARINC 653 standard.
-\todo[inline, color=green]{define an OS name somewhere to be used throughout
-the report}
+\OSname\ based on the ARINC 653 standard.
+
 \section{System Overview}
 As a means to both explaining the system and as a practical development
 model, the system can be thought of as being made up of layers.
@@ -133,8 +132,8 @@ memory map implemented in the STM32F415RG microcontroller. The blocks
 on the left column are legacy of the ARM Architecture. This provides 
 4 GB of addressable memory in all.
 These regions are correlated to the microcontroller\textquotesingle s
-actual memory, as it can be seen in the right column. Each block in this
-column contain their start and end addresses, on their side.
+actual memory, as it can be seen in the column on the right. Each block
+in this column contain their start and end addresses, on their side.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{memory_model.pdf}
@@ -424,6 +423,12 @@ Beneath graphical overview of the different layers with their core
 \subsection{Error Handling}
 
 \section{Agile development}
+The software development process flowed naturally due to previous 
+experience, curiosity and personal interests. The nature of the project
+allowed the team to cover different areas at the same time, while still
+doing progress, without having a strict plan. Seen as a whole, the project
+was pursued by applying the principles of agile software development.
+\todo[inline,color=green]{Maybe move this section somewhere else.}
 
 \section{Discussion}
 

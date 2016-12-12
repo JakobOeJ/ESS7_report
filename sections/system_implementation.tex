@@ -286,8 +286,19 @@ The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as
 	\label{tab:gcc_flags}
 \end{table}
 
+There are two important flags, which haven't been mentioned in table \ref{tab:gcc_flags}.
+the \texttt{-DHSE\_VALUE=16000000} and \texttt{-DSTM32F415xx} aren't compiler options but definitions passed to GCC to use at compile-time.
+
+\texttt{-DHSE\_VALUE=16000000} defines the value of the external oscillator in hertz.
+Specifically it defines \texttt{HSE\_VALUE} to be 16 million hertz as is specified in \cite{hse_value}.
+The input of the external oscillator is used as the source for the main clock (some ref to clock setup?).
+
+\texttt{-DSTM32F415xx} simply adds \texttt{STM32F415xx} as a definition at compile-time.
+It's used by the HAL library to determine which processor to set up for.
+
 \subsubsection{Linker Script}
 \label{ssec:linker_script}
+
 
 \subsection{OpenOCD}
 \label{ssec:openocd}

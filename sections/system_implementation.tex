@@ -396,7 +396,7 @@ GDB can\\
 	affects the state of the program, and in case of crashing code, which line
 	of code crashes the program.
 \end{itemize}
-This featureset, makes GDB especially useful for tracking down complex bugs and
+This feature set, makes GDB especially useful for tracking down complex bugs and
 bugs in otherwise inaccessible systems, e.g. systems with no screen to directly 
 print to. GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
@@ -407,7 +407,7 @@ running, as opposed to after-the-fact debugging of logging, printing, etc.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{system_clock.pdf}
-\captionof{figure}{An advanced system overview}
+\caption{An advanced system overview}
 \label{fig:advanced_system}
 \end{figure}
 
@@ -462,6 +462,7 @@ assembly code to issue an \texttt{SVC} instruction} code in partition level
 software, system call functions (including the APEX functions) are implemented
 as a library that entirely handles the system call.
 The sequence of steps for making a system call is a follows:\\
+
 \begin{tabular}{ r l p{10.5cm} }
     1. & Userspace & Partition code calls one of the system call wrapper
     functions.\\
@@ -516,24 +517,24 @@ identifier.
 		\hline
 		Identifier		&	Name \\
 		\hline
-		0xc0ffee0a		&	CREATE\_PROCESS 			\\
+		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
 		\hline
-		0xc0ffee0b		&	GET\_TIME					\\
+		0xC0FFEE0B		&	GET\_TIME					\\
 		\hline
-		0xc0ffee0c		&	CREATE\_QUEUING\_PORT 		\\
+		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
 		\hline
-		0xc0ffee0d		&	RECEIVE\_QUEUING\_PORT 		\\
+		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
 		\hline
-		0xc0ffee0e		&	SEND\_QUEUING\_PORT 		\\
+		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
 		\hline
-		0xc0ffee0f		&	GET\_QUEUING\_PORT\_ID 		\\
+		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
 		\hline
-		0xc0ffee10		&	GET\_QUEUING\_PORT\_STATUS	\\
+		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
 		\hline
-		0xc0ffee11		&	PROCESS\_STOP\_SELF 		\\
+		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
 		\hline		
 	\end{tabular}
-\caption{A table of tje implemented system calls and their identifier.}
+\caption{A table of the implemented system calls and their identifier.}
 \label{tab:syscalls}
 \end{table}
 

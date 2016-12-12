@@ -309,7 +309,30 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.
 
-\todo{Specifically how is the linker-file written?}
+\begin{lstlisting}[firstnumber=40,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+/* Specify the memory areas */
+MEMORY
+{
+  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 1024K
+  OS (rx)        : ORIGIN = 0x08000000, LENGTH =   64K
+  DUMMY1 (rx)    : ORIGIN = 0x08010000, LENGTH =    8K
+  DUMMY2 (rx)    : ORIGIN = 0x08012000, LENGTH =    8K
+  STDIO_SYS (rx) : ORIGIN = 0x08014000, LENGTH =    8K
+  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH =  128K
+  CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH =   64K
+}
+\end{lstlisting}
+
+\begin{lstlisting}[firstnumber=77,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+.stdio_sys :
+{
+  . = ALIGN(4);
+  libstdio_sys.a:*
+  . = ALIGN(4);
+} >STDIO_SYS
+\end{lstlisting}
 
 \subsection{OpenOCD}
 \label{ssec:openocd}
@@ -325,7 +348,7 @@ The CMakeLists.txt file in project root defines a function running the following
 
 Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
 
-After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to.
+After execution of this command, OpenOCD stays open and connected to the chip and leaves port 3333 open on the host operating system, for GDB to connect to (see section ref).
 
 \subsection{GDB}
 \label{ssec:gdb}
@@ -350,9 +373,6 @@ bugs in otherwise inaccessible systems, e.g. systems with no screen to directly
 print to. GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
 
-\section{Source Structure}
-
-
 \section{Drivers}
 
 \subsection{System clock}
@@ -363,15 +383,22 @@ running, as opposed to after-the-fact debugging of logging, printing, etc.
 \label{fig:advanced_system}
 \end{figure}
 
-
-\subsection{Other peripherals}
-
-\section{Drivers}
-
-
 \subsection{UART}
 The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.
+
+\subsection{LEDs}
+
+\subsection{Delay}
+
+\subsection{MPU}
+
+\subsection{Timing function}
+This driver is used for precise measuring the execution time of different functions. It uses the DWT
+ registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
+ and Trace support. By using one of these counters, one could follow the system's clock ticks. 
+ At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
+In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
@@ -394,20 +421,10 @@ When the program is run, the watchdog restarts it after the interval of time set
 phase runs out. In order to have the program running as usual, the refresh function has to be called,
  at intervals shorter than the initial time span.
 
-\subsection{Timing function}
-This driver is used for precise measuring the execution time of different functions. It uses the DWT
- registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
- and Trace support. By using one of these counters, one could follow the system's clock ticks. 
- At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
-In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
-
-\subsection{LEDs}
-
 \subsection{RTC}
 
-\subsection{MPU}
-
-\subsection{System Calls}
+\section{System Calls}
+\todo[inline,color=green]{needs to be moved}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function

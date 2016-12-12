@@ -412,34 +412,34 @@ The schema defined was not the complete ARINC 653 schema, though it can be exten
 
 The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
 
-\TODO{expand on what the attributes do}
+\todo{expand on what the attributes do}
 Each partition has five attributes, and zero or more sampling and queuing port elements. 
 %In addition there is an optional Process element and its associated attributes.
 
 Sampling or queuing ports each have a unique attribute, and share common attributes defined by PortType.  
 
 
-Each Partition_Memory has two attributes, and one or more Memory_Requirements.
+Each Partition\_Memory has two attributes, and one or more Memory\_Requirements.
 
-Memory_Requirements each have five attributes.
-
-
-Module_Schedule is made up of one or more Partition_Schedule elements, which in turn are made up of one or more Window_Schedule elements. Module_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
-
-Partition_Schedule has four attributes
-
-Window_Schedule has four attributes
+Memory\_Requirements each have five attributes.
 
 
-A Connection_Table has no attributes and one or more channels.
+Module\_Schedule is made up of one or more Partition\_Schedule elements, which in turn are made up of one or more Window\_Schedule elements. Module\_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
 
-A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard_Partition.  
+Partition\_Schedule has four attributes
+
+Window\_Schedule has four attributes
+
+
+A Connection\_Table has no attributes and one or more channels.
+
+A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition.  
 
 \subsection{Schema translation}
 
-\TODO{explain xml alternatives?}
+\todo{explain xml alternatives?}
 
-XML is the chosen configuration file format, a tool has not been used to generate the configuration file. The XML file was written by hand in accordance with the schema, therefore the instance must be modified by hand. XML was chosen as opposed to alternatives do to its easy to read and write nature, and ARINC's XML example providing guidance.
+XML is the chosen configuration file format, a tool has not been used to generate the configuration file. The XML file was written by hand in accordance with the schema, therefore the instance must be modified by hand. XML was chosen as opposed to alternatives do to its easy to read and write nature, and ARINC\textquotesingle s XML example providing guidance.
 
 
 \section{APEX}

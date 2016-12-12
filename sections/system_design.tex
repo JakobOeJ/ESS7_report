@@ -406,6 +406,8 @@ CPU registers and the stack.
 
 An ARINC 653 schema specifies the requirements to configure the core module to be compliant with the standard. The schema is to be implemented in a static structured document, which defines *. You may extend the document to include additional features not required by ARINC 653.
 
+\subsection{Schema design}
+
 The schema defined was not the complete ARINC 653 schema, though it can be extended into the full schema with some more work. The scope was limited to deliver a working product that covered the core functionality.
 
 The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
@@ -433,7 +435,7 @@ A Connection_Table has no attributes and one or more channels.
 
 A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard_Partition.  
 
-\subsection{Schema usage}
+\subsection{Schema translation}
 
 \TODO{explain xml alternatives?}
 

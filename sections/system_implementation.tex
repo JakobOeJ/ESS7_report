@@ -309,7 +309,11 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.
 
-\begin{lstlisting}[firstnumber=40,
+Listing \ref{linker_mem_overview}.
+
+\begin{lstlisting}[
+	firstnumber=40,
+	label=linker_mem_overview,
 	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
 /* Specify the memory areas */
 MEMORY
@@ -324,7 +328,9 @@ MEMORY
 }
 \end{lstlisting}
 
-\begin{lstlisting}[firstnumber=77,
+\begin{lstlisting}[
+	firstnumber=77,
+	label=linker_example,
 	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
 .stdio_sys :
 {

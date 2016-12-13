@@ -459,11 +459,11 @@ divided into low and high speed domains as:
 
 \begin{labeling}{APB1 domain}
 	\item[\textbf{APB1 domain}]
-		low-speed domain, running at 42 Mhz. This includes among other 
+		low-speed domain, running at 42 MHz. This includes among other 
 		peripherals the UART.
 		
 	\item[\textbf{APB2 domain}]
-		high-speed domain, running at 84 mHz.
+		high-speed domain, running at 84 MHz.
 	\end{labeling}
 
 \subsection{UART}
@@ -473,8 +473,21 @@ The UART sets the speed of the transmission and reception of the information bet
 It is also possible to communicate with the UART using a screen, getting some important output for debugging.}
 
 \subsection{LEDs}
+The LEDs are used mainly for debugging. There are three LEDs on the 
+Mini-M4 board, two of them being programmable. Since they are connected
+to two pins of a GPIO port, these needs to be initialised. Afterwards, 
+by using the functions defined in the HAL library, these pins can be 
+turned high, low or toggled.
 
 \subsection{Delay}
+The delay function is also used for debugging, giving the developers the 
+chance of seeing "when things are happening". This is because most of the
+program instructions are executed so fast, that the normal human would
+consider them as instant. 
+Delay is defined in the HAL library, and relies on the Systick API.
+Systick is a timer is the default time base, which has a scale of 1
+milisecond. This means that every milisecond, Systick generates an
+interrupt to increase the value of its timer.
 
 \subsection{MPU}
 

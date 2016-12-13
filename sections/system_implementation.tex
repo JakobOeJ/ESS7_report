@@ -24,13 +24,13 @@ for practicality, as seen in \ref{fig:photo1}.
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
   \centering
-  \includegraphics[width=3cm]{hardware/board_not_soldered.png}
+  \includegraphics[width=3cm]{hardware/board_not_soldered}
   \caption{MINI-M4 before soldernig}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
   \centering
-  \includegraphics[width=3cm]{hardware/board_on_breadboard.png}
+  \includegraphics[width=3cm]{hardware/board_on_breadboard}
   \caption{MINI-M4 on a breadboard}
   \label{fig:sub2}
 \end{subfigure}
@@ -520,6 +520,11 @@ phase runs out. In order to have the program running as usual, the refresh funct
  at intervals shorter than the initial time span.
 
 \subsection{RTC}
+The real-time clock was implemented as a way to give the system the
+possibility to keep track of time. However, at a later point, we realised
+that ARINC 653 specifies that time keeping should be done in nanoseconds,
+a range that the RTC is not capable of.
+Anyway, the RTC is 
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}

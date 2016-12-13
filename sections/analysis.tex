@@ -192,12 +192,13 @@ while the Raspberry Pi and the Creator Ci40 are more capable.
 All four devices have the necessary features to run a simple low power OS,
 but building the OS give practical concerns to the complexity and ease of setup.
 \\\\
-Focussing on core OS features, only a few basic peripherals
+Focusing on core OS features, only a few basic peripherals
 like timers, MPU/MMU, UART and basic IO are necessary for the project,
 also the ARINC 653 does not provide a solution to scaling the operating system
 or containers across multiple cores,
 hence more capable hardware is likely see a low peripheral use.
-Since the project is focussed on the implementation of an OS
+\todo {rephrase this}
+Since the project is focused on the implementation of an OS
 and less so the containers running on it.
 A low CPU utilization might be seen on more performant systems.
 \\\\
@@ -205,12 +206,15 @@ The MINI-M4 modules are more attractive choices from the utilization standpoint.
 A comprehensive datasheet is available for both of them,
 making it easier to program them from the scratch.
 Some experience with the STM32 is present within the project group
-on how to setup and Linux based tool-chain.
-That, and the availability of sample code implementations and a HAL library,
-means that the MINI-M4 for STM32 is the hardware platform being used and referred to
-in the duration of this project.
-\todo{leads to the choice...}
-\todo{Why have a HAL, why is it good to have}
+on how to setup and Linux based tool-chain. The manufacturer of the STM32
+provides sample code implementations as well as hardware abstraction
+layer libraries, things that would give a head start on the project.
+\\\\
+This leads to the decision of using Mini-M4 for STM32 as the hardware
+for \OSname{}. For the rest of the document this would be referred as 
+"the board", while the STM32F415RG unit as "the microcontroller" or
+"the chip".
+\todo{The choice: to be reviewed - are the quotation marks right?}
 
 \subsection{Communication with the board}
 In order to get started with the development of the OS, there is need for
@@ -224,6 +228,7 @@ this type of hardware, the following components have been ordered:
 	port
 \end{itemize}
 \todo[inline, color=green]{maybe choice of language should be here??}
+
 \subsection{Helper libraries}
 When starting writing software, one needs to decide how to make this
 process easy and transparent. This is very dependent of the 
@@ -237,16 +242,16 @@ Another way could be to use some libraries that define the I/O and work
 on a slightly higher level. ARM provides libraries for their architecture
 as well as the vendors providing libraries and examples on how to use their
 hardware. 
+\todo {I don't specifically mention HAL and CMSIS until the next chapter.
+is that fine?} 
 
 \subsection{The legacy from the race car project}
 This project has some roots in another project that has been going on
-for some years at Aalborg University. 
-\todo{reference}
+for some years at Aalborg University \cite{aauracing}. 
 The choice of hardware was
 slightly influenced by this, as well as the tools and libraries used 
-throughout the project. The big advantage of this, is having the 
-experience and knowledge to give a quick start
-
+throughout the project. The big advantage of this, is that by having the 
+experience and knowledge the project could get a head start.
 \todo{Maybe Jakob has something to add}
 
 \section{Software}

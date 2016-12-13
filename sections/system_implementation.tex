@@ -486,7 +486,7 @@ program instructions are executed so fast, that the normal human would
 consider them as instant. 
 Delay is defined in the HAL library, and relies on the Systick API.
 Systick is a timer is the default time base, which has a scale of 1
-milisecond. This means that every milisecond, Systick generates an
+millisecond. This means that every millisecond, Systick generates an
 interrupt to increase the value of its timer.
 
 \subsection{MPU}
@@ -524,7 +524,10 @@ The real-time clock was implemented as a way to give the system the
 possibility to keep track of time. However, at a later point, we realised
 that ARINC 653 specifies that time keeping should be done in nanoseconds,
 a range that the RTC is not capable of.
-Anyway, the RTC is 
+Anyway, the RTC is a nice feature, since it operates in the Stop and Standby
+of the microcontroller, and can generate interrupts to wake the system up.
+Its registers contain all the time components, as well as correction for
+leap years.
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}

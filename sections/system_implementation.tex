@@ -479,6 +479,7 @@ by using the functions defined in the HAL library, these pins can be
 turned high, low or toggled, thus changing the state of the LEDs.
 
 \subsection{Delay}
+\label{ssec:delay}
 The delay function is also used for debugging, giving the developers the 
 chance of seeing \textit{when things are happening}. This is because most of the
 program instructions are executed so fast, that the they appear to be
@@ -812,6 +813,15 @@ is considered to be an implicit idle period.
 During the initialisation of the system, a static schedule is build based on the
 windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
 
+The partition scheduler is supposed to keep track of the position within a major
+frame, and based on the position, figure out which window that corrosponds to,
+and then schedule the partition of that window.
+
+The scheduler keeps track of the position within a major frame with the HAL
+tick. This tick is incremented every millisecond. This is the same tick used by
+delay function (see \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulu divided by the length of a major frame in
+milliseconds.
 
 
 \subsubsection{Process scheduler}

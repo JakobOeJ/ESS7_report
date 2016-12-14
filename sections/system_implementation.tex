@@ -409,10 +409,10 @@ be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
 
 \section{Drivers}
 
-Setting up the drivers took place in the beginning of the project. Their
+Setting up the drivers took place in the early phases of the project. Their
 functionality rely a lot on the HAL library. Even though the process is
 quite straightforward, there is some learning involved in how to use the
-library. The library\textquotesingle s documentation is a good starting
+HAL library. The library\textquotesingle s documentation is a good starting
 point, and the things it lacks can be found in the 
 microcontroller\textquotesingle s datasheet.
 
@@ -420,7 +420,7 @@ microcontroller\textquotesingle s datasheet.
 The initial setting for the clock is that it uses the internal oscillator,
 which runs at 16MHz. In order to get the maximum speed supported by the
 CPU, the board needs to be configured to multiply this frequency.
-However, instead of using the internal oscillator which can be imprecise, 
+However, instead of using the internal oscillator, which can be imprecise, 
 the Mini-M4 
 board has an external oscillator\footnote{Featuring less wander (slow
  variations due to temperature and aging) and jitter(fast variations)} 
@@ -444,21 +444,22 @@ present on the board or inside the microcontroller:
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{system_clock.pdf}
-\caption{An advanced system overview}
+\caption{System clock overview}
 \label{fig:system_clock}
 \end{figure}
 
 The lower part of figure \ref{fig:system_clock} shows that the frequency
 of the HSE is multiplied by a PLL(Phase-locked loop) system, before it gets
-to the clock selection block. After this, the frequency is supplied to
-the CPU bus, and scaled down for the peripheral busses. The latter are
-divided into low and high speed domains as:
+to the clock selection block. This is the frequency supplied to
+the CPU and memory through the AHB bus, and scaled down for the peripheral busses. These busses are divided into low and high speed domains as:
 
 \begin{labeling}{APB1 domain}
+	\item[\textbf{AHB}]
+		Advanced High-speed bus. This runs at 168 MHz, and connects
+		mainly the CPU, memory and the GPIOs.
 	\item[\textbf{APB1 domain}]
 		low-speed domain, running at 42 MHz. This includes among other 
-		peripherals the UART.
-		
+		peripherals the UART.		
 	\item[\textbf{APB2 domain}]
 		high-speed domain, running at 84 MHz.
 	\end{labeling}

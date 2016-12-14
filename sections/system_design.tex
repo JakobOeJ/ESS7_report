@@ -4,14 +4,14 @@
 
 In this chapter the project is further analysed. Diagrams are given
 and other notions are described, setting up the premises for implementing
-\OSname\ based on the ARINC 653 standard.
+\OSname{} based on the \arinc{} standard.
 
 \section{System Overview}
 As a means to both explaining the system and as a practical development
 model, the system can be thought of as being made up of layers.
 Each layer being an abstraction of workings in the layers beneath it,
 with the partitions at the top and the hardware at the bottom.
-The model in \ref{fig:simple_system} is defined by the ARINC 653 standard
+The model in \ref{fig:simple_system} is defined by the \arinc{} standard
 and expanded upon here with drivers being build on top of the HAL library,
 instead of directly on top of the hardware, creating an extra layer of
  abstraction.
@@ -20,8 +20,7 @@ instead of directly on top of the hardware, creating an extra layer of
 	\item [\textbf{Partitions}]
 		independent program units that contain applications. These
 		applications can in turn interact with other systems. The
-		partitions are achieving this in complete isolation from 
-		one another.
+		partitions are achieving this while separated from one another.
 	\item [\textbf{APEX}]
 		defines the methods by which the partitions talk to other 
 		modules and
@@ -55,7 +54,7 @@ instead of directly on top of the hardware, creating an extra layer of
 
 In the rest of the chapter the different layers are described,
 from bottom up, 
-together with their core components.The hardware specifications
+together with their core components. The hardware specifications
 are outlined, as well as explaining how the rest of the system is
 set up.
 
@@ -64,7 +63,8 @@ set up.
 
 As mentioned in the \nameref{section:settleing_platform} section,
 the hardware used for the development of this system is the Mini-M4
-board. It is build around the STM32F415RG microcontroller, based on
+board. It is build around the STM32F415RG microcontroller
+\cite{stm32_datasheet}, based on
 an ARM Cortex-M4 core. This is a 32-bit RISC architecture CPU using 
 the ARM intruction set \cite{arm_architecture}. Additional information
 was found in the ARM technical reference \cite{arm_technical} 
@@ -78,29 +78,33 @@ The chip provides two interfaces for debugging:
 There was no thought process involved in choosing one of the two.
 The JTAG interface is enabled by default, and worked right from the
 early phases of the project. In some situations, SW would have been
-preferred to JTAG, due to space(2 pins instead of 5) constraints
- or the IDE used.
+preferred to JTAG, due to physical space constraints. JTAG uses 5
+wires, while SW only 2. Also, the IDE of choice can have some limitations 
+on the debugging platform.
+\todo{Can I reference to something like this : <http://ieeexplore.ieee.org/document/5412866/>}
 
-JTAG is actually an association that develops standards about how 
+JTAG is actually an association\footnote{Joint Test Action Group} 
+that develops standards about how 
 physical circuit boards should be tested. However, for the rest of
 the document, JTAG will be referred to as the main communication interface
 to the Mini-M4 board. This will mainly be used for flashing the program
 on the chip and debugging it. In order for a computer to access this
-interface, there is need the STLINK-V2, that would 
-use the USB as a mean to communicate with the JTAG port on the chip.
+interface, the STLINK-V2 in-circuit debugger/programmer \cite{st_link}
+is used, through USB.
 
-Another way of communicating to the chip is the serial communication.
-For this purpose the UART will be used. This is common peripheral for 
-embedded devices, and it needs to be set up before it can be used. This
+Another way of communicating with the chip is the serial communication.
+For this purpose the UART will be used. This is a common peripheral for 
+embedded devices, but it needs to be set up before it can be used. This
 involves initialising the UART, configuring the data format and the
 transmission speed and sending the actual data. In order to see this data
-on a computer, one could use an USB-to-serial adapter. This would then
-create a vitual COM (Communication port), that could be accessed using
-a serial console such as PuTTY.
+on a computer, one could use a serial-to-USB adapter \cite{ttl_usb}.
+This creates a virtual COM (Communication port), that is accessed using
+a serial console such as PuTTY\footnote{Free and open-source terminal emulator, serial console and network file transfer application}.
 \\\\
-The Mini-M4 board would have to accommodate the 5 wires from the JTAG,
-the 2 wires from the UART, and to receive power through the built-in
-mini USB port, in order to be ready for the development process.
+The final setup of the Mini-M4 board comprises of the 5 wires from the JTAG,
+the 2 wires from the UART, the mini-USB cable that provides power and a
+breadboard to accommodate electrical connections.
+\todo{how to write this in the context of system design(the verbal tense)}
 
 \section{Memory Map}
 \label{sec:memory_map}
@@ -110,40 +114,37 @@ data.
 
 There are 192 KB of RAM, divided into 128 KB of SRAM and 64 KB of 
 CCM data RAM.
-The SRAM is volatile memory, where the 'static' tag means 
+The SRAM is volatile memory, where the $static$ tag means 
 that it does not need to be refreshed in order to
 keep its state. This is divided furthermore into a section of 112 KB, and 
-another of 16 KB, which can be useful if one needs to boot from RAM. Anyway, these are adjacent in address space and can be treated as 
-one block. (REFERENCE)
-The memory has a feature called bit-banding, in order to let the system
-to perform atomical operations on bits.
-%https://spin.atomicobject.com/2013/02/08/bit-banding/
-%http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0179b/CHDJHIDF.html
+another of 16 KB, which can be useful if one needs to boot from RAM
+\cite{run_from_ram}. Anyway, they are adjacent in address space and can be
+treated as one block.
+The memory has a feature called bit-banding , in order to let the system
+perform atomical operations on bits \cite{bit_banding}.
 
 The other 64 KB of CCM data RAM are always ready for access by the CPU,
 but cannot be accessed by the peripherals through direct memory access.
 Beside the 192 KB of SRAM, there are 4 KB of SRAM used for backup purposes.
-These won't be used, since they not represent the scope of the project.
-%http://hackaday.com/2012/11/15/in-depth-comparison-at-stm32-f3-and-f4-discovery-boards/
-%http://electronics.stackexchange.com/questions/27550/what-is-bit-banding
-%http://libopencm3.org/wiki/Run_From_RAM
-%stm32f4415 pag 74 figure 18
+These won't be used, since they are not the scope of the project.
 
-Figure \ref{fig:memory_model} represents a simplified model of the 
-memory map implemented in the STM32F415RG microcontroller. The blocks
+Figure \ref{fig:memory_model} presents a simplified model of the 
+memory map implemented in the STM32F415RG microcontroller
+\cite{stm32_datasheet_74}. The blocks
+\todo{can't get the page referenced PAGE 74}
 on the left column are legacy of the ARM Architecture. This provides 
 4 GB of addressable memory in all.
 These regions are correlated to the microcontroller\textquotesingle s
 actual memory, as it can be seen in the column on the right. Each block
 in this column contain their start and end addresses, on their side.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{memory_model.pdf}
-\captionof{figure}{The memory map (inspired by: 
-REFERENCE PAGE 74)}
+\captionof{figure}{Memory map}
 \label{fig:memory_model}
 \end{figure}
-\todo{REFERENCE PAGE 74}
+
 
 The input/output are mapped as well in the memory. This can be seen in
 the upper two blocks of the memory map, where there are the 
@@ -155,7 +156,7 @@ These two libraries are truly the workhorse when dealing with the
 board\textquotesingle s peripherals. By using them, the development
 process usually has a quick start, removing the steepness of the 
 learning curve.	\\
-HAL stands for Hardware Abstraction layer and is provided by the chip manufacturer - STMicroelectronics. The source files are available at
+HAL stands for Hardware Abstraction Layer and is provided by the chip manufacturer - STMicroelectronics. The source files are available at
 their website, along with its documentation \cite{HAL_library}.
 The CMSIS (Cortex Microcontroller Software Interface Standard)
 can be seen more as a framework, than a library
@@ -163,9 +164,9 @@ can be seen more as a framework, than a library
 by ARM, the company that developed the chip architecture.
 
 As seen in figure \ref{fig:CMSIS_HAL}, CMSIS
-is defining the data structures and address mapping of all peripherals.
+defines the data structures and address mapping of all peripherals.
 Besides this, it can be used to configure the microcontroller
-oscillators, ad well as providing support for the instrumentation trace during debug sessions \cite{cmsis_reference}.
+oscillators, as well as providing support for the instrumentation trace during debug sessions \cite{cmsis_reference}.
 The HAL library can then use these definitions for implementing its
 utilities. One could easily say that HAL is build on top of CMSIS.
 This can be further understood by looking at the way CMSIS handles
@@ -191,9 +192,9 @@ interface to access the hardware.
 
 \begin{labeling}{Watchdog timer}
 	\item [\textbf{System Clock}] provide the frequency at which the
-	peripherals are synchronised. This can be later on scaled up or down
+	peripherals are synchronised. This can later on be scaled up or down
 	to generate the CPU\textquotesingle s and peripherals\textquotesingle
-	clock.
+	\ \ clock.
 	The system clock relies on an oscillator.
 	There is a multitude of choices, ranging from internal or external
 	oscillators, to high or low speed crystals. In some cases, certain
@@ -202,21 +203,21 @@ interface to access the hardware.
 	\item [\textbf{UART}] used by the system to communicate with the outside
 	world. This can either receive or transmit data to another UART device
 	\item [\textbf{LEDs}] mainly used for debugging. They are
-	are connected to two of the GPIO pins
-	\item [\textbf{Delay}] is a simple function, based on a calling another
+	connected to two of the GPIO pins
+	\item [\textbf{Delay}] is a simple function, based on calling another
 	function from the HAL library. It delays the execution 
-	of the program by a factor of milliseconds. Mainly used in debugging
+	of the program by a factor of milliseconds. Mainly used for debugging
 	\item [\textbf{MPU}] provides the system a way to manage its
 	memory. This is required by the ARINC 653 standard. 
 	Operating systems built on more advanced processors generally use 
 	an MMU
-	\item [\textbf{Timing}] has the purpose of keep track of 
+	\item [\textbf{Timing}] has the purpose of keeping track of 
 	relative time. As the standard specifies, it should be counting 
 	nanoseconds
 	\item [\textbf{Watchdog timer}] necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the
 	program would be restarted from a safe state
-	\item [\textbf{RTC}] has purpose of this is to keep track of 
+	\item [\textbf{RTC}] has the purpose of keeping track of 
 	time accurately. Usually it uses  a 32,768kHz oscillator as a 
 	clock source, which is the standard in the field
 	
@@ -234,10 +235,13 @@ The basic functionalities of a driver are:
 
 \section{OS}
 \subsection{Scheduler}
-A scheduler decides which process should be executed by the processor available,
-according to predefined rules. The ARINC 653 specification defines 2 levels of
-scheduling, a partitions level scheduler and a process level scheduler, and the
-algorithms for both are strictly defined.\\
+Schedulers are used to allow a system to run more processes than there are
+available CPU core. 
+A scheduler decides which process should be executed by the processor available
+at any given time, according to predefined rules. Based on these rules, two more
+more processes may run concurrently, sharing CPU time. The ARINC 653
+specification defines 2 levels of scheduling, a partitions level scheduler and a
+process level scheduler, and the algorithms for both are strictly defined.\\
 
 The partition level scheduler uses a manual scheduling. Time is split into fixed
 length intervals, major frames. Each partition is given one or more windows
@@ -284,8 +288,9 @@ When the exception handling routine exits, and control is handed back to the NVI
 the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
-and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
-
+and hand back control to the NVIC. The NVIC will then reload the remaining
+registers from the stack of the new context. To see a figure of the registers
+and who saves them, see table \ref{tab:registers}\\
 
 \begin{table}[H]
 	\centering
@@ -317,6 +322,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
 \end{table}
+
 As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
 The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
 Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
@@ -427,7 +433,7 @@ executes the necessary functions and returns the result in the general purpose
 CPU registers and the stack.
 
 \section{Schema}
-
+\label{sec:design_schema}
 An ARINC 653 schema specifies the requirements to configure the core module to be compliant with the standard. The schema is to be implemented in a static structured document, which defines *. You may extend the document to include additional features not required by ARINC 653.
 
 \subsection{Schema design}

@@ -568,22 +568,27 @@ timer restarts the program (depicted with the red arrow).
 \label{fig:watchdog}
 \end{figure}
 
+
 The second watchdog timer, is called a window watchdog. In contrast 
 to the independent watchdog, one can provide a time interval in which
 the timer has to be reset. Resetting the timer outside this interval
 (as well as not resetting it in the mentioned time window) would restart
 the program. It uses the system clock, which means that if this fails,
-the watchdog won't be able to reset the system.
+the watchdog won\textquotesingle t be able to reset the system.
 \todo{explain the watchdog in the context of partitions}
+
 \subsection{RTC}
 The real-time clock was implemented as a way to give the system the
-possibility to keep track of time. However, at a later point, we realised
-that ARINC 653 specifies that time keeping should be done in nanoseconds,
+possibility to keep track of time. It was realised at a later point
+that \arinc{} specifies that time keeping should be done in nanoseconds,
 a range that the RTC is not capable of.
-Anyway, the RTC is a nice feature, since it operates in the Stop and Standby
+
+Anyway, the RTC is a good-to-have feature, since it operates in the 
+Stop and Standby modes
 of the microcontroller, and can generate interrupts to wake the system up.
 Its registers contain all the time components, as well as correction for
 leap years.
+
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}

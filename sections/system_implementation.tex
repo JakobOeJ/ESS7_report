@@ -3,22 +3,18 @@
 \newcommand{\excreturn}{EXC\_RETURN}
 
 \chapter{System Implementation}
-{INTRO, to be reviewed}
 This chapter deals with how the system\textquotesingle s functionalities 
 are implemented. Diagrams will be included when necessary, as well as code 
 snippets for the interesting parts of the program. In the end, all these
 will be reviewed and compared with the actual requirements of the standard.
 
-
 \section{Hardware}
-
-As mentioned in the previous chapter, the hardware used for this project 
-is a MINI-M4 board from MikroElectronica. This is build around an
-STM32F415RG microcontroller produced by STMicroelectronics. Besides
-this, the board contains two crystal oscillators, two LEDs, a reset 
-button and the peripherals for supplying power via a microUSB connector.
+The Mini-M4 board is a development board, which means that beside the 
+microcontroller, it also contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for regulating the power it gets from
+a micro-USB connector.
 Some of the GPIOs are break through using external pins.
-These pins were soldered to the board, and this was setup on a breadboard
+These pins are soldered to the board, and this is setup on a breadboard
 for practicality, as seen in \ref{fig:photo1}.
 
 \begin{figure}[H]
@@ -38,10 +34,10 @@ for practicality, as seen in \ref{fig:photo1}.
 \label{fig:photo1}
 \end{figure}
 
-For programming and debugging the board the JTAG interface was used.
-This had to be connected to certain pins of the board. In order to get 
-feedback from the board, a serial connection was used, which requires two
-more lines to it. The final setup can be seen in the next figures.
+The JTAG connector is wired to the five corresponding pins of the
+board. The serial communication is established with two other wires, going
+to the UART pins of the board.
+The final setup can be seen in the next figures.
 
 \begin{figure}[H]
 \centering
@@ -61,9 +57,11 @@ more lines to it. The final setup can be seen in the next figures.
 \label{fig:photo2}
 \end{figure}
 
-After this, the board was ready to be used in the development process.
+After this, the board is ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
-power for the board, the JTAG interface, and the serial communication.
+one for power for the board, another one for the JTAG interface, and last
+the serial communication. For detailed photos of the process, consult
+Appendix \ref{app:hardware_setup}.
 
 \subsection{JTAG Interface}
 \label{ssec:JTAG_Interface}

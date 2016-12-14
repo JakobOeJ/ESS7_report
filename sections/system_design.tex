@@ -244,10 +244,10 @@ length intervals, major frames. Each partition is given one or more windows
 (i.e. time slices) in each the major frame. Each window has a start time
 relative to the time of the major frame and a duration. Windows are set up by
 the system integrator in the XML file.\cite{arinc_part_scheduling}
-When a partition has run for the duration its' specified, the scheduler will
+When a partition has run for the duration it is specified, the scheduler will
 switch to the partition of the next window. The switch will happen regardless of
-what the partition is doing at that time, so a partition cannot overrun its'
-allotted time and cause other partitions to overrun their deadlines.\\
+what the partition is doing at that time; a partition cannot overrun its
+allotted time and thereby cause other partitions to overrun their deadlines.\\
 
 The process level scheduler is a pre-emptive priority scheduler. All processes 
 will at all time have a priority. Processes can only be scheduled when the

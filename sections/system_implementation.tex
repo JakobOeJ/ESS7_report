@@ -494,12 +494,57 @@ basic timing tasks.
 
 \subsection{MPU}
 
-\subsection{Timing function}
-This driver is used for precise measuring the execution time of different functions. It uses the DWT
- registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
- and Trace support. By using one of these counters, one could follow the system's clock ticks. 
- At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
-In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
+\subsection{Timing}
+This driver is used for accurately measuring the execution time of different
+functions. It uses the DWT (Data Watchpoint  and Trace support)
+internal peripheral registers defined in the ARM-M4 Architecture 
+manual \cite{arm_architecture}.
+Since the HAL library does not define them, there is need to access them
+by their addresses. Their address range can be seen in the upper part of
+figure \ref{fig:memory_model}, while the register used by this driver are 
+shown in listing \ref{list:time_get}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=9,
+	label=list:time_get,
+	caption=\textit{src/drivers/time\_get.c}]
+volatile unsigned int *DWT_CYCCNT  = (unsigned int *)0xE0001004;
+volatile unsigned int *DWT_CONTROL = (unsigned int *)0xE0001000;
+volatile unsigned int *SCB_DEMCR   = (unsigned int *)0xE000EDFC;
+\end{lstlisting}
+\end{minipage}
+
+\textit{DWT\_CYCCNT} is a 32 bit counter, that when enabled counts
+the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
+as DWT\_CTRL in the ARM documentation} is the control register for the
+Data Watchpoint and Trace support. By setting its least significant bit,
+the cycle counter mentioned above is enabled. The last register,
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
+
+At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
+incremented every 5.45 nanoseconds. In order to convert the number 
+of cycles into time, the function in listing \ref{list:time_convert}
+was used.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=33,
+	label=list:time_convert,
+	caption=\textit{src/drivers/time\_get.c}]
+int64_t convert_cycles_to_time(uint32_t cycles)
+{
+    return (int64_t)((cycles / 168) * 1000);
+}
+\end{lstlisting}
+\end{minipage}
+
+The returned value is a 64 bit signed integer, as the \arinc{} standard 
+specifies \cite{arinc_time}. the only problem with this, is that while 
+the count is done in the range of nanoseconds, the sampling frequency
+gives a 5,45 nanosecond step. In order to fully comply with the standard,
+we would need a timer running at at least 1 GHz\footnote{Produces 1
+ nanosecond steps}.
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg

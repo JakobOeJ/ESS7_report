@@ -3,22 +3,18 @@
 \newcommand{\excreturn}{EXC\_RETURN}
 
 \chapter{System Implementation}
-{INTRO, to be reviewed}
 This chapter deals with how the system\textquotesingle s functionalities 
 are implemented. Diagrams will be included when necessary, as well as code 
 snippets for the interesting parts of the program. In the end, all these
 will be reviewed and compared with the actual requirements of the standard.
 
-
 \section{Hardware}
-
-As mentioned in the previous chapter, the hardware used for this project 
-is a MINI-M4 board from MikroElectronica. This is build around an
-STM32F415RG microcontroller produced by STMicroelectronics. Besides
-this, the board contains two crystal oscillators, two LEDs, a reset 
-button and the peripherals for supplying power via a microUSB connector.
+The Mini-M4 board is a development board, which means that beside the 
+microcontroller, it also contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for regulating the power it gets from
+a micro-USB connector.
 Some of the GPIOs are break through using external pins.
-These pins were soldered to the board, and this was setup on a breadboard
+These pins are soldered to the board, and this is setup on a breadboard
 for practicality, as seen in \ref{fig:photo1}.
 
 \begin{figure}[H]
@@ -38,10 +34,10 @@ for practicality, as seen in \ref{fig:photo1}.
 \label{fig:photo1}
 \end{figure}
 
-For programming and debugging the board the JTAG interface was used.
-This had to be connected to certain pins of the board. In order to get 
-feedback from the board, a serial connection was used, which requires two
-more lines to it. The final setup can be seen in the next figures.
+The JTAG connector is wired to the five corresponding pins of the
+board. The serial communication is established with two other wires, going
+to the UART pins of the board.
+The final setup can be seen in the next figures.
 
 \begin{figure}[H]
 \centering
@@ -61,9 +57,11 @@ more lines to it. The final setup can be seen in the next figures.
 \label{fig:photo2}
 \end{figure}
 
-After this, the board was ready to be used in the development process.
+After this, the board is ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
-power for the board, the JTAG interface, and the serial communication.
+one for power for the board, another one for the JTAG interface, and last
+the serial communication. For detailed photos of the process, consult
+Appendix \ref{app:hardware_setup}.
 
 \subsection{JTAG Interface}
 \label{ssec:JTAG_Interface}
@@ -97,13 +95,12 @@ JTAG specific:
 \end{labeling}
 
 The tags on the lower part of the figure represent the pins of the 
-microcontroller, where 'P' stand for port, 'A' or 'B' for the port
-identity (PORTA) and the number is the individual GPIO needed.
+microcontroller, where $P$ stand for port, $A$ or $B$ for the port
+identity ($PORTA$ or $PORTB$) and the number is the individual GPIO needed.
 
-A driver is needed to be installed on Windows machines, in order to
-recognize and program using STLINK/v2.
-\todo{What about LINUX} 
-
+A driver \footnote{STSW-LINK009 v1.02} 
+is needed to be installed on Windows machines, in order to
+recognize and program using ST-LINK/v2.
 
 \section{Source Structure}
 The following sections describes different aspects the software used and
@@ -412,10 +409,10 @@ be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
 
 \section{Drivers}
 
-Setting up the drivers took place in the beginning of the project. Their
+Setting up the drivers took place in the early phases of the project. Their
 functionality rely a lot on the HAL library. Even though the process is
 quite straightforward, there is some learning involved in how to use the
-library. The library\textquotesingle s documentation is a good starting
+HAL library. The library\textquotesingle s documentation is a good starting
 point, and the things it lacks can be found in the 
 microcontroller\textquotesingle s datasheet.
 
@@ -423,7 +420,7 @@ microcontroller\textquotesingle s datasheet.
 The initial setting for the clock is that it uses the internal oscillator,
 which runs at 16MHz. In order to get the maximum speed supported by the
 CPU, the board needs to be configured to multiply this frequency.
-However, instead of using the internal oscillator which can be imprecise, 
+However, instead of using the internal oscillator, which can be imprecise, 
 the Mini-M4 
 board has an external oscillator\footnote{Featuring less wander (slow
  variations due to temperature and aging) and jitter(fast variations)} 
@@ -447,21 +444,22 @@ present on the board or inside the microcontroller:
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{system_clock.pdf}
-\caption{An advanced system overview}
+\caption{System clock overview \cite{reference_manual_74}}
 \label{fig:system_clock}
 \end{figure}
 
 The lower part of figure \ref{fig:system_clock} shows that the frequency
 of the HSE is multiplied by a PLL(Phase-locked loop) system, before it gets
-to the clock selection block. After this, the frequency is supplied to
-the CPU bus, and scaled down for the peripheral busses. The latter are
-divided into low and high speed domains as:
+to the clock selection block. This is the frequency supplied to
+the CPU and memory through the AHB bus, and scaled down for the peripheral busses. These busses are divided into low and high speed domains as:
 
 \begin{labeling}{APB1 domain}
+	\item[\textbf{AHB}]
+		Advanced High-speed bus. This runs at 168 MHz, and connects
+		mainly the CPU, memory and the GPIOs.
 	\item[\textbf{APB1 domain}]
 		low-speed domain, running at 42 MHz. This includes among other 
-		peripherals the UART.
-		
+		peripherals the UART.		
 	\item[\textbf{APB2 domain}]
 		high-speed domain, running at 84 MHz.
 	\end{labeling}
@@ -475,56 +473,123 @@ It is also possible to communicate with the UART using a screen, getting some im
 \subsection{LEDs}
 The LEDs are used mainly for debugging. There are three LEDs on the 
 Mini-M4 board, two of them being programmable. Since they are connected
-to two pins of a GPIO port, these needs to be initialised. Afterwards, 
+to two pins of a GPIO ports, these pins needs to be initialised first.
+Afterwards, 
 by using the functions defined in the HAL library, these pins can be 
-turned high, low or toggled.
+turned high, low or toggled, thus changing the state of the LEDs.
 
 \subsection{Delay}
+\label{ssec:delay}
 The delay function is also used for debugging, giving the developers the 
-chance of seeing "when things are happening". This is because most of the
-program instructions are executed so fast, that the normal human would
-consider them as instant. 
-Delay is defined in the HAL library, and relies on the Systick API.
-Systick is a timer is the default time base, which has a scale of 1
-milisecond. This means that every milisecond, Systick generates an
-interrupt to increase the value of its timer.
+chance of seeing \textit{when things are happening}. This is because most of the
+program instructions are executed so fast, that the they appear to be
+instant to humans. 
+Delay is defined in the HAL library, and relies on the SysTick API.
+
+SysTick is a timer\footnote{Fed with the AHB clock divided by 8} that can 
+be used to generate the main system event clock.
+In fact, that is exactly how the HAL library has it implemented. Its
+default time base is 1 millisecond. This means that every millisecond,
+SysTick generates an interrupt to look after sensor values, scheduling or
+basic timing tasks.
 
 \subsection{MPU}
 
-\subsection{Timing function}
-This driver is used for precise measuring the execution time of different functions. It uses the DWT
- registers defined in the ARM-M4 Architecture manual. These are responsible for Data Watchpoint 
- and Trace support. By using one of these counters, one could follow the system's clock ticks. 
- At a core frequency of 168 MHz, each tick would take 5.45 nanoseconds.\\
-In order to do this, the DWT\textunderscore CONTROL register is set to a value that allows the system's clock to be sent to DWT\textunderscore CYCCNT. After this, the time can easily be tracked by converting the value of DWT\textunderscore CYCCNT.
+\subsection{Timing}
+This driver is used for accurately measuring the execution time of different
+functions. It uses the DWT (Data Watchpoint  and Trace support)
+internal peripheral registers defined in the ARM-M4 Architecture 
+manual \cite{arm_architecture}.
+Since the HAL library does not define them, there is need to access them
+by their addresses. Their address range can be seen in the upper part of
+figure \ref{fig:memory_model}, while the register used by this driver are 
+shown in listing \ref{list:time_get}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=9,
+	label=list:time_get,
+	caption=\textit{src/drivers/time\_get.c}]
+volatile unsigned int *DWT_CYCCNT  = (unsigned int *)0xE0001004;
+volatile unsigned int *DWT_CONTROL = (unsigned int *)0xE0001000;
+volatile unsigned int *SCB_DEMCR   = (unsigned int *)0xE000EDFC;
+\end{lstlisting}
+\end{minipage}
+
+\textit{DWT\_CYCCNT} is a 32 bit counter, that when enabled counts
+the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
+as DWT\_CTRL in the ARM documentation} is the control register for the
+Data Watchpoint and Trace support. By setting its least significant bit,
+the cycle counter mentioned above is enabled. The last register,
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
+
+At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
+incremented every 5.45 nanoseconds. In order to convert the number 
+of cycles into time, the function in listing \ref{list:time_convert}
+was used.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=33,
+	label=list:time_convert,
+	caption=\textit{src/drivers/time\_get.c}]
+int64_t convert_cycles_to_time(uint32_t cycles)
+{
+    return (int64_t)((cycles / 168) * 1000);
+}
+\end{lstlisting}
+\end{minipage}
+
+The returned value is a 64 bit signed integer, as the \arinc{} standard 
+specifies \cite{arinc_time}. the only problem with this, is that while 
+the count is done in the range of nanoseconds, the sampling frequency
+gives a 5,45 nanosecond step. In order to fully comply with the standard,
+we would need a timer running at at least 1 GHz\footnote{Produces 1
+ nanosecond steps}.
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
-The STM32 MCU has two watchdog timers ready to reset the program, in case of an error.
-The first one, is the independent watchdog timer, based on an independent oscillator (32 kHz).
-When initialised, the watchdog timer receives a value, from which it starts counting down, using
-the ticks from the crystal. In the meanwhile, the program has to reset this count, by refreshing 
-the timer to the same value it used before. If this fails to happen, when the count reaches zero, 
-the watchdog timer will react by restarting the board.
-\\
-The second watchdog timer, is called a window watchdog. In contrast to the independent watchdog, 
-one can provide a time interval in which the timer has to be reset. Resetting the timer outside this interval(as well as not resetting it in the mentioned time window) would restart the program. It uses 
-the system clock, which means that if this fails, the watchdog won't be able to reset the system.
+The microcontroller has two watchdog timers ready to reset the program, in case of an error.
+The first one, the independent watchdog timer is based on an oscillator
+\footnote{LSI running at 32 kHz, seen in the upper part of
+ \ref{fig:system_clock}}
+that can only be used by it. This way,
+the the watchdog could catch a fault in the program, even if the other
+oscillators fail. Its basic functionality is represented in figure
+\ref{fig:watchdog}. After the program starts running, a function is called
+that initialises and starts the watchdog timer. Here, a period of time is defined, in which the program has to refresh (reload) the watchdog timer.
+If this fails to happen, either by mistake, the developer forgetting to 
+call the refresh function, or by a software/hardware fault, the watchdog 
+timer restarts the program (depicted with the red arrow).
 
-\subsubsection{Specifics}
-The driver for the independent watchdog works by setting a prescaler on the 32kHz crystal to match 
-the time requirements of the program(multiples of milliseconds). The watchdog is then initialised 
-and started using the HAL library specific functions. \\
-When the program is run, the watchdog restarts it after the interval of time set in the initialisation
-phase runs out. In order to have the program running as usual, the refresh function has to be called,
- at intervals shorter than the initial time span.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{watchdog.pdf}
+\captionof{figure}{Basic watchdog timer functionality}
+\label{fig:watchdog}
+\end{figure}
+
+
+The second watchdog timer, is called a window watchdog. In contrast 
+to the independent watchdog, one can provide a time interval in which
+the timer has to be reset. Resetting the timer outside this interval
+(as well as not resetting it in the mentioned time window) would restart
+the program. It uses the system clock, which means that if this fails,
+the watchdog won\textquotesingle t be able to reset the system.
+\todo{explain the watchdog in the context of partitions}
 
 \subsection{RTC}
 The real-time clock was implemented as a way to give the system the
-possibility to keep track of time. However, at a later point, we realised
-that ARINC 653 specifies that time keeping should be done in nanoseconds,
+possibility to keep track of time. It was realised at a later point
+that \arinc{} specifies that time keeping should be done in nanoseconds,
 a range that the RTC is not capable of.
-Anyway, the RTC is 
+
+Anyway, the RTC is a good-to-have feature, since it operates in the 
+Stop and Standby modes
+of the microcontroller, and can generate interrupts to wake the system up.
+Its registers contain all the time components, as well as correction for
+leap years.
+
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}
@@ -616,15 +681,25 @@ identifier.
 \section{XML configuration file}
 \todo{Write about the manual writing of the XML config file?}
 
-\subsection{XML Parser}
+\section{XML Parser}
 
-The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to generate C structs from the XML.
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
 \todo{reference for xmltodict}
-Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure with lists.
-The generation of the structs is handled as two seperate file writes. xml\_data.h is mostly statically defined as it contains the declarations for the C structs. The majority of the content of that file is read and re-written into the file from another file called xml\_data\_template.h. The rest of the file is written dynamically from the configuration data as references to its content.
-xml\_data.c is fully dynamic and generated from the elements in the XML. The four major elements (partitions, partition\_memory, module\_schedule and connection\_table) are looped through, populating formatted strings, and then are written to the file.
+Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
+The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
 
-\subsection{C Structures}
+\subsection{xml\_data.h}
+
+xml\_data.h is \todo{expand on xmldata.h file}.
+
+\subsection{xml\_data.c}
+
+xml\_data.c is mostly dynamic and generated from the elements in the XML. 
+The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
+The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+
+\section{C Structures}
 
 \section{OS}
 
@@ -633,10 +708,59 @@ xml\_data.c is fully dynamic and generated from the elements in the XML. The fou
 \subsubsection{MPU Setup}
 \subsubsection{Partition Setup}
 \subsubsection{Process Setup}
+\subsubsection{Building the schedule}
+\label{sssec:build_schedule}
+
 
 \subsection{Scheduling}
+The ARINC 653 specification defines two levels of schedulers and the rules by
+which these shcedulers decide which processes may execute at any given time.
+There are two different kinds of rescheduling, temporal rescheduling and event
+driven rescheduling. Partitions are exclusively rescheduled because of time, 
+whereas processes may be rescheduled because of both time and events.
+As for temporal scheduling, the ARINC 653 specification does not explicitly 
+specify a minimum or maximum time resolution for scheduling, though it does
+imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
+
+For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
+also led to the choice of a time resolution of 1 millisecond. Scheduling is
+never disabled; every millisecond the scheduler will be invoked and check which
+process of which partition should run next. Therefore, increasing the resolution
+of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
+would spend a greater amount of time handling scheduling compared to executing
+user code.
+
+Oppositly, decreasing the resolution would limit the places where \OSname\ is
+viable, as certain tasks require a certain minimum resolution. For example,
+assuming the system is continuously moving, a sorting robot has only a certain
+time to identify objects before they pass by its sensors. If time resolution of 
+the underlying operating system of such a robot is too low, object may pass the
+robots sensors before the code checking the sensors are rescheduled.\\
+
+Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
+timed waits, this is not supported in \OSname . Given the maximum frequency of
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
 
 \subsubsection{SysTick}
+The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
+Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
+specification. Other timers are implementation specific; the vendor decides
+which timers to add to a chip. Therefore, between two different boards, there
+may be a different number of timers, and timers may have a different resolution.
+This makes it more difficult to port code from one board to another. The SysTick
+timer however, is garantued to be 24-bit on any board that implements it. In the
+Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
+and M7; any code written for these can assume portability.\\
+
+The clock source for the SysTick timer is the CPU clock, optionally divided by
+eight. The reset value of the SysTick timer is programmable. This makes it
+possible for software to program how often this timer wraps.
+Unless otherwise specified, this timer operates in polling mode; software has to
+poll for wraps, but it is possible to program the SysTick timer to trigger an 
+interrupt upon wrapping.
+
+By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
+and to trigger an interrupt upon wrapping. 
 
 \subsubsection{Context Switching}
 There are multiple different states the processor can be in, when a context 
@@ -688,9 +812,30 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
     \label{fig:scheduling_sequence_diagram}
 \end{figure}
 \todo{Make the text larger}
-\subsubsection{windows}
+\subsubsection{Windows}
+Windows are the abstract concept used by system intregrators to schedule
+paritions in \arinc . A window consists of a start time, relative to the major
+frame, and a duration. These windows are specified by the system integrator in
+XML schema (for more, see \ref{sec:design_schema}).\\
+Time is allocated to partitions according to the windows specified in the XML
+schema, but windows do not have to be contiguous; there may be unused time
+between the end of one window and the start of the next. In that case, this time
+is considered to be an implicit idle period.
 
 \subsubsection{Partition Scheduler}
+During the initialisation of the system, a static schedule is build based on the
+windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+
+The partition scheduler is supposed to keep track of the position within a major
+frame, and based on the position, figure out which window that corrosponds to,
+and then schedule the partition of that window.
+
+The scheduler keeps track of the position within a major frame with the HAL
+tick. This tick is incremented every millisecond. This is the same tick used by
+delay function (see \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulu divided by the length of a major frame in
+milliseconds.
+
 
 \subsubsection{Process scheduler}
 
@@ -716,6 +861,7 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
 \subsection{Processes}
 
 \subsection{idle\_sys}
+\label{ssec:idle_part}
 
 \subsection{stdio\_sys}
 

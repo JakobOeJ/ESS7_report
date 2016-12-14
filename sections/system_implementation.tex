@@ -684,6 +684,9 @@ xml\_data.c is fully dynamic and generated from the elements in the XML. The fou
 \subsubsection{MPU Setup}
 \subsubsection{Partition Setup}
 \subsubsection{Process Setup}
+\subsubsection{Building the schedule}
+\label{sssec:build_schedule}
+
 
 \subsection{Scheduling}
 The ARINC 653 specification defines two levels of schedulers and the rules by
@@ -797,7 +800,9 @@ is considered to be an implicit idle period.
 
 \subsubsection{Partition Scheduler}
 During the initialisation of the system, a static schedule is build based on the
-windows specified in the XML schema. In this build phase 
+windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+
+
 
 \subsubsection{Process scheduler}
 

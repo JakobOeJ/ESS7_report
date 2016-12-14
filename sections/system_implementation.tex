@@ -675,15 +675,25 @@ identifier.
 \section{XML configuration file}
 \todo{Write about the manual writing of the XML config file?}
 
-\subsection{XML Parser}
+\section{XML Parser}
 
-The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to generate C structs from the XML.
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
 \todo{reference for xmltodict}
-Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure with lists.
-The generation of the structs is handled as two seperate file writes. xml\_data.h is mostly statically defined as it contains the declarations for the C structs. The majority of the content of that file is read and re-written into the file from another file called xml\_data\_template.h. The rest of the file is written dynamically from the configuration data as references to its content.
-xml\_data.c is fully dynamic and generated from the elements in the XML. The four major elements (partitions, partition\_memory, module\_schedule and connection\_table) are looped through, populating formatted strings, and then are written to the file.
+Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
+The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
 
-\subsection{C Structures}
+\subsection{xml\_data.h}
+
+xml\_data.h is \todo{expand on xmldata.h file}.
+
+\subsection{xml\_data.c}
+
+xml\_data.c is mostly dynamic and generated from the elements in the XML. 
+The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
+The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+
+\section{C Structures}
 
 \section{OS}
 
@@ -692,10 +702,59 @@ xml\_data.c is fully dynamic and generated from the elements in the XML. The fou
 \subsubsection{MPU Setup}
 \subsubsection{Partition Setup}
 \subsubsection{Process Setup}
+\subsubsection{Building the schedule}
+\label{sssec:build_schedule}
+
 
 \subsection{Scheduling}
+The ARINC 653 specification defines two levels of schedulers and the rules by
+which these shcedulers decide which processes may execute at any given time.
+There are two different kinds of rescheduling, temporal rescheduling and event
+driven rescheduling. Partitions are exclusively rescheduled because of time, 
+whereas processes may be rescheduled because of both time and events.
+As for temporal scheduling, the ARINC 653 specification does not explicitly 
+specify a minimum or maximum time resolution for scheduling, though it does
+imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
+
+For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
+also led to the choice of a time resolution of 1 millisecond. Scheduling is
+never disabled; every millisecond the scheduler will be invoked and check which
+process of which partition should run next. Therefore, increasing the resolution
+of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
+would spend a greater amount of time handling scheduling compared to executing
+user code.
+
+Oppositly, decreasing the resolution would limit the places where \OSname\ is
+viable, as certain tasks require a certain minimum resolution. For example,
+assuming the system is continuously moving, a sorting robot has only a certain
+time to identify objects before they pass by its sensors. If time resolution of 
+the underlying operating system of such a robot is too low, object may pass the
+robots sensors before the code checking the sensors are rescheduled.\\
+
+Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
+timed waits, this is not supported in \OSname . Given the maximum frequency of
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
 
 \subsubsection{SysTick}
+The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
+Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
+specification. Other timers are implementation specific; the vendor decides
+which timers to add to a chip. Therefore, between two different boards, there
+may be a different number of timers, and timers may have a different resolution.
+This makes it more difficult to port code from one board to another. The SysTick
+timer however, is garantued to be 24-bit on any board that implements it. In the
+Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
+and M7; any code written for these can assume portability.\\
+
+The clock source for the SysTick timer is the CPU clock, optionally divided by
+eight. The reset value of the SysTick timer is programmable. This makes it
+possible for software to program how often this timer wraps.
+Unless otherwise specified, this timer operates in polling mode; software has to
+poll for wraps, but it is possible to program the SysTick timer to trigger an 
+interrupt upon wrapping.
+
+By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
+and to trigger an interrupt upon wrapping. 
 
 \subsubsection{Context Switching}
 There are multiple different states the processor can be in, when a context 
@@ -747,9 +806,21 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
     \label{fig:scheduling_sequence_diagram}
 \end{figure}
 
-\subsubsection{windows}
+\subsubsection{Windows}
+Windows are the abstract concept used by system intregrators to schedule
+paritions in \arinc . A window consists of a start time, relative to the major
+frame, and a duration. These windows are specified by the system integrator in
+XML schema (for more, see \ref{sec:design_schema}).\\
+Time is allocated to partitions according to the windows specified in the XML
+schema, but windows do not have to be contiguous; there may be unused time
+between the end of one window and the start of the next. In that case, this time
+is considered to be an implicit idle period.
 
 \subsubsection{Partition Scheduler}
+During the initialisation of the system, a static schedule is build based on the
+windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+
+
 
 \subsubsection{Process scheduler}
 
@@ -775,6 +846,7 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
 \subsection{Processes}
 
 \subsection{idle\_sys}
+\label{ssec:idle_part}
 
 \subsection{stdio\_sys}
 

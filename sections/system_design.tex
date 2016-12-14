@@ -235,10 +235,13 @@ The basic functionalities of a driver are:
 
 \section{OS}
 \subsection{Scheduler}
-A scheduler decides which process should be executed by the processor available,
-according to predefined rules. The ARINC 653 specification defines 2 levels of
-scheduling, a partitions level scheduler and a process level scheduler, and the
-algorithms for both are strictly defined.\\
+Schedulers are used to allow a system to run more processes than there are
+available CPU core. 
+A scheduler decides which process should be executed by the processor available
+at any given time, according to predefined rules. Based on these rules, two more
+more processes may run concurrently, sharing CPU time. The ARINC 653
+specification defines 2 levels of scheduling, a partitions level scheduler and a
+process level scheduler, and the algorithms for both are strictly defined.\\
 
 The partition level scheduler uses a manual scheduling. Time is split into fixed
 length intervals, major frames. Each partition is given one or more windows
@@ -285,8 +288,9 @@ When the exception handling routine exits, and control is handed back to the NVI
 the NVIC will restore these registers again.\\
 If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory
 pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
-and hand back control to the NVIC. The NVIC will then reload the remaining registers from the stack of the new context. To see a figure of the registers and who saves them, see figure \ref{tab:registers}\\\\
-
+and hand back control to the NVIC. The NVIC will then reload the remaining
+registers from the stack of the new context. To see a figure of the registers
+and who saves them, see table \ref{tab:registers}\\
 
 \begin{table}[H]
 	\centering
@@ -318,6 +322,7 @@ and hand back control to the NVIC. The NVIC will then reload the remaining regis
 	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
 	\label{tab:registers}
 \end{table}
+
 As added complexity, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
 The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
 Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
@@ -428,7 +433,7 @@ executes the necessary functions and returns the result in the general purpose
 CPU registers and the stack.
 
 \section{Schema}
-
+\label{sec:design_schema}
 An ARINC 653 schema specifies the requirements to configure the core module to be compliant with the standard. The schema is to be implemented in a static structured document, which defines *. You may extend the document to include additional features not required by ARINC 653.
 
 \subsection{Schema design}

@@ -755,10 +755,10 @@ timed waits, this is not supported in \OSname . Given the maximum frequency of
 
 Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
 function is called directly by the NVIC when the SysTick timer triggers an
-interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current context,
-then invokes the parition scheduler, followed by the process scheduler. Once the
-process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler} restores the context
-of chosen process and returns control to the NVIC.
+interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current
+context, then invokes the partition scheduler, followed by the process scheduler.
+Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
+restores the context of chosen process and returns control to the NVIC.
 
 \subsubsection{SysTick}
 The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
@@ -832,8 +832,8 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
 \end{figure}
 \todo{Make the text larger}
 \subsubsection{Windows}
-Windows are the abstract concept used by system intregrators to schedule
-paritions in \arinc . A window consists of a start time, relative to the major
+Windows are the abstract concept used by system integrators to schedule
+partitions in \arinc . A window consists of a start time, relative to the major
 frame, and a duration. These windows are specified by the system integrator in
 XML schema (for more, see \ref{sec:design_schema}).\\
 Time is allocated to partitions according to the windows specified in the XML
@@ -843,10 +843,10 @@ is considered to be an implicit idle period.
 
 \subsubsection{Partition Scheduler}
 During the initialisation of the system, a static schedule is build based on the
-windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
 
 The partition scheduler is supposed to keep track of the position within a major
-frame, and based on the position, figure out which window that corrosponds to,
+frame, and based on the position, figure out which window that corresponds to,
 and then schedule the partition of that window.
 
 The scheduler keeps track of the position within a major frame with the HAL
@@ -861,8 +861,27 @@ can be derived from the start time plus the duration, the end time of the
 active window is cached in memory to avoid repeated calculation of the end time.
 
 \subsubsection{Process scheduler}
+Processes are scheduled based on priority and state. Of the processes in the
+READY state, the one with the highest priority should be scheduled. If there are
+two or more processes that are in the READY state and that have the highest
+priority, then the one that transitioned from the DORMANT or the WAITING state
+to the READY state first should be scheduled.
 
+To accomplish this goal, the process scheduler first iterates through all the
+processes of a partition and selects the first available process in the READY
+state. However, the processes are not stored in a ready queue, but are instead
+stored only in the order they were created. Therefore, finding the first ready
+processes does not guarantee that it is also the processes with the highest
+priority. The scheduler therefore continues to iterate through the available
+processes to try to find a process better fulfilling the scheduling rules. For
+each iteration, if a process better fulfills the rules, it is selected as the
+base for further iterations. At the end of the loop, the process in the READY
+state with the highest priority will be selected, and if there are other
+processes with the same priority, the selected process will be the one that
+transitioned from DORMANT or WAITING among them first.
 
+If there are no processes in the READY state, none will be selected, and kernel
+will fault, so each partition must have at least one process in the READY state.
 \subsection{Ports}
 
 \subsubsection{Queuing Ports}
@@ -870,9 +889,6 @@ active window is cached in memory to avoid repeated calculation of the end time.
 
 
 \subsection{APEX}
-
-\subsubsection{Syscalls}
-
 
 \subsection{Error Handling}
 
@@ -885,6 +901,38 @@ active window is cached in memory to avoid repeated calculation of the end time.
 
 \subsection{idle\_sys}
 \label{ssec:idle_part}
+The idle partition, technically named idle\_sys, is an implicitly generated
+partition. This partition is used to fill out potentially empty time between
+different windows (see \ref{ssec:design_scheduling}). This partition should not
+be specified in the XML schema, but will be automatically defined by the XML
+parser. This partition will alway be the partition with index 0. The reason this
+partition is kept visible in the generated xml\_data.c file, is make it more
+transparent to the system integrator what is running during idle periods.\\
+
+The purpose of this partition is to have something to switch to, when nothing
+else is scheduled, while using the minimum amount of resources possible.
+To keep the partition as lightweight as possible, the partition only does a
+\texttt{NOP}-loop. See figure \ref{fig:idle_src} to see the source code of the
+idle partition.\\
+\begin{figure}
+	\begin{lstlisting}
+idle_main:
+	NOP
+	NOP
+	NOP
+	B   idle_main
+	\end{lstlisting}
+	\caption{The entire code, excluding the assembly flags, for the idle partition}
+	\label{fig:idle_src}
+\end{figure}
+The partition code is written in assembly to make sure it uses the least possible
+resources. While executing, the code uses no memory, although it needs a at
+least 32 bytes to store the hardware stacked registers during a context switch.
+The reason code consists of three \texttt{NOP} instructions before a branch, is
+to fill the pipeline\footnote{The pipeline of the Cortex-M4 consists of 3 stages}
+with \texttt{NOP} operations before each branch. It is assumed, although no
+attempt has been made to prove it, that this will allow the CPU to run slightly
+more efficiently.
 
 \subsection{stdio\_sys}
 

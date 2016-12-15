@@ -750,7 +750,14 @@ robots sensors before the code checking the sensors are rescheduled.\\
 
 Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
 timed waits, this is not supported in \OSname . Given the maximum frequency of
-168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.\\
+
+Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
+function is called directly by the NVIC when the SysTick timer triggers an
+interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current context,
+then invokes the parition scheduler, followed by the process scheduler. Once the
+process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler} restores the context
+of chosen process and returns control to the NVIC.
 
 \subsubsection{SysTick}
 The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
@@ -845,8 +852,12 @@ The scheduler keeps track of the position within a major frame with the HAL
 tick. This tick is incremented every millisecond. This is the same tick used by
 delay function (see \ref{ssec:delay}). The position within each major frame is
 derived by the tick count modulu divided by the length of a major frame in
-milliseconds.
-
+milliseconds. If the result of this operation is zero, it is assumed that a new
+major frame has begun. Otherwise, if the position within the major frame is on
+or after the active window closes, the scheduler switches to the next window,
+and thereby schedules the next partition. Although the time at a window closes
+can be derived from the start time plus the duration, the end time of the
+active window is cached in memory to avoid repeated calculation of the end time.
 
 \subsubsection{Process scheduler}
 

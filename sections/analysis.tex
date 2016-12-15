@@ -89,7 +89,15 @@ Processes can be in different states: dormant, waiting, running, ready.
 Their scheduling is done in such a way that the process in the ready state
 with the highest priority  is always executing when the partition is active - priority preemptive.
 \cite{page_20}
+
 \subsection{Time}
+Time management is very important in real-time systems.
+Time is being provided for partitions scheduling and process scheduling,
+as well as for delays deadlines and periodicity.
+Partitions receive time-slots.
+Processes receive time capacity (need to finish before deadline).
+The difference between the two brings the need for having extra APEX calls
+to control ad monitor how processes are behaving.
 
 \subsection{Memory}
 

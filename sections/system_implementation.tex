@@ -603,6 +603,14 @@ of the microcontroller, and can generate interrupts to wake the system up.
 Its registers contain all the time components, as well as correction for
 leap years.
 
+\todo[inline,color=green]
+{The notion of time used here is local to a module and is needed for time
+management within the partitions on one module. If a partition needs 
+a timestamp for
+a reason such as fault reporting, a different time may be used. That time
+ value could
+come from an aircraft clock via normal interpartition communication means
+page 26}
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}

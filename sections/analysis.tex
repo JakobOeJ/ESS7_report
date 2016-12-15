@@ -49,6 +49,7 @@ Applications are partitioned separately into those partitions with their own mem
 These partitions cannot interfere with each other and can not take resources from each other.
 If an error in a partition occurs, it will only crash itself; the remaining partitions will not be affected.
 
+\todo[inline, color=green]{the following could be in the decision}
 The idea is to bring such an operating system in to the wider embedded world.
 To do that in a one semester project, the focus will be on understanding the standard,
 working with embedded systems and implementing the parts of the operating system that are
@@ -56,11 +57,38 @@ essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
 
 \subsection{Modules}
+The term module refers to the aviation concept IMA. Even though a module
+can contain one or more processors, this does not apply to partitions,
+which have to run on one processor. \cite{page_11}
+The processor for ARINC applications should have sufficient processing
+power, should have access to I/O, to memory and time resources. Besides
+this, the processor should be able to isolate a partition, if it fails.
+\cite{page_12}
 
 \subsection{Partitions}
+A partition is a program unit designed to obey space and time limitations
+set by the developer. The way partitions are being run by the processor,
+is in a static, cyclic manner.The do not have any priorities.
+One partition should only have write right to its own space allocated
+(memory). Memory access outside one partition (at least writing) are not allowed.
+\cite{page_13}
+The resources used by the partitions are specified at build time.
+\cite{page_14}
 
 \subsection{Processes}
-
+These are the parts of program running on partitions. One partition
+may contain one or more processes. These may operate concurrently,
+and may operate in a periodic or aperiodic manner. A process's 
+characteristics are: data and stack areas, program counter, stack pointer,
+and maybe priority and deadline. These attributes can either be fixed 
+or variable. The fixed attributes are statically defined, and cannot
+be changed during operation.
+\cite{page_19}
+Process management is done with the use of APEX.
+Processes can be in different states: dormant, waiting, running, ready.
+Their scheduling is done in such a way that the process in the ready state
+with the highest priority  is always executing when the partition is active - priority preemptive.
+\cite{page_20}
 \subsection{Time}
 
 \subsection{Memory}

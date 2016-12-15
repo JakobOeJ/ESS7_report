@@ -1,53 +1,109 @@
 %! tex root = ../master.tex
 
 \chapter{Analysis}\label{chap:analysis}
-This chapter includes information about the standard that is going to be
-implemented and the different pieces of hardware suitable for the purpose.
-After this, the arguments for choosing one platform are presented, as well
-as a quick review over the other existing implementations.
-
-
+This chapter includes information about 
+the standard and how it is going to be implemented.
+Requirements for the standard are analysed, 
+and decisions of hardware, software and 
+existing platforms are considered
+to formulate the project scope.
 
 \section{Real-time systems}
 A real-time system is handling data as it comes in.
 Besides the usual computations needed to be done,
 the time until a result is generated is also important.
-This means that the applications are scheduled in a manner that would allow them 
-to respond quickly and predictable.
-The real-time systems were developed in order to answer the requirements of different fields of work
+This means that the applications are scheduled in a manner 
+that would allow them to respond quickly and predictable.
+Real-time systems are developed in order to answer 
+requirements of different fields of work
 where time is critical: military, automotive or aeronautics.
 
-
 \section{Integrated Modular Avionics}
-In the aeronautic industry, the devices and peripherals used for controlling the machines have to be reliable and operate using the necessary time constraints. Integrated Modular Avionics stands for
-a network of real-time modules deployed for use in the avionics industry.
-The main characteristics of such a network are: modularity and keeping track of the time and criticality levels.
-This implies that the applications running on a system share the resources following a set of well defined rules.
-There are guidelines of how such a system should be designed and implemented,
-as well as standards that specify how space and time should be partitioned.
+In the aeronautic industry, the devices and subsystems used for
+controlling the peripherals have to be reliable and operate using
+fixed time constraints. Integrated Modular Avionics is a term used
+to describe a distributed real-time computer network deployed for
+use in the avionics industry \cite{ima_description}.
+Modularity, keeping track of the time and criticality levels are
+the main characteristics of such a network.
+This implies that the applications running would share the 
+system\textquotesingle s resources following a set of well defined rules.
 
+There are guidelines of how such a system should be designed and
+implemented, as well as standards that specify how space and time 
+should be partitioned.
 
 \section{ARINC 653}
+\arinc{} is a software specification that allows a system to host 
+multiple avionics applications on the same hardware while being able
+to execute them independently. This is achieved by partitioning the
+system \cite{arinc_2}.
 
 \subsection{Overview}
-ARINC 653 is a software specification that can run multiple applications on the same hardware, while providing resources in the context of an IMA system.
 
-ARINC 653 is said to “bring a new quality in real-time systems development“,
-this is achieved through its API (APEX) which interfaces between the OS and the software applications.
+
+\arinc{} is said to \textit{bring a new quality in real-time systems development} \cite{arinc_scarlett},
+this is achieved through its API (called APEX) which interfaces between the OS and the software applications.
 The APEX manages partitions, memory allocation and error handling.
 Applications are partitioned separately into those partitions with their own memory and scheduled processing time slots.
 These partitions cannot interfere with each other and can not take resources from each other.
 If an error in a partition occurs, it will only crash itself; the remaining partitions will not be affected.
 
+\todo[inline, color=green]{the following could be in the decision}
 The idea is to bring such an operating system in to the wider embedded world.
 To do that in a one semester project, the focus will be on understanding the standard,
 working with embedded systems and implementing the parts of the operating system that are
 essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
 
-\subsubsection{Modules}
+\subsection{Modules}
+The term module refers to the aviation concept IMA. Even though a module
+can contain one or more processors, this does not apply to partitions,
+which have to run on one processor. \cite{page_11}
+The processor for ARINC applications should have sufficient processing
+power, should have access to I/O, to memory and time resources. Besides
+this, the processor should be able to isolate a partition, if it fails.
+\cite{page_12}
 
-\subsubsection{Interpatition communication}
+\subsection{Partitions}
+A partition is a program unit designed to obey space and time limitations
+set by the developer. The way partitions are being run by the processor,
+is in a static, cyclic manner.The do not have any priorities.
+One partition should only have write right to its own space allocated
+(memory). Memory access outside one partition (at least writing) are not allowed.
+\cite{page_13}
+The resources used by the partitions are specified at build time.
+\cite{page_14}
+There are also system partitions.
+\subsection{Processes}
+These are the parts of program running on partitions. One partition
+may contain one or more processes. These may operate concurrently,
+and may operate in a periodic or aperiodic manner. A process's 
+characteristics are: data and stack areas, program counter, stack pointer,
+and maybe priority and deadline. These attributes can either be fixed 
+or variable. The fixed attributes are statically defined, and cannot
+be changed during operation.
+\cite{page_19}
+Process management is done with the use of APEX.
+Processes can be in different states: dormant, waiting, running, ready.
+Their scheduling is done in such a way that the process in the ready state
+with the highest priority  is always executing when the partition is active - priority preemptive.
+\cite{page_20}
+
+\subsection{Time}
+Time management is very important in real-time systems.
+Time is being provided for partitions scheduling and process scheduling,
+as well as for delays deadlines and periodicity.
+Partitions receive time-slots.
+Processes receive time capacity (need to finish before deadline).
+The difference between the two brings the need for having extra APEX calls
+to control ad monitor how processes are behaving.
+\cite{page_25}
+\subsection{Memory}
+Memory spaces are defined during the system configuration. These cannot
+be changed later on.
+
+\subsection{Interpatition communication}
 The \arinc\ specification defines a way for different partitions to communicate with one another.
 This communication is based on message passing. To transfer messages between partitions the \arinc\ standard
 defines the concepts of channels and ports.
@@ -81,9 +137,25 @@ It is therefore impossible for application code to define new ports at runtime.
 For a process to access a port, an object representation must be created. This happens through an APEX system call.
 The location in memory of port buffers is not specified in the \arinc\ specification.
 
-\subsubsection{Intrapartition communication}
+\subsection{Intrapartition communication}
+Allows processes in a partition to communicate to each other. This way
+the communication is done more efficiently than having  a using a 
+global message passing system.
+Can be done by implementing buffers and blackboards, or semaphores and 
+events.
+
+\subsection{Health Monitor}
+Has the purpose of monitoring and reporting hardware and software faults
+and failures.
+
+\subsection{System configuration}
+
+\subsection{Decision}
+\todo[inline,color=green] {Here we write what parts of ARINC do we want to
+implement}
 
 \section{Hardware}
+
 \subsection{The rise of embedded devices}
 \todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
 In the world of embedded computing the computing platforms varies a lot more,
@@ -208,11 +280,13 @@ on how to setup and Linux based tool-chain. The manufacturer of the STM32
 provides sample code implementations as well as hardware abstraction
 layer libraries, things that would give a head start on the project.
 \\\\
+
+\subsection{Decision}
 This leads to the decision of using Mini-M4 for STM32 as the hardware
 for \OSname{}. For the rest of the document this would be referred as 
 "the board", while the STM32F415RG unit as "the microcontroller" or
 "the chip".
-\todo{The choice: to be reviewed - are the quotation marks right?}
+\todo[inline, color=green] {Make sure this fits in the Hardware section}
 
 \subsection{Communication with the board}
 In order to get started with the development of the OS, there is need for
@@ -301,7 +375,8 @@ Called VxWorks 653, is it marketed as ``The Industry's Leading Operating System 
 It contains an ARINC 653 compliant platform and compliance with DO-178C to level A, DO-254 and DO-297.
 Capable of full virtualization on a shared multi-core processor.
 
-\section{Decision}
+\subsection{Decision}
+\todo[inline,color=green] {why we did not use any of the Arinc implementations mentioned above?}
 
 \section{Programming language choice}
-\todo[inline, color=green]{Ada / c / C++}
+\todo[inline, color=green]{Ada / c / C++ - Is this placed right?}

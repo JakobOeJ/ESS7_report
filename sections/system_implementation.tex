@@ -21,7 +21,7 @@ for practicality, as seen in \ref{fig:photo1}.
 \begin{subfigure}{0.5\textwidth}
   \centering
   \includegraphics[width=3cm]{hardware/board_not_soldered}
-  \caption{MINI-M4 before soldernig}
+  \caption{MINI-M4 before soldering}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
@@ -74,7 +74,7 @@ corresponding pins on the microcontroller\textquotesingle s JTAG port.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{jtag_interface.pdf}
-\captionof{figure}{The connection of the JTAG interface}
+\caption{The connection of the JTAG interface}
 \label{fig:jtag_interface}
 \end{figure}
 
@@ -305,10 +305,10 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.\\
 
-Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linkerscript.
+Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linker script.
 While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
 \texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
-In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memmory
+In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memory
 and \texttt{LENGTH} denotes the size of the section.\\
 
 \begin{minipage}{\linewidth}
@@ -332,7 +332,7 @@ MEMORY
 
 By default all symbols and associated memory goes into the \texttt{OS},
 Only when a partition is specifically defined to a location in the linker-script,
-can it be seperated from the OS.
+can it be separated from the OS.
 Listing \ref{linker_example} shows how to allocate a specific partition.
 The linker-script uses the fact that every partition is compiled as a library,
 and the library name is added in the listed format under its corresponding label
@@ -354,7 +354,7 @@ It does not, however, separate the statically allocated variables and structures
 \end{lstlisting}
 \end{minipage}
 
-Simular to listing \ref{linker_example},
+Similar to listing \ref{linker_example},
 the other partitions compiled libraries are confined to a space in flash,
 as defined by their labels in \ref{linker_mem_overview}.
 
@@ -465,10 +465,15 @@ the CPU and memory through the AHB bus, and scaled down for the peripheral busse
 	\end{labeling}
 
 \subsection{UART}
-
-\todo[inline,color=green]{
-The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
-It is also possible to communicate with the UART using a screen, getting some important output for debugging.}
+The UART allows the transmission and reception of the information between the STM32 and the outside. The 
+communication is made by one character at a time. The transmission is activated by the interrupts and it 
+can happen both ways simultaneously, or one way at a time. An UART has a clock generator, with 4 levels of 
+\todo{Fractional baud rate generator system}
+frequence, input and output registers, transmit/receive control, read/write control logic, and transmit/
+receiver buffers. It is also possible to communicate with the UART using a screen, as an important output 
+for debugging. The function used allows the transmission or reception of one character of a time, of the 
+message sent by the printf function. The UART setted was the UART4 of the STM32 connecting the wires to 
+the PIN's 10 and 11.
 
 \subsection{LEDs}
 The LEDs are used mainly for debugging. There are three LEDs on the 
@@ -479,6 +484,7 @@ by using the functions defined in the HAL library, these pins can be
 turned high, low or toggled, thus changing the state of the LEDs.
 
 \subsection{Delay}
+\label{ssec:delay}
 The delay function is also used for debugging, giving the developers the 
 chance of seeing \textit{when things are happening}. This is because most of the
 program instructions are executed so fast, that the they appear to be
@@ -493,10 +499,17 @@ SysTick generates an interrupt to look after sensor values, scheduling or
 basic timing tasks.
 
 \subsection{MPU}
+As the biggest partitions are less likely to perfectly fit in a region, since the regions are power of 2, 
+increasing the size much faster the bigger the power gets, those are the first ones to be allocated. Then, 
+if there are empty subregions, we try to fit in the other partitions in the best combination possible, 
+trying different possibilities. In case that a certain partition doesn't full fill the last subregion we 
+update the partition size with that free space, so that empty space can be used by the partition too, 
+instead of being always empty. That can also help to avoid some errors, for example if the initial 
+partition size wasn't enough for the different processes allocated by that partition.
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different
-functions. It uses the DWT (Data Watchpoint  and Trace support)
+functions. It uses the DWT (Data Watchpoint and Trace support)
 internal peripheral registers defined in the ARM-M4 Architecture 
 manual \cite{arm_architecture}.
 Since the HAL library does not define them, there is need to access them
@@ -520,7 +533,8 @@ the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
 as DWT\_CTRL in the ARM documentation} is the control register for the
 Data Watchpoint and Trace support. By setting its least significant bit,
 the cycle counter mentioned above is enabled. The last register,
-\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register,
+and is used to manage exception behaviour under debug.
 
 At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
 incremented every 5.45 nanoseconds. In order to convert the number 
@@ -548,34 +562,55 @@ we would need a timer running at at least 1 GHz\footnote{Produces 1
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
-The STM32 MCU has two watchdog timers ready to reset the program, in case of an error.
-The first one, is the independent watchdog timer, based on an independent oscillator (32 kHz).
-When initialised, the watchdog timer receives a value, from which it starts counting down, using
-the ticks from the crystal. In the meanwhile, the program has to reset this count, by refreshing 
-the timer to the same value it used before. If this fails to happen, when the count reaches zero, 
-the watchdog timer will react by restarting the board.
-\\
-The second watchdog timer, is called a window watchdog. In contrast to the independent watchdog, 
-one can provide a time interval in which the timer has to be reset. Resetting the timer outside this interval(as well as not resetting it in the mentioned time window) would restart the program. It uses 
-the system clock, which means that if this fails, the watchdog won't be able to reset the system.
+The microcontroller has two watchdog timers ready to reset the program, in case of an error.
+The first one, the independent watchdog timer is based on an oscillator
+\footnote{LSI running at 32 kHz, seen in the upper part of
+ \ref{fig:system_clock}}
+that can only be used by it. This way,
+the the watchdog could catch a fault in the program, even if the other
+oscillators fail. Its basic functionality is represented in figure
+\ref{fig:watchdog}. After the program starts running, a function is called
+that initialises and starts the watchdog timer. Here, a period of time is defined, in which the program has to refresh (reload) the watchdog timer.
+If this fails to happen, either by mistake, the developer forgetting to 
+call the refresh function, or by a software/hardware fault, the watchdog 
+timer restarts the program (depicted with the red arrow).
 
-\subsubsection{Specifics}
-The driver for the independent watchdog works by setting a prescaler on the 32kHz crystal to match 
-the time requirements of the program(multiples of milliseconds). The watchdog is then initialised 
-and started using the HAL library specific functions. \\
-When the program is run, the watchdog restarts it after the interval of time set in the initialisation
-phase runs out. In order to have the program running as usual, the refresh function has to be called,
- at intervals shorter than the initial time span.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{watchdog.pdf}
+\captionof{figure}{Basic watchdog timer functionality}
+\label{fig:watchdog}
+\end{figure}
+
+
+The second watchdog timer, is called a window watchdog. In contrast 
+to the independent watchdog, one can provide a time interval in which
+the timer has to be reset. Resetting the timer outside this interval
+(as well as not resetting it in the mentioned time window) would restart
+the program. It uses the system clock, which means that if this fails,
+the watchdog won\textquotesingle t be able to reset the system.
+\todo{explain the watchdog in the context of partitions}
 
 \subsection{RTC}
 The real-time clock was implemented as a way to give the system the
-possibility to keep track of time. However, at a later point, we realised
-that ARINC 653 specifies that time keeping should be done in nanoseconds,
+possibility to keep track of time. It was realised at a later point
+that \arinc{} specifies that time keeping should be done in nanoseconds,
 a range that the RTC is not capable of.
-Anyway, the RTC is a nice feature, since it operates in the Stop and Standby
+
+Anyway, the RTC is a good-to-have feature, since it operates in the 
+Stop and Standby modes
 of the microcontroller, and can generate interrupts to wake the system up.
 Its registers contain all the time components, as well as correction for
 leap years.
+
+\todo[inline,color=green]
+{The notion of time used here is local to a module and is needed for time
+management within the partitions on one module. If a partition needs 
+a timestamp for
+a reason such as fault reporting, a different time may be used. That time
+ value could
+come from an aircraft clock via normal interpartition communication means
+page 26}
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}
@@ -658,7 +693,7 @@ identifier.
 		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
 		\hline
 		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
-		\hline		
+		\hline
 	\end{tabular}
 \caption{A table of the implemented system calls and their identifier.}
 \label{tab:syscalls}
@@ -696,15 +731,16 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 \subsubsection{Process Setup}
 \subsubsection{Building the schedule}
 \label{sssec:build_schedule}
-
+\todo{Write this part}
+\todo{Put a figure of example windows}
 
 \subsection{Scheduling}
 The ARINC 653 specification defines two levels of schedulers and the rules by
 which these shcedulers decide which processes may execute at any given time.
 There are two different kinds of rescheduling, temporal rescheduling and event
-driven rescheduling. Partitions are exclusively rescheduled because of time, 
+driven rescheduling. Partitions are exclusively rescheduled because of time,
 whereas processes may be rescheduled because of both time and events.
-As for temporal scheduling, the ARINC 653 specification does not explicitly 
+As for temporal scheduling, the ARINC 653 specification does not explicitly
 specify a minimum or maximum time resolution for scheduling, though it does
 imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
 
@@ -719,13 +755,20 @@ user code.
 Oppositly, decreasing the resolution would limit the places where \OSname\ is
 viable, as certain tasks require a certain minimum resolution. For example,
 assuming the system is continuously moving, a sorting robot has only a certain
-time to identify objects before they pass by its sensors. If time resolution of 
+time to identify objects before they pass by its sensors. If time resolution of
 the underlying operating system of such a robot is too low, object may pass the
 robots sensors before the code checking the sensors are rescheduled.\\
 
 Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
 timed waits, this is not supported in \OSname . Given the maximum frequency of
-168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.\\
+
+Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
+function is called directly by the NVIC when the SysTick timer triggers an
+interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current
+context, then invokes the partition scheduler, followed by the process scheduler.
+Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
+restores the context of chosen process and returns control to the NVIC.
 
 \subsubsection{SysTick}
 The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
@@ -742,14 +785,14 @@ The clock source for the SysTick timer is the CPU clock, optionally divided by
 eight. The reset value of the SysTick timer is programmable. This makes it
 possible for software to program how often this timer wraps.
 Unless otherwise specified, this timer operates in polling mode; software has to
-poll for wraps, but it is possible to program the SysTick timer to trigger an 
+poll for wraps, but it is possible to program the SysTick timer to trigger an
 interrupt upon wrapping.
 
 By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
-and to trigger an interrupt upon wrapping. 
+and to trigger an interrupt upon wrapping.
 
 \subsubsection{Context Switching}
-There are multiple different states the processor can be in, when a context 
+There are multiple different states the processor can be in, when a context
 switch from one process to another occurs. The state determines whether the
 Master Stack Pointer or the Process Stack Pointer was used by the process,
 and whether the FPU was used by the process or not. Because of this, the context
@@ -765,8 +808,8 @@ The registers are saved entirely on the stack. Therefore, it is important for
 the software to know which
 stack pointer to use when saving the remaining registers. So the very first
 thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
-the \excreturn\ value in the LR register to determine wether to use the 
-Master Stack Pointer or the Process Stack Pointer. The software must then, at 
+the \excreturn\ value in the LR register to determine wether to use the
+Master Stack Pointer or the Process Stack Pointer. The software must then, at
 the address denoted by the stack pointer, save the registers that have yet to be
 saved, and update the stack pointer, before saving both the stack pointer and
 the \excreturn\ value to the process structure elsewhere in memory. This is all
@@ -784,9 +827,9 @@ After the context has been saved, control is handed over to the scheduler, which
 can then decide which process should be running next.\\
 Once all the operations the ISR has completed, the context of the process
 selected by the scheduler must be restored. From this point, the code must once
-again be written in assembly to avoid overwriting a register after it has been 
+again be written in assembly to avoid overwriting a register after it has been
 restored. First, the registers saved by software on the stack must be restored,
-then based on the \excreturn\ value the process interrupted with, it can be 
+then based on the \excreturn\ value the process interrupted with, it can be
 determined to which stack pointer register the new stack pointer must be pushed
 to. Lastly, execution must return to the process by pushing the \excreturn\ value
 to the PC register. The \excreturn\ value pushed to the PC register must be the
@@ -794,13 +837,13 @@ same as that read from the LR register when the process was interrupted.
 Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.} shows the flow when switching contexts.
 \begin{figure}
     \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
-    \caption{This is just a placeholder.}
+    \caption{This is not just a placeholder.}
     \label{fig:scheduling_sequence_diagram}
 \end{figure}
-
+\todo{Make the text larger}
 \subsubsection{Windows}
-Windows are the abstract concept used by system intregrators to schedule
-paritions in \arinc . A window consists of a start time, relative to the major
+Windows are the abstract concept used by system integrators to schedule
+partitions in \arinc . A window consists of a start time, relative to the major
 frame, and a duration. These windows are specified by the system integrator in
 XML schema (for more, see \ref{sec:design_schema}).\\
 Time is allocated to partitions according to the windows specified in the XML
@@ -810,13 +853,45 @@ is considered to be an implicit idle period.
 
 \subsubsection{Partition Scheduler}
 During the initialisation of the system, a static schedule is build based on the
-windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
 
+The partition scheduler is supposed to keep track of the position within a major
+frame, and based on the position, figure out which window that corresponds to,
+and then schedule the partition of that window.
 
+The scheduler keeps track of the position within a major frame with the HAL
+tick. This tick is incremented every millisecond. This is the same tick used by
+delay function (see \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulu divided by the length of a major frame in
+milliseconds. If the result of this operation is zero, it is assumed that a new
+major frame has begun. Otherwise, if the position within the major frame is on
+or after the active window closes, the scheduler switches to the next window,
+and thereby schedules the next partition. Although the time at a window closes
+can be derived from the start time plus the duration, the end time of the
+active window is cached in memory to avoid repeated calculation of the end time.
 
 \subsubsection{Process scheduler}
+Processes are scheduled based on priority and state. Of the processes in the
+READY state, the one with the highest priority should be scheduled. If there are
+two or more processes that are in the READY state and that have the highest
+priority, then the one that transitioned from the DORMANT or the WAITING state
+to the READY state first should be scheduled.
 
+To accomplish this goal, the process scheduler first iterates through all the
+processes of a partition and selects the first available process in the READY
+state. However, the processes are not stored in a ready queue, but are instead
+stored only in the order they were created. Therefore, finding the first ready
+processes does not guarantee that it is also the processes with the highest
+priority. The scheduler therefore continues to iterate through the available
+processes to try to find a process better fulfilling the scheduling rules. For
+each iteration, if a process better fulfills the rules, it is selected as the
+base for further iterations. At the end of the loop, the process in the READY
+state with the highest priority will be selected, and if there are other
+processes with the same priority, the selected process will be the one that
+transitioned from DORMANT or WAITING among them first.
 
+If there are no processes in the READY state, none will be selected, and kernel
+will fault, so each partition must have at least one process in the READY state.
 \subsection{Ports}
 
 \subsubsection{Queuing Ports}
@@ -824,9 +899,6 @@ windows specified in the XML schema. To see more about this, see \ref{sssec:buil
 
 
 \subsection{APEX}
-
-\subsubsection{Syscalls}
-
 
 \subsection{Error Handling}
 
@@ -839,6 +911,38 @@ windows specified in the XML schema. To see more about this, see \ref{sssec:buil
 
 \subsection{idle\_sys}
 \label{ssec:idle_part}
+The idle partition, technically named idle\_sys, is an implicitly generated
+partition. This partition is used to fill out potentially empty time between
+different windows (see \ref{ssec:design_scheduling}). This partition should not
+be specified in the XML schema, but will be automatically defined by the XML
+parser. This partition will alway be the partition with index 0. The reason this
+partition is kept visible in the generated xml\_data.c file, is make it more
+transparent to the system integrator what is running during idle periods.\\
+
+The purpose of this partition is to have something to switch to, when nothing
+else is scheduled, while using the minimum amount of resources possible.
+To keep the partition as lightweight as possible, the partition only does a
+\texttt{NOP}-loop. See figure \ref{fig:idle_src} to see the source code of the
+idle partition.\\
+\begin{figure}
+	\begin{lstlisting}
+idle_main:
+	NOP
+	NOP
+	NOP
+	B   idle_main
+	\end{lstlisting}
+	\caption{The entire code, excluding the assembly flags, for the idle partition}
+	\label{fig:idle_src}
+\end{figure}
+The partition code is written in assembly to make sure it uses the least possible
+resources. While executing, the code uses no memory, although it needs a at
+least 32 bytes to store the hardware stacked registers during a context switch.
+The reason code consists of three \texttt{NOP} instructions before a branch, is
+to fill the pipeline\footnote{The pipeline of the Cortex-M4 consists of 3 stages}
+with \texttt{NOP} operations before each branch. It is assumed, although no
+attempt has been made to prove it, that this will allow the CPU to run slightly
+more efficiently.
 
 \subsection{stdio\_sys}
 

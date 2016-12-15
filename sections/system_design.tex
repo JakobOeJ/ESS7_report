@@ -235,6 +235,7 @@ The basic functionalities of a driver are:
 
 \section{OS}
 \subsection{Scheduler}
+\label{ssec:design_scheduling}
 Schedulers are used to allow a system to run more processes than there are
 available CPU core. 
 A scheduler decides which process should be executed by the processor available
@@ -248,10 +249,10 @@ length intervals, major frames. Each partition is given one or more windows
 (i.e. time slices) in each the major frame. Each window has a start time
 relative to the time of the major frame and a duration. Windows are set up by
 the system integrator in the XML file.\cite{arinc_part_scheduling}
-When a partition has run for the duration its' specified, the scheduler will
+When a partition has run for the duration it is specified, the scheduler will
 switch to the partition of the next window. The switch will happen regardless of
-what the partition is doing at that time, so a partition cannot overrun its'
-allotted time and cause other partitions to overrun their deadlines.\\
+what the partition is doing at that time; a partition cannot overrun its
+allotted time and thereby cause other partitions to overrun their deadlines.\\
 
 The process level scheduler is a pre-emptive priority scheduler. All processes 
 will at all time have a priority. Processes can only be scheduled when the
@@ -409,16 +410,10 @@ Regions can be nested and overlap.
 The behavior when nesting and overlapping is dictated by the priority of the region as shown in figure \ref{fig:stm32_mpu}.
 
 \subsection{memory strategy}
-To allocate all the partitions in the most optimized way we try to have the less spare memory possible. As
- the biggest partitions are less likely to perfectly fit in a region, since the regions are power of 2,
-  the biggest the power the biggest the jumps of size, we start by allocating them. Then, if there are
-   empty subregions, we try to fit in the other partitions in the best combination possible, trying
-    different possibilities with the non allocated ones. In case that a certain partition doesn't full
-    fill the last subregion we update the partition size with that free space, so that empty space can be
-    used by the partition too, instead of being empty always. That can also help to avoid some errors, 
-    for example if the initial partition size wasn't enough.
-
-
+As the memory space is not abundant, there is the need of avoiding wasting or having gaps of unused 
+memory. For that the memory needed by the partitions is optimized by a sorting algorithm in order to fit 
+the most partitions possible in a limited region of memory and by expanding the partition size fullfilling 
+the gaps.
 
 \subsection{System calls}
 To improve security and robustness, many modern operating systems make clear 

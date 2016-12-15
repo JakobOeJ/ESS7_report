@@ -55,9 +55,17 @@ working with embedded systems and implementing the parts of the operating system
 essential for running simple partitions on a single hardware unit.
 \todo[inline]{Correct and expand on the introduction to what the standard is about.}
 
-\subsubsection{Modules}
+\subsection{Modules}
 
-\subsubsection{Interpatition communication}
+\subsection{Partitions}
+
+\subsection{Processes}
+
+\subsection{Time}
+
+\subsection{Memory}
+
+\subsection{Interpatition communication}
 The \arinc\ specification defines a way for different partitions to communicate with one another.
 This communication is based on message passing. To transfer messages between partitions the \arinc\ standard
 defines the concepts of channels and ports.
@@ -91,9 +99,18 @@ It is therefore impossible for application code to define new ports at runtime.
 For a process to access a port, an object representation must be created. This happens through an APEX system call.
 The location in memory of port buffers is not specified in the \arinc\ specification.
 
-\subsubsection{Intrapartition communication}
+\subsection{Intrapartition communication}
+
+\subsection{Health Monitor}
+
+\subsection{System configuration}
+
+\subsection{Decision}
+\todo[inline,color=green] {Here we write what parts of ARINC do we want to
+implement}
 
 \section{Hardware}
+
 \subsection{The rise of embedded devices}
 \todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
 In the world of embedded computing the computing platforms varies a lot more,
@@ -218,11 +235,13 @@ on how to setup and Linux based tool-chain. The manufacturer of the STM32
 provides sample code implementations as well as hardware abstraction
 layer libraries, things that would give a head start on the project.
 \\\\
+
+\subsection{Decision}
 This leads to the decision of using Mini-M4 for STM32 as the hardware
 for \OSname{}. For the rest of the document this would be referred as 
 "the board", while the STM32F415RG unit as "the microcontroller" or
 "the chip".
-\todo{The choice: to be reviewed - are the quotation marks right?}
+\todo[inline, color=green] {Make sure this fits in the Hardware section}
 
 \subsection{Communication with the board}
 In order to get started with the development of the OS, there is need for
@@ -311,7 +330,8 @@ Called VxWorks 653, is it marketed as ``The Industry's Leading Operating System 
 It contains an ARINC 653 compliant platform and compliance with DO-178C to level A, DO-254 and DO-297.
 Capable of full virtualization on a shared multi-core processor.
 
-\section{Decision}
+\subsection{Decision}
+\todo[inline,color=green] {why we did not use any of the Arinc implementations mentioned above?}
 
 \section{Programming language choice}
-\todo[inline, color=green]{Ada / c / C++}
+\todo[inline, color=green]{Ada / c / C++ - Is this placed right?}

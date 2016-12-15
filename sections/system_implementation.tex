@@ -21,7 +21,7 @@ for practicality, as seen in \ref{fig:photo1}.
 \begin{subfigure}{0.5\textwidth}
   \centering
   \includegraphics[width=3cm]{hardware/board_not_soldered}
-  \caption{MINI-M4 before soldernig}
+  \caption{MINI-M4 before soldering}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
@@ -74,7 +74,7 @@ corresponding pins on the microcontroller\textquotesingle s JTAG port.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{jtag_interface.pdf}
-\captionof{figure}{The connection of the JTAG interface}
+\caption{The connection of the JTAG interface}
 \label{fig:jtag_interface}
 \end{figure}
 
@@ -305,10 +305,10 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.\\
 
-Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linkerscript.
+Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linker script.
 While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
 \texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
-In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memmory
+In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memory
 and \texttt{LENGTH} denotes the size of the section.\\
 
 \begin{minipage}{\linewidth}
@@ -332,7 +332,7 @@ MEMORY
 
 By default all symbols and associated memory goes into the \texttt{OS},
 Only when a partition is specifically defined to a location in the linker-script,
-can it be seperated from the OS.
+can it be separated from the OS.
 Listing \ref{linker_example} shows how to allocate a specific partition.
 The linker-script uses the fact that every partition is compiled as a library,
 and the library name is added in the listed format under its corresponding label
@@ -354,7 +354,7 @@ It does not, however, separate the statically allocated variables and structures
 \end{lstlisting}
 \end{minipage}
 
-Simular to listing \ref{linker_example},
+Similar to listing \ref{linker_example},
 the other partitions compiled libraries are confined to a space in flash,
 as defined by their labels in \ref{linker_mem_overview}.
 
@@ -508,7 +508,7 @@ partition size wasn't enough for the different processes allocated by that parti
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different
-functions. It uses the DWT (Data Watchpoint  and Trace support)
+functions. It uses the DWT (Data Watchpoint and Trace support)
 internal peripheral registers defined in the ARM-M4 Architecture 
 manual \cite{arm_architecture}.
 Since the HAL library does not define them, there is need to access them
@@ -532,7 +532,8 @@ the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
 as DWT\_CTRL in the ARM documentation} is the control register for the
 Data Watchpoint and Trace support. By setting its least significant bit,
 the cycle counter mentioned above is enabled. The last register,
-\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register,
+and is used to manage exception behaviour under debug.
 
 At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
 incremented every 5.45 nanoseconds. In order to convert the number 

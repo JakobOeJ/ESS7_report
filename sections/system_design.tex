@@ -375,26 +375,38 @@ to manage permissions across sections of memory,
 ensuring that partitions stay within a dedicated memory space.
 
 \subsection{something about ARINC on memory management}
-The ARINC 653 standard OS, uses a statically allocated memory layout for everything
-that gets compiled.
+The ARINC 653 standard OS, uses a statically allocated memory layout for everything that gets compiled.
 \todo[inline]{reference to standard}
 This means that no memory allocation is permitted at runtime
 outside predefined memory sections.
-This policy ensures a fixed and predictable sandboxing environment, where partitions
-can not restrict other parts of the system by occupying memory resources.
-It also gives the system developer a way to ensure that the system has enough memory
-for all processes to function correctly, given that this amount can be predetermined.
+This policy ensures a fixed and predictable sandboxing environment, where partitions can not restrict other parts of the system by occupying memory resources.
+It also gives the system developer a way to ensure that the system has enough memory for all processes to function correctly, given that this amount can be predetermined.
 
-Memory regions are declared in the XML file, included at compile time, for a list
-of different system features, like individual partitions and communication buffers.
+% This figure should NOT be placed near a pagebreak.
+% Otherwise it fucks everything up!
+% If thats not okay, use normal figure instead.
+\begin{wrapfigure}{R}[-35pt]{0.3\textwidth}
+	\vspace{-20pt}
+	\centering
+	\includegraphics[width=0.3\textwidth]{mpu_overlapping_regions.pdf}
+	\caption{Example of nested and overlapping regions from \cite{stm32_mpu}.}
+	\label{fig:stm32_mpu}
+	\vspace{-40pt}
+\end{wrapfigure}
+
+Memory regions are declared in the XML file, included at compile time, for a list of different system features, like individual partitions and communication buffers.
 All of this information is important for different reasons when setting up the system.
-The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip
-and categorizing and analysing the memory requirements into a single memory strategy to implement in
-\todo[inline]{ref to memory management implementation}.
+The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip and categorizing and analysing the memory requirements into a single memory strategy to implement in \todo[inline]{ref to memory management implementation}.
 
 \subsection{the MPU on a STM32F415}
+The memory protection unit (MPU) can be used to prohibit partitions from corrupting data used by kernel code and other partitions.
+The MPU can protect up to eight memory regions and is unified, meaning that it doesn't distinguish between code sections and data sections.
+Regions can have sub-regions but because the minimum (sub-)region size is the size of a cache line length (32 bytes), sub-regions is only available for regions of at least 256 bytes of size.
+Partitions above this threshold can have eight sub-regions.\\
 
-
+Every region have a fixed priority and is numbered from 0-7, where region 7 has the highest priority.
+Regions can be nested and overlap.
+The behavior when nesting and overlapping is dictated by the priority of the region as shown in figure \ref{fig:stm32_mpu}.
 
 \subsection{memory strategy}
 To allocate all the partitions in the most optimized way we try to have the less spare memory possible. As
@@ -514,4 +526,3 @@ with all the components organised in the corresponding layers.
 
 The following chapter will go through how all these components,
 features and functionalities has been implemented.
-

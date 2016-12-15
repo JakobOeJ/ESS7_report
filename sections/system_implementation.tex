@@ -468,6 +468,7 @@ the CPU and memory through the AHB bus, and scaled down for the peripheral busse
 The UART allows the transmission and reception of the information between the STM32 and the outside. The 
 communication is made by one character at a time. The transmission is activated by the interrupts and it 
 can happen both ways simultaneously, or one way at a time. An UART has a clock generator, with 4 levels of 
+\todo{Fractional baud rate generator system}
 frequence, input and output registers, transmit/receive control, read/write control logic, and transmit/
 receiver buffers. It is also possible to communicate with the UART using a screen, as an important output 
 for debugging. The function used allows the transmission or reception of one character of a time, of the 

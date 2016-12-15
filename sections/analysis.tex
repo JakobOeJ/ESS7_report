@@ -4,36 +4,44 @@
 This chapter includes information about the standard that is going to be
 implemented and the different pieces of hardware suitable for the purpose.
 After this, the arguments for choosing one platform are presented, as well
-as a quick review over the other existing implementations.
-
-
+as a quick review over some of the other existing implementations.
 
 \section{Real-time systems}
 A real-time system is handling data as it comes in.
 Besides the usual computations needed to be done,
 the time until a result is generated is also important.
-This means that the applications are scheduled in a manner that would allow them 
-to respond quickly and predictable.
-The real-time systems were developed in order to answer the requirements of different fields of work
+This means that the applications are scheduled in a manner 
+that would allow them to respond quickly and predictable.
+Real-time systems are developed in order to answer 
+requirements of different fields of work
 where time is critical: military, automotive or aeronautics.
 
-
 \section{Integrated Modular Avionics}
-In the aeronautic industry, the devices and peripherals used for controlling the machines have to be reliable and operate using the necessary time constraints. Integrated Modular Avionics stands for
-a network of real-time modules deployed for use in the avionics industry.
-The main characteristics of such a network are: modularity and keeping track of the time and criticality levels.
-This implies that the applications running on a system share the resources following a set of well defined rules.
-There are guidelines of how such a system should be designed and implemented,
-as well as standards that specify how space and time should be partitioned.
+In the aeronautic industry, the devices and subsystems used for
+controlling the peripherals have to be reliable and operate using
+fixed time constraints. Integrated Modular Avionics is a term used
+to describe a distributed real-time computer network deployed for
+use in the avionics industry \cite{ima_description}.
+Modularity, keeping track of the time and criticality levels are
+the main characteristics of such a network.
+This implies that the applications running would share the 
+system\textquotesingle s resources following a set of well defined rules.
 
+There are guidelines of how such a system should be designed and
+implemented, as well as standards that specify how space and time 
+should be partitioned.
 
 \section{ARINC 653}
+\arinc{} is a software specification that allows a system to host 
+multiple avionics applications on the same hardware while being able
+to execute them independently. This is achieved by partitioning the
+system \cite{arinc_2}.
 
 \subsection{Overview}
-ARINC 653 is a software specification that can run multiple applications on the same hardware, while providing resources in the context of an IMA system.
 
-ARINC 653 is said to “bring a new quality in real-time systems development“,
-this is achieved through its API (APEX) which interfaces between the OS and the software applications.
+
+\arinc{} is said to \textit{bring a new quality in real-time systems development} \cite{arinc_scarlett},
+this is achieved through its API (called APEX) which interfaces between the OS and the software applications.
 The APEX manages partitions, memory allocation and error handling.
 Applications are partitioned separately into those partitions with their own memory and scheduled processing time slots.
 These partitions cannot interfere with each other and can not take resources from each other.

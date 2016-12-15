@@ -683,7 +683,7 @@ identifier.
 		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
 		\hline
 		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
-		\hline		
+		\hline
 	\end{tabular}
 \caption{A table of the implemented system calls and their identifier.}
 \label{tab:syscalls}
@@ -727,9 +727,9 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 The ARINC 653 specification defines two levels of schedulers and the rules by
 which these shcedulers decide which processes may execute at any given time.
 There are two different kinds of rescheduling, temporal rescheduling and event
-driven rescheduling. Partitions are exclusively rescheduled because of time, 
+driven rescheduling. Partitions are exclusively rescheduled because of time,
 whereas processes may be rescheduled because of both time and events.
-As for temporal scheduling, the ARINC 653 specification does not explicitly 
+As for temporal scheduling, the ARINC 653 specification does not explicitly
 specify a minimum or maximum time resolution for scheduling, though it does
 imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
 
@@ -744,7 +744,7 @@ user code.
 Oppositly, decreasing the resolution would limit the places where \OSname\ is
 viable, as certain tasks require a certain minimum resolution. For example,
 assuming the system is continuously moving, a sorting robot has only a certain
-time to identify objects before they pass by its sensors. If time resolution of 
+time to identify objects before they pass by its sensors. If time resolution of
 the underlying operating system of such a robot is too low, object may pass the
 robots sensors before the code checking the sensors are rescheduled.\\
 
@@ -774,14 +774,14 @@ The clock source for the SysTick timer is the CPU clock, optionally divided by
 eight. The reset value of the SysTick timer is programmable. This makes it
 possible for software to program how often this timer wraps.
 Unless otherwise specified, this timer operates in polling mode; software has to
-poll for wraps, but it is possible to program the SysTick timer to trigger an 
+poll for wraps, but it is possible to program the SysTick timer to trigger an
 interrupt upon wrapping.
 
 By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
-and to trigger an interrupt upon wrapping. 
+and to trigger an interrupt upon wrapping.
 
 \subsubsection{Context Switching}
-There are multiple different states the processor can be in, when a context 
+There are multiple different states the processor can be in, when a context
 switch from one process to another occurs. The state determines whether the
 Master Stack Pointer or the Process Stack Pointer was used by the process,
 and whether the FPU was used by the process or not. Because of this, the context
@@ -797,8 +797,8 @@ The registers are saved entirely on the stack. Therefore, it is important for
 the software to know which
 stack pointer to use when saving the remaining registers. So the very first
 thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
-the \excreturn\ value in the LR register to determine wether to use the 
-Master Stack Pointer or the Process Stack Pointer. The software must then, at 
+the \excreturn\ value in the LR register to determine wether to use the
+Master Stack Pointer or the Process Stack Pointer. The software must then, at
 the address denoted by the stack pointer, save the registers that have yet to be
 saved, and update the stack pointer, before saving both the stack pointer and
 the \excreturn\ value to the process structure elsewhere in memory. This is all
@@ -816,9 +816,9 @@ After the context has been saved, control is handed over to the scheduler, which
 can then decide which process should be running next.\\
 Once all the operations the ISR has completed, the context of the process
 selected by the scheduler must be restored. From this point, the code must once
-again be written in assembly to avoid overwriting a register after it has been 
+again be written in assembly to avoid overwriting a register after it has been
 restored. First, the registers saved by software on the stack must be restored,
-then based on the \excreturn\ value the process interrupted with, it can be 
+then based on the \excreturn\ value the process interrupted with, it can be
 determined to which stack pointer register the new stack pointer must be pushed
 to. Lastly, execution must return to the process by pushing the \excreturn\ value
 to the PC register. The \excreturn\ value pushed to the PC register must be the

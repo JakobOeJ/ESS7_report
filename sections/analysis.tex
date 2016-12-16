@@ -382,66 +382,46 @@ Capable of full virtualization on a shared multi-core processor.
 \todo[inline,color=green] {why we did not use any of the Arinc implementations mentioned above?}
 
 \section{Programming language choice}
-
-Programming languages vary significantly, 
-while it may seem difficult to settle 
-on a language due to how many exist, 
-only a few are immediately obvious 
-choices to solve a specific problem.
-\\
-This project aims to implement an OS 
-on an embedded device. 
-The chosen language must be low level 
-in order to communicate and use 
-the hardware with enough detail 
-to setup drivers and provide a platform.
-\\ \todo[inline, color=green]{more reasons}
-The three languages taken in consideration are
-Ada, C and C++.
-\\
-Ada was created during the 70's by the 
-Defense Department of the USA. 
-It was created to reduce the number of 
-languages used between departments. 
-It is a high level language, 
-and with high critical control, 
+The languages Ada, C and C++ are taken in consideration as an embedded language.
+\\\\
+Ada was created during the 70's by the Defense Department of the USA.
+It was created to reduce the number of
+languages used between departments.
+It is a high level language,
+and with high critical control,
 making it safe to be used in airplane software.
-\\
-C is a low level language, 
-also created during the 70's, 
-being one of the most popular languages 
-in the world currently. 
-C allows for precise memory and instruction control, 
-potentially preventing errors or bugs 
-more commonly encountered by language libraries. 
-The majority of this groups members have experience
-with C.
-\\
-C++ is a multi paradigm language mixing C with Java. 
-Created in the 90's, it is more an object oriented
-language than imperative like C. 
-It allows for the creation of classes 
-and inheritance between classes.
-\\
-For the schema, a higher level language can be used
-as there is no real concern for optimisation 
-and memory usage.
-The schema will be translated into a usable format 
-on a separate computing device to the embedded system.
-Once translated it will be compiled and put onto the
+\\\\
+C is a simple low level language especially popular in embedded systems.
+like Ada it was created in the 70's and
+overall among the most popular languages used today.
+C is easy to use in projects favoring memory and instruction control,
+as is the case with ARINC 653,
+where resources are allocated statically
+so dynamic memory allocation can be avoided.
+\todo{do we have a reference on some of this?}
+\\\\
+C++ is a multi paradigm language described by some as ``C with classes''.
+Created in the 90's, it is more an object oriented language than
+the imperative C.
+\todo{Maybe Anders can fill in a little about what C++ can do
+and why that is good/bad?}
+\\\\
+For the passing of the schema, a higher level language can be used
+since it is running on the computer used in development,
+hence there is little concern for optimisation and memory usage.
+The schema will be translated into a usable format to the embedded system.
+Once translated it will be compiled and uploaded to the
 embedded system.
-\\
-Python is an easy high level language to use. 
-There is very little boiler plate code involved, 
-it is not typecast, nore does it need to compile 
-before it is run.
-It has many libraries to interact with structured 
-data types such as XML and JSON.
-\todo[inline, color=green]{expand on this}
+\\\\
+Python is an easy high level language to use.
+There is very little boiler plate code involved,
+it is not typecast, nor does it need to compile
+before it is executed.
+It has many libraries to interact with structured
+data types such as XML and JSON,
+which makes it a well suited option for developing the schema parser.
 
 \subsection{Decision}
-
-C has been chosen to implement the OS because blah.
-\\
-Python has been chosen to implement the schema translator 
-because blah.... duh
+Python is chosen as the language to parse the schema and
+C is chosen for embedded development because of its simplicity and
+the level of experience within the group, with the language.

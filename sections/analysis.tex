@@ -42,39 +42,37 @@ system \cite{arinc_2}.
 \subsection{Overview}
 
 
-\arinc{} is said to \textit{bring a new quality in real-time systems development} \cite{arinc_scarlett},
-this is achieved through its API (called APEX) which interfaces between the OS and the software applications.
+\arinc{} is said to \textit{bring a new quality in real-time systems development} \cite{arinc_scarlett}.
+This is achieved through its API (called APEX) which interfaces between the OS and the software applications.
 The APEX manages partitions, memory allocation and error handling.
-Applications are partitioned separately into those partitions with their own memory and scheduled processing time slots.
+Applications are partitioned separately into these partitions with their own memory and scheduled processing time slots.
 These partitions cannot interfere with each other and can not take resources from each other.
 If an error in a partition occurs, it will only crash itself; the remaining partitions will not be affected.
 
-\todo[inline, color=green]{the following could be in the decision}
-The idea is to bring such an operating system in to the wider embedded world.
-To do that in a one semester project, the focus will be on understanding the standard,
-working with embedded systems and implementing the parts of the operating system that are
-essential for running simple partitions on a single hardware unit.
-\todo[inline]{Correct and expand on the introduction to what the standard is about.}
+The following is a brief description of what the standard specifies.
 
 \subsection{Modules}
-The term module refers to the aviation concept IMA. Even though a module
-can contain one or more processors, this does not apply to partitions,
+The term module refers to the aviation concept of IMA, thus a module
+can be seen as a piece of hardware, controlling other subsystems.
+A module can contain one or more processors. However, this does not fit 
+well with the concept of partitions,
 which have to run on one processor. \cite{page_11}
-The processor for ARINC applications should have sufficient processing
-power, should have access to I/O, to memory and time resources. Besides
-this, the processor should be able to isolate a partition, if it fails.
+A processor used for ARINC applications should have sufficient processing
+power and access to I/O, memory and time resources. Besides
+this, the processor should be able to isolate a partition from
+the others, if it fails.
 \cite{page_12}
 
 \subsection{Partitions}
 A partition is a program unit designed to obey space and time limitations
 set by the developer. The way partitions are being run by the processor,
-is in a static, cyclic manner.The do not have any priorities.
-One partition should only have write right to its own space allocated
-(memory). Memory access outside one partition (at least writing) are not allowed.
+is in a static, cyclic manner meaning that they do not have any priorities.
+One partition should only have writing rights to its own memory space. 
 \cite{page_13}
 The resources used by the partitions are specified at build time.
 \cite{page_14}
-There are also system partitions.
+The standard differentiates between partitions that run applications and system partitions. The latter are optional, and can be used to contain
+services not provided in the APEX \cite{scarlett_page_3}.
 \subsection{Processes}
 These are the parts of program running on partitions. One partition
 may contain one or more processes. These may operate concurrently,
@@ -151,8 +149,10 @@ and failures.
 \subsection{System configuration}
 
 \subsection{Decision}
-\todo[inline,color=green] {Here we write what parts of ARINC do we want to
-implement}
+The idea is to bring such an operating system in to the wider embedded world.
+To do that in a one semester project, the focus will be on understanding the standard,
+working with embedded systems and implementing the parts of the operating system that are
+essential for running simple partitions on a single hardware unit.
 
 \section{Hardware}
 

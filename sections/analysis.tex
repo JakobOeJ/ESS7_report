@@ -73,6 +73,7 @@ The resources used by the partitions are specified at build time.
 \cite{page_14}
 The standard differentiates between partitions that run applications and system partitions. The latter are optional, and can be used to contain
 services not provided in the APEX \cite{scarlett_page_3}.
+
 \subsection{Processes}
 These are the parts of program running on partitions. One partition
 may contain one or more processes. These may operate concurrently,
@@ -82,21 +83,23 @@ and maybe priority and deadline. These attributes can either be fixed
 or variable. The fixed attributes are statically defined, and cannot
 be changed during operation.
 \cite{page_19}
-Process management is done with the use of APEX.
+Process management is done with the use of APEX calls.
 Processes can be in different states: dormant, waiting, running, ready.
 Their scheduling is done in such a way that the process in the ready state
-with the highest priority  is always executing when the partition is active - priority preemptive.
+with the highest priority is always executing when the partition is active - priority preemptive.
 \cite{page_20}
 
 \subsection{Time}
 Time management is very important in real-time systems.
-Time is being provided for partitions scheduling and process scheduling,
-as well as for delays deadlines and periodicity.
-Partitions receive time-slots.
-Processes receive time capacity (need to finish before deadline).
+Time keeping is needed for partition and process scheduling,
+as well as for delays, deadlines and periodicity.
+Partitions receive time-slots during system configuration.
+Processes receive time capacity (meaning that they are expected
+to finish before a deadline).
 The difference between the two brings the need for having extra APEX calls
 to control ad monitor how processes are behaving.
 \cite{page_25}
+
 \subsection{Memory}
 Memory spaces are defined during the system configuration. These cannot
 be changed later on.

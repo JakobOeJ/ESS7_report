@@ -380,21 +380,59 @@ Capable of full virtualization on a shared multi-core processor.
 
 \section{Programming language choice}
 
-For the choice of the language used to program the OS environment it was important to take in concern some 
-especifications, such as, being a low level language, in order to have a better control of the processes 
-and memory, being imperative, in order to follow the instructions exactly how they are suppose and the
-previous experience of the group members working with that language.\\
-The three languages taken in consideration were Ada, C and C++. \\
+Programming languages vary significantly, 
+while it may seem difficult to settle 
+on a language due to how many exist, 
+only a few are immediately obvious 
+choices to solve a specific problem.
+\\
+This project aims to implement an OS 
+on an embedded device. 
+The chosen language must be low level 
+in order to communicate and use 
+the hardware with enough detail 
+to setup drivers and provide a platform.
+\\ \todo[inline, color=green]{more reasons}
+The three languages taken in consideration are
+Ada, C and C++.
+\\
 Ada was created during the 70's by the 
-Defense Department of the USA, in order to avoid having many different languages used in the different 
-departments. It is a high level language, and with high crytical control, making it safe to be used in 
-airplanes software. \\
-C language is a low level language, also created during the 70's, being one of the most popular languages 
-in the world nowadays. Is a low level language, allowing a good memory and instructions control avoiding
-some errors or bugs created by laguage libraries. It is also the most common used by the group members.\\
-C++ is a multi paradigm language, mixing C with Java, created in the 90's. It is more an object oriented
-language, allowing the creation of classes and heritage between classes.  
-For the XML it can be used an higer level language, since only the output matters, not being really 
-important how the compiler creates the files. We could use Python as an example, since is a laguage easy 
-to work with.\\
-\todo[inline, color=green]{Ada / c / C++ - Is this placed right?}
+Defense Department of the USA. 
+It was created to reduce the number of 
+languages used between departments. 
+It is a high level language, 
+and with high critical control, 
+making it safe to be used in airplane software.
+\\
+C is a low level language, 
+also created during the 70's, 
+being one of the most popular languages 
+in the world currently. 
+C allows for precise memory and instruction control, 
+potentially preventing errors or bugs 
+more commonly encountered by language libraries. 
+The majority of this groups members have experience
+with C.
+\\
+C++ is a multi paradigm language mixing C with Java. 
+Created in the 90's, it is more an object oriented
+language than imperative like C. 
+It allows for the creation of classes 
+and inheritance between classes.
+\\
+For the schema, a higher level language can be used
+as there is no real concern for optimisation 
+and memory usage.
+The schema will be translated into a usable format 
+on a separate computing device to the embedded system.
+Once translated it will be compiled and put onto the
+embedded system.
+\\
+Python is an easy high level language to use. 
+There is very little boiler plate code involved, 
+it is not typecast, nore does it need to compile 
+before it is run.
+It has many libraries to interact with structured 
+data types such as XML and JSON.
+
+\todo[inline, color=green]{expand on this}

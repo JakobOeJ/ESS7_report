@@ -1,22 +1,20 @@
 \chapter{Problem statement}
 
 
-The purpose of this project is to initiate the development an Operating System compliant to the 
-ARINC 653 standard, that would run on a small embedded system.
-The choice of hardware has to be done in the early stages, while the software characteristics
-have to be thought over throughout the process.
+The purpose of this project is to initiate 
+the development of the ARINC 653 operating 
+system defined by the decisions in the analysis section.
 \\\\
-The main characteristic of the OS would be that the application space is a partitioned environment.
-The partitions would have to be set up in the beginning using an XML file, which contains their 
-characteristics. Each partition is allocated an amount of memory, thus the system should be able to restrict memory space accordingly.
-Furthermore, each partition is allocated a time interval for running its applications. This means
-that the scheduler should have access to time resources. Each partition should have access to the 
-low level hardware, and data exchange should be predictable through the APEX. 
+The OS will be implemented on the Mini-M4.
+It will be a new OS written from scratch 
+called open653. The chosen programming 
+language is C, with some initialisation 
+done in Python.
 \\\\
-From this, the following questions arose, in relation to the main goal:
+The following questions arose from the defined scope:
 \begin{itemize}
-	\item What are the main obstacles when developing such a system?
-	\item What makes this Operating System implementation different from others?
-	\todo {Reformulate this question}
-	\item Is there a need for an open-source ARINC 653 implementation?
+ \item What are the main obstacles when developing such a system?
+ \item What makes this Operating System implementation different from others?
+ \item Can this OS be useful in non-avionics industries?
+ \item What uses ca an open-source ARINC 653 implementation provide?
 \end{itemize}

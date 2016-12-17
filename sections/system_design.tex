@@ -442,33 +442,70 @@ CPU registers and the stack.
 
 \section{Schema}
 \label{sec:design_schema}
-An ARINC 653 schema specifies the requirements to configure the core module to be compliant with the standard. The schema is to be implemented in a static structured document, which defines *. You may extend the document to include additional features not required by ARINC 653.
+An ARINC 653 schema specifies the structure 
+of the configuration and the required elements 
+for the core module to operate.
+The schema is a recipe used to create the file 
+that will contain the configuration.
 
 \subsection{Schema design}
 
-The schema defined was not the complete ARINC 653 schema, though it can be extended into the full schema with some more work. The scope was limited to deliver a working product that covered the core functionality.
+The schema defined is not the complete 
+ARINC 653 schema, though it can be extended 
+into the full schema with some more work. 
+The scope was limited as outlined in the
+problem statement. \ref{chap:Problem_Statement}) 
 
-\begin{figure}[H]
-	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653schema.pdf}
+\begin{figure}[H]	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653schema.pdf}
 	\caption{open653 schema design}
 	\label{fig:open653schema}
 \end{figure}
 
-The figure represents the schema and the relationship between the nodes. An ARINC 653 Module has five elements. One or more Partitions, a Connection Table, one or more Partition Memory elements, and a Module Schedule.
-\todo{expand on what the attributes do}
-Each partition has five attributes, and zero or more sampling and queuing port elements. 
-%In addition there is an optional Process element and its associated attributes.
-Sampling or queuing ports each have a unique attribute, and share common attributes defined by PortType.  
-
-Each Partition\_Memory has two attributes, and one or more Memory\_Requirements.
+The figure represents the schema and the 
+relationship between the elements. 
+An ARINC 653 Module has five elements. 
+One or more Partitions, a Connection Table, 
+one or more Partition Memory elements, and 
+a Module Schedule.
+\\\\
+Each partition has five attributes, and zero 
+or more sampling and queuing port elements. 
+PartitionIdentifier is the unique ID for the partition. 
+PartitionName is the name for the partition. 
+Criticality specifies the importance of the partition.
+SystemPartition is a boolean specifying if the partition 
+is a system partition or standard partition. 
+EntryPoint is the name of related partition function name.
+\\
+Sampling or queuing ports each have a unique 
+attribute, and share common attributes defined 
+by PortType. 
+PortName is the name of the port. 
+MaxMessageSize is
+Direction is 
+MaxNbMessages is
+\\\\
+Each Partition\_Memory has two attributes, 
+and one or more Memory\_Requirements.
+PartitionIdentifier is the unique ID for the partition memory.
+PartitionName is the name for the partition memory.
+\\
 Memory\_Requirements each have five attributes.
-
+Type is
+SizeBytes is 
+Access is 
+PhysicalAddress is
+\\\\
 Module\_Schedule is made up of one or more Partition\_Schedule elements, which in turn are made up of one or more Window\_Schedule elements. Module\_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
+\\
 Partition\_Schedule has four attributes
+\\
 Window\_Schedule has four attributes
-
+\\\\
 A Connection\_Table has no attributes and one or more channels.
-A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition.  
+\\
+A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition. 
+\\\\
 
 \subsection{Full ARINC 653 schema}
 
@@ -479,14 +516,11 @@ A Channel has two attributes, and one or more source or destination channels whi
 \end{figure}
 
 \todo{add ARINC standard reference}
-The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented. 
+The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented in this project. 
 
 \subsection{Schema translation}
 
-\todo{explain xml alternatives?}
-
-XML is the chosen configuration file format, a tool has not been used to generate the configuration file. The XML file was written by hand in accordance with the schema, therefore the instance must be modified by hand. XML was chosen as opposed to alternatives do to its easy to read and write nature, and ARINC\textquotesingle s XML example providing guidance.
-
+XML is the chosen configuration file format. XML was chosen as opposed to alternatives due to its easy to read and write nature, ARINC\textquotesingle s XML example providing guidance and previous experience with XML in the project group.
 
 \section{APEX}
 

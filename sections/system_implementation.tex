@@ -690,7 +690,64 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 \subsubsection{Process Setup}
 \subsubsection{Building the schedule}
 \label{sssec:build_schedule}
-\todo{Write this part}
+The partition schedule is defined in the XML schema file as windows (see 
+\ref{sssec:impl_windows}). Windows in the XML schema, as well as in xml\_data.c
+file output by the schema parser, are ordered by partition, not chronologically.
+Additionally, windows in the XML schema are not subelements of partitions, but
+are instead seperate elements, referencing the partition they belong to by ID.
+
+As a result, to do any scheduling of windows, it is necessary to search through
+all windows to find the next one within a major frame, and then search through
+all partitions to find the partition with the same ID. To make matters more
+complecated, the XML schema may contain implicit idle periods (periods with no
+defined windows). To lighten the burden on the scheduler, the work to build a
+schedule by ordering the windows chronologically and inserting explicit idle
+periods are done during initialisation.\\
+
+The algorithm to build the schedule is as follows:\\
+\begin{algorithm}[H]
+\tcc{excluding implicit idle peroids}
+$totalWindows \leftarrow$ number of windows in xml\;
+$desiredStartTime \leftarrow 0$\;
+\tcc{This is just an arbitrary high number}
+$earliestNextStartTime \leftarrow 5000$\;
+$matchingWindow \leftarrow NULL$\;
+\While{windows in schedule < $totalWindows$}{
+	\ForEach{window $w$ in xml schema}{
+		\If{start time of $w$ = $desiredStartTime$} {
+			$matchingWindow \leftarrow w$\;
+			break\;
+		}
+		\ElseIf{start time of $w$ > desiredStartTime and earlier than $earliestNextStartTime$}{
+			$earliestNextStartTime \leftarrow$ start time of $w$\;
+		}
+	}
+	\If{matching window is found}{
+		$partition$\;
+		\ForEach{partition $p$}{
+			\If{ID of $p$ = ID of partition of $matchingWindow$}{
+				$partition \leftarrow p$\;
+				break\;
+			}
+		}
+		insert window for $partiton$ into schedule\;
+		$desiredStartTime \leftarrow$ start time of $w$\;
+	}
+	\Else{
+		insert window starting at $desiredStartTime$ and lasting
+		$earliestNextStartTime - desiredStartTime$ for idle partition into schedule\;
+		\tcc{This is just an arbitrary high number}
+		$earliestNextStartTime \leftarrow 5000$\;
+		$totalWindows++$\;
+	}
+}
+\end{algorithm}
+
+Provided that the data in the XML schema is valid, i.e. there is window 
+referencing a partition that does not exist, and provided that the major frame
+is shorter than 5000 (this number is easily changable) time units, this
+algorithm will create a schedule of chronologically ordered windows, including
+windows pointing to the idle partition.
 \todo{Put a figure of example windows}
 
 \subsection{Scheduling}
@@ -801,6 +858,7 @@ Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.
 \end{figure}
 \todo{Make the text larger}
 \subsubsection{Windows}
+\label{sssec:impl_windows}
 Windows are the abstract concept used by system integrators to schedule
 partitions in \arinc . A window consists of a start time, relative to the major
 frame, and a duration. These windows are specified by the system integrator in
@@ -947,7 +1005,7 @@ software, system call functions (including the APEX functions) are implemented
 as a library that entirely handles the system call.
 The sequence of steps for making a system call is a follows:\\
 
-\begin{tabular}{ r l p{10.5cm} }
+\noindent\begin{tabular}{ r l p{10.5cm} }
     1. & Userspace & Partition code calls one of the system call wrapper
     functions.\\
     2. & Userspace & The wrapper function moves the number denoting the system

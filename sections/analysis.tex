@@ -33,6 +33,9 @@ There are guidelines of how such a system should be designed and
 implemented, as well as standards that specify how space and time 
 should be partitioned.
 
+\todo{Include the benefits : significant benefits, i.e. aircraft weight reduction
+and lower maintenance costs}
+
 \section{ARINC 653}
 \arinc{} is a software specification that allows a system to host 
 multiple avionics applications on the same hardware while being able
@@ -141,7 +144,7 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 
 \subsection{Intrapartition communication}
 Allows processes in a partition to communicate to each other. This way
-the communication is done more efficiently than having  a using a 
+the communication is done more efficiently than having to use a 
 global message passing system.
 Can be done by implementing buffers and blackboards, or semaphores and 
 events.
@@ -149,8 +152,16 @@ events.
 \subsection{Health Monitor}
 Has the purpose of monitoring and reporting hardware and software faults
 and failures.
+\todo{Include this: Its main task
+is to isolate faults and prevent failure propagation. For example, the HM can restart a partition
+when detects application fault
+\cite{scarlet_page_4}}
 
 \subsection{System configuration}
+The OS allows portability and reusability of applications. However,
+these applications have to be integrated in the system. This is done
+by giving the partitions the access and resources needed, in order to
+satisfy the applications\textquotesingle requirements \cite{page_42}.
 
 \subsection{Decision}
 The idea is to bring such an operating system in to the wider embedded world.
@@ -381,6 +392,8 @@ Capable of full virtualization on a shared multi-core processor.
 
 \subsection{Decision}
 \todo[inline,color=green] {why we did not use any of the Arinc implementations mentioned above?}
+Since we decide not to use any of the existing implementations...
+the degree of freedom for choosing the hardware is increased.
 
 \section{Programming language choice}
 The languages Ada, C and C++ are taken in consideration as an embedded language.

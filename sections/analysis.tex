@@ -140,7 +140,7 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 
 \subsection{Intrapartition communication}
 Allows processes in a partition to communicate to each other. This way
-the communication is done more efficiently than having  a using a 
+the communication is done more efficiently than having to use a 
 global message passing system.
 Can be done by implementing buffers and blackboards, or semaphores and 
 events.
@@ -150,6 +150,10 @@ Has the purpose of monitoring and reporting hardware and software faults
 and failures.
 
 \subsection{System configuration}
+The OS allows portability and reusability of applications. However,
+these applications have to be integrated in the system. This is done
+by giving the partitions the access and resources needed, in order to
+satisfy the applications\textquotesingle requirements \cite{page_42}.
 
 \subsection{Decision}
 The idea is to bring such an operating system in to the wider embedded world.

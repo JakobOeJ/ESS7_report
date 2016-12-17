@@ -853,7 +853,8 @@ If there are no processes in the READY state, none will be selected, and kernel
 will fault, so each partition must have at least one process in the READY state.
 
 \subsection{Ports}
-Interpartition communication (section \ref{design:interpart_comm})
+\label{impl:ports}
+Interpartition communication (see section \ref{ssec:interpart_comm} and \ref{design:interpart_comm})
 is implemented with an initialization function and a function for every APEX call to the given port type.
 
 As described in \ref{design:interpart_comm},
@@ -890,7 +891,7 @@ typedef struct {
 \end{lstlisting}
 \end{minipage}
 
-Listing \ref{list:port_struct} shows how every port has the four following common variables:
+Listing \ref{list:port_struct} shows how every \texttt{port\_t} has the four following common variables:
 
 \begin{itemize}
 	\item The first being a boolean indicating whether the port is a a queuing port or sampling port
@@ -909,11 +910,11 @@ they are declared as a union of the two different port attribute types
 Both types contain a byte array to hold buffered messages.
 The buffer of the sampling port is a simple buffer with the size of maximum message size,
 while the buffer of the queuing port is used as a circular buffer,
-hence the use of an object wit the type \texttt{circBuf\_t} to hold additional data,
+hence the use of an object with the type \texttt{circBuf\_t} to hold additional data,
 used when pushing and popping messages.
 \\\\
 All code used to manipulate a circular buffer is contained src/kernel/circular\_buffer.c
-and wont be covered in this report.
+and is not be covered in this report.
 \\\\
 besides arrays to contain the buffers each type of port also has a port status struct
 of type \texttt{QUEUING\_PORT\_STATUS\_TYPE} and \texttt{SAMPLING\_PORT\_STATUS\_TYPE}.
@@ -921,15 +922,81 @@ These types are declared in \texttt{apex\_queuing.h} and \texttt{apex\_sampling.
 from the folder \texttt{src/third\_party/ARINC/APEX}.
 They contain the specific status attributes for the port type.
 The structs are embedded (listing \ref{list:port_struct}) in as anonimous structs
-meaning that one can access its members directly instead of as a substruct.
+meaning that one can access its members directly instead of as a conventional substruct.
 While this is not strictly a native C feature it is enabled in GCC with the \texttt{-fms-extensions} flag
-and is only used to make easier to read and edit.
+and is only used to make the code easier to read and edit.
 \\\\
-While a the ports.h file is used to declare all information about the ports,
-The functions to work on sampling ports and queuing ports are located in src/kernel/sampling\_port.c and src/kernel/queuing\_ports.c respectively.
+While the ports.h file is used to declare all information about the ports,
+the functions to work on sampling ports and queuing ports are located in
+src/kernel/sampling\_port.c and src/kernel/queuing\_ports.c respectively.
+\\\\
+For the rest of section \ref{impl:ports}, queuing ports will be used to explain
+how iterpartition communication is implemented in these files.
+\\\\
+As mentioned above,
+ports are created by ``activating'' a statically allocated port.
+This is done from a process, by a system call.
+Specifically by calling the function \texttt{CREATE\_QUEUING\_PORT()}.
+When making this call, a kernel function named \texttt{create\_queuing\_port()}
+is called which takes care of the actual setup.
+\\\\
+The same scheme of having a similar named kernel function for every system calls
+is used for everything which has to do with the ports.
+\\\\
+Since the attributes and starting values for the ports is auto-generated at compile-time,
+the setup can be kept simple:
 
-\subsubsection{Queuing Ports}
-\subsubsection{Sampling Ports}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=51,
+	label=list:qport_create,
+	caption=\textit{src/kernel/queuing\_port.c}]
+(void) QUEUING_DISCIPLINE;
+
+partition_t *this_partition = getActivePartition();
+port_t *ports = this_partition->ports;
+
+for (APEX_INTEGER n = 0; n < this_partition->nb_ports; ++n) {
+    if (!strcmp(ports[n].portname, QUEUING_PORT_NAME) &&
+    ports[n].q_buf.MAX_MESSAGE_SIZE == MAX_MESSAGE_SIZE &&
+    ports[n].q_buf.MAX_NB_MESSAGE == MAX_NB_MESSAGE &&
+    ports[n].q_buf.PORT_DIRECTION == PORT_DIRECTION)
+    {
+        ports[n].activated = true;
+        *QUEUING_PORT_ID = n;
+        *RETURN_CODE = NO_ERROR;
+        return;
+    }
+}
+
+*RETURN_CODE = INVALID_PARAM;
+\end{lstlisting}
+\end{minipage}
+
+Since open653 only features a simplified implementation of the ARINC 653 standard,
+only a minimal functioning featureset is present for the ports.\\
+The input variable \texttt{QUEUING\_DISCIPLINE} for example is in this case not used,
+hence it has been casted to type \texttt{void} as seen in listing \ref{list:qport_create} at line 51.
+\\\\
+The remaining input variables are checked for their validity after the current port in question
+has been located.
+If these are found to be consistent with the autogenerated attributes, the port is activated by setting
+the \texttt{activated} attribute to true (line 62).
+An ID is also set as a return value and an error is cleared before returning.
+If no port is found to match the input attributes passed to the function
+the APEX defined \texttt{INVALID\_PARAM} error code is passed instead (line 69).
+\\\\
+The functions \texttt{write\_sampling\_message} and \texttt{read\_sampling\_message} follows the same pattern:\\
+1.\quad Validate if the input is consistent with the port information.\\
+2.\quad Update port status and/or pop/push message to buffer.\\
+
+Only the functions \texttt{get\_queuing\_port\_id()} and \texttt{get\_queuing\_port\_status()}
+are different in that they just return information about a certain port.
+\\\\
+The code for the sampling port, follows the same pattern and much of the code is in fact the same.
+Messages are passed in a different manner and circular buffers are not used.
+Instead a simple buffer is overwritten with new messages or being read from,
+which makes it simpler to implement than queuing ports, having to use less code for managing the buffer.
 
 
 \subsection{APEX}

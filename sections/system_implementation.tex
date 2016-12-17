@@ -498,13 +498,20 @@ SysTick generates an interrupt to look after sensor values, scheduling or
 basic timing tasks.
 
 \subsection{MPU}
-As the biggest partitions are less likely to perfectly fit in a region, since the regions are power of 2, 
-increasing the size much faster the bigger the power gets, those are the first ones to be allocated. Then, 
-if there are empty subregions, we try to fit in the other partitions in the best combination possible, 
-trying different possibilities. In case that a certain partition doesn't full fill the last subregion we 
-update the partition size with that free space, so that empty space can be used by the partition too, 
+As the regions are power of 2, as shown in the picture, the bigger is the partition the more likely it 
+is to have spare space, since it becomes harder to fit it completely in a region.\\
+\includegraphics[width=15cm]{partitions/partitions2.png}
+Let's take as an example 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
+\includegraphics[width=15cm]{partitions/partitions1.png}
+If we just putted them in the most suited region, we would have to reserve 480bits.\\
+\includegraphics[width=15cm]{partitions/partitions3.png}
+But if we first allocate the bigger partitions and try to fullfill the subreagions not occupied with the smaller ones we can reduce the memory needed, like shown in the figure, using only 384bits.\\
+\includegraphics[width=15cm]{partitions/partitions4.png}
+In case that a certain partition doesn't full fill the subregions we 
+update the partition size with that free space, 
 instead of being always empty. That can also help to avoid some errors, for example if the initial 
-partition size wasn't enough for the different processes allocated by that partition.
+defined size wasn't enough for the different processes allocated by that partition.\\
+\includegraphics[width=15cm]{partitions/partitions5.png}
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different

@@ -362,10 +362,80 @@ register. This value must be saved by software to assure it can return to the ri
 \end{table}
 
 \subsection{Interpartition communication}
+Interpartition communication as introduced in section \ref{ssec:interpart_comm} is a basic mechanism for linking partitions by messages with channels.
+Each partition can be linked to multiple channels by ports.
+A partition can interact with its ports by using the APEX and send or receive messages.
+
+At the application level messages are atomic and as such channels are required to insure the correctness of every message received \ref{}.
+Multiple different modes exist for the messages and different checks and methods should be applied to comply with the ARINC 653 standard.
+Only a subset of these features is designed and implemented,
+to give a basic feature set which allows partitions to communicated on a single MCU.
+
+A simplified design of queuing ports and sampling ports is designed for open653.
+
+Since ports and their attributes are declared and defined statically,
+very little has to be done to initialize them at startup.
+Ports are organized as belonging to some partition and some channel
+and have some common port attributes as well as some attributes belonging to their port type.
+
+Some necessary common port attributes for for ports is:
+\begin{itemize}
+	\item The port name
+	\item Some flag indicating wheather a port is a of type queuing or sampling
+	\item A port direction attributed indicating whether the port is a destination or a source
+	\item Maximum message size
+	\item A reference to the channel it belongs to
+\end{itemize}
+
+A port can be viewed as belonging to some partition,
+hence ports can be structured in multiple arrays,
+with each array containing the ports belonging to a particular partition.
+This way of structuring result in every port having to contain a reference to its channel, as started in the above list.
+
+Some necessary attributes for queuing ports and sampling ports are listed in
+the sections \ref{sssec:queuing_ports} and \ref{sssec:sampling_ports} respectively.
 
 \subsubsection{Queuing Ports}
+\label{sssec:queuing_ports}
+The necessary attributes for queuing ports secifically are the following:
+\begin{itemize}
+	\item Number or messages received in the queue
+	\item Maximum number of messages to be hold by the receive buffer
+	\item A circular buffer to act as the FIFO buffer
+\end{itemize}
+
+The OS has to facilitate some methods to push and pop complete messages to and from a circular buffer,
+which would be defined auto-generated from the XML configuration file.
+Open653 also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
+
+\begin{itemize}
+	\item CREATE\_QUEUING\_PORT
+	\item SEND\_QUEUING\_MESSAGE
+	\item RECEIVE\_QUEUING\_MESSAGE
+	\item GET\_QUEUING\_PORT\_ID
+	\item GET\_QUEUING\_PORT\_STATUS
+\end{itemize}
 
 \subsubsection{Sampling Ports}
+\label{sssec:sampling_ports}
+The necessary attributes for sampling ports secifically are the following:
+\begin{itemize}
+	\item A refresh period time
+	\item An indicator for the validity of the last received message
+	\item A buffer to hold the sampling message
+\end{itemize}
+
+The OS has to facilitate some methods to transmit and validate sampling messages.
+A simple buffer has to be provided for this by the auto-generated structures.
+Open653 also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
+
+\begin{itemize}
+	\item CREATE\_SAMPLING\_PORT
+	\item WRITE\_SAMPLING\_MESSAGE
+	\item READ\_SAMPLING\_MESSAGE
+	\item GET\_SAMPLING\_PORT\_ID
+	\item GET\_SAMPLING\_PORT\_STATUS
+\end{itemize}
 
 
 \subsection{Memory Management}

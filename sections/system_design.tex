@@ -221,7 +221,6 @@ interface to access the hardware.
 	\item [\textbf{RTC}] has the purpose of keeping track of 
 	time accurately. Usually it uses  a 32,768kHz oscillator as a 
 	clock source, which is the standard in the field
-	
 \end{labeling}
 
 These drivers should be implemented as standalone .c files. They could then
@@ -235,6 +234,10 @@ The basic functionalities of a driver are:
 \end{itemize}
 
 \section{OS}
+The OS kernel has the purpose to link the APEX interface with the hardware.
+This is a monolithic kernel. The following sections contain
+the kernel\textquotesingle s features and functionalities.
+
 \subsection{Scheduler}
 \label{ssec:design_scheduling}
 Schedulers are used to allow a system to run more processes than there are

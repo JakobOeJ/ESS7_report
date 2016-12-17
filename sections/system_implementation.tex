@@ -500,20 +500,47 @@ basic timing tasks.
 \todo {reference to systick in the OS section}
 
 \subsection{MPU}
-As the regions are power of 2, as shown in the picture, the bigger is the partition the more likely it 
+As the regions are power of 2, as shown in the picture, the bigger partition is the more likely it 
 is to have spare space, since it becomes harder to fit it completely in a region.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions2.png}
-Let's take as an example 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
+\captionof{figure}{Example of 3 memory region sizes}
+\label{fig:simple_system}
+\end{figure}
+Lets take, as an example, 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions1.png}
-If we just putted them in the most suited region, we would have to reserve 480bits.\\
+\captionof{figure}{Example of 5 partitions sizes}
+\label{fig:simple_system}
+\end{figure}
+If they were just allocated in the most suited region for each, the memory needed would be of 480bits, 
+leaving 155bits unused.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions3.png}
-But if we first allocate the bigger partitions and try to fullfill the subreagions not occupied with the smaller ones we can reduce the memory needed, like shown in the figure, using only 384bits.\\
+\captionof{figure}{Partition memory distribuition in different regions}
+\label{fig:simple_system}
+\end{figure}
+The first allocate are the biggest partitions and if there are empty subregions, the system tries to 
+allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions4.png}
-In case that a certain partition doesn't full fill the subregions we 
-update the partition size with that free space, 
-instead of being always empty. That can also help to avoid some errors, for example if the initial 
-defined size wasn't enough for the different processes allocated by that partition.\\
+\captionof{figure}{Partition memory distribuition in the same regions}
+\label{fig:simple_system}
+\end{figure}
+In case that a certain partition doesn't full fill the subregion, their size gets updated with the full 
+remaining subregion area, 
+instead of leaving those parts always empty. That can also help to avoid some errors, for example if the 
+initial defined size wasn't enough for the different processes allocated by that partition.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions5.png}
+\captionof{figure}{Memory extension of the partitions sizes}
+\label{fig:simple_system}
+\end{figure}
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different
@@ -626,93 +653,6 @@ as the standard specifies \cite{page_26}. The use of the LSE oscillator,
 as well as the design of the RTC (having all time components, including
 subseconds, as well as leap year correction), make this clock a reliable
 secondary time source.
-
-\section{System Calls}
-\todo[inline,color=green]{needs to be moved}
-System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
-Call). When this instruction is executed, a interrupt will be triggered. Already
-set up by the CMSIS library, any SVC interrupts will trap into the function
-named \texttt{SVC\_Handler}.
-In order to avoid having to deal with assembly\footnote{It is necessary to use
-assembly code to issue an \texttt{SVC} instruction} code in partition level
-software, system call functions (including the APEX functions) are implemented
-as a library that entirely handles the system call.
-The sequence of steps for making a system call is a follows:\\
-
-\begin{tabular}{ r l p{10.5cm} }
-    1. & Userspace & Partition code calls one of the system call wrapper
-    functions.\\
-    2. & Userspace & The wrapper function moves the number denoting the system
-    call function into register R0.\\
-    3. & Userspace & The wrapper function moves any input arguments into the
-    registers R1-R3 and R12. If the function has more than four input arguments,
-    those must be stacked.\\
-    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
-    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
-    branches to the \texttt{SVC\_Handler} function.\\
-    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
-    stacked value of register R0 to determine which function the partition level
-    code wished to execute.\\
-    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
-    function with the input arguments from the stacked registers.\\
-    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
-    function in the stacked registers. The return code is moved to R0, and
-    additional output is put in the registers R1-R3 and R12. If necessary, more
-    output is put in the stack.\\
-    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
-    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
-    the stack and returns execution to the system call wrapper function.\\
-    11. & Userspace & The wrapper function returns the output from the system
-    call as stored in the registers to the calling partition code.\\
-\end{tabular}\\
-
-
-Only the registers R0-R3 and R12 are available for argument passing, as these
-are the only general purpose registers that are stacked by the NVIC. The NVIC
-does not clear the registers before entering the \texttt{SVC\_Handler} function,
-and thus all the general purpose registers may contain the same values as when
-the \texttt{SVC} instruction was executed, but their consistency is not
-garantued, as other interrupt service routines could have run before the
-\texttt{SVC\_Handler} function started execution.\\
-To avoid rescheduling occuring during a system call, the SysTick interrupt is
-turned off during the execution of the \texttt{SVC\_Handler} function.\\
-Each system call is identified by the number the caller has moved into the R0
-register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
-instruction does supply a way to embed this number directly as a part of the
-instruction as an immediate value, instead of using a seperate register, but
-dedicating a register to this was chosen for two reason: One, it is poorly
-documented how software can read the value embedded in the instruction, and two,
-to keep it consistent with how system calls are handled on other architectures
-such as x86.\\
-Table \ref{tab:syscalls} shows all the implemented system calls and their
-identifier.
-
-\begin{table}
-\centering
-	\begin{tabular}{| l | l |}
-		\hline
-		Identifier		&	Name \\
-		\hline
-		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
-		\hline
-		0xC0FFEE0B		&	GET\_TIME					\\
-		\hline
-		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
-		\hline
-		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
-		\hline
-		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
-		\hline
-	\end{tabular}
-\caption{A table of the implemented system calls and their identifier.}
-\label{tab:syscalls}
-\end{table}
 
 \section{XML configuration file}
 
@@ -921,6 +861,91 @@ will fault, so each partition must have at least one process in the READY state.
 
 \subsection{Error Handling}
 
+\subsection{System Calls}
+System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
+Call). When this instruction is executed, a interrupt will be triggered. Already
+set up by the CMSIS library, any SVC interrupts will trap into the function
+named \texttt{SVC\_Handler}.
+In order to avoid having to deal with assembly\footnote{It is necessary to use
+assembly code to issue an \texttt{SVC} instruction} code in partition level
+software, system call functions (including the APEX functions) are implemented
+as a library that entirely handles the system call.
+The sequence of steps for making a system call is a follows:\\
+
+\begin{tabular}{ r l p{10.5cm} }
+    1. & Userspace & Partition code calls one of the system call wrapper
+    functions.\\
+    2. & Userspace & The wrapper function moves the number denoting the system
+    call function into register R0.\\
+    3. & Userspace & The wrapper function moves any input arguments into the
+    registers R1-R3 and R12. If the function has more than four input arguments,
+    those must be stacked.\\
+    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
+    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
+    branches to the \texttt{SVC\_Handler} function.\\
+    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
+    stacked value of register R0 to determine which function the partition level
+    code wished to execute.\\
+    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
+    function with the input arguments from the stacked registers.\\
+    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
+    function in the stacked registers. The return code is moved to R0, and
+    additional output is put in the registers R1-R3 and R12. If necessary, more
+    output is put in the stack.\\
+    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
+    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
+    the stack and returns execution to the system call wrapper function.\\
+    11. & Userspace & The wrapper function returns the output from the system
+    call as stored in the registers to the calling partition code.\\
+\end{tabular}\\
+
+
+Only the registers R0-R3 and R12 are available for argument passing, as these
+are the only general purpose registers that are stacked by the NVIC. The NVIC
+does not clear the registers before entering the \texttt{SVC\_Handler} function,
+and thus all the general purpose registers may contain the same values as when
+the \texttt{SVC} instruction was executed, but their consistency is not
+garantued, as other interrupt service routines could have run before the
+\texttt{SVC\_Handler} function started execution.\\
+To avoid rescheduling occuring during a system call, the SysTick interrupt is
+turned off during the execution of the \texttt{SVC\_Handler} function.\\
+Each system call is identified by the number the caller has moved into the R0
+register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
+instruction does supply a way to embed this number directly as a part of the
+instruction as an immediate value, instead of using a seperate register, but
+dedicating a register to this was chosen for two reason: One, it is poorly
+documented how software can read the value embedded in the instruction, and two,
+to keep it consistent with how system calls are handled on other architectures
+such as x86.\\
+Table \ref{tab:syscalls} shows all the implemented system calls and their
+identifier.
+
+\begin{table}
+\centering
+	\begin{tabular}{| l | l |}
+		\hline
+		Identifier		&	Name \\
+		\hline
+		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
+		\hline
+		0xC0FFEE0B		&	GET\_TIME					\\
+		\hline
+		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
+		\hline
+		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
+		\hline
+		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
+		\hline
+	\end{tabular}
+\caption{A table of the implemented system calls and their identifier.}
+\label{tab:syscalls}
+\end{table}
 
 \section{Partitions and processes}
 

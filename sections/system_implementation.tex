@@ -602,29 +602,28 @@ to \OSname{}.
 
 In regards to what the standard specifies, that the processor should be able
 to isolate a partition that fails \cite{page12}. This could be done by 
-using the window watchdog timer
-\todo{explain the watchdog in the context of partitions}
+using the window watchdog timer to define the time intervals for partitions 
+to run. The feature called Early Wakeup Interrupt can be used to do some
+safety operations, just before the reset is done by the watchdog.
+\cite{reference_manual_716}.
+In short, if the window watchdog is not reset in the window interval it
+receives (correspondent to each partition), then the EWI will isolate the
+partition and the mcrocontroller will be reset to continue its operation
+with the remaining partitions.
 
 \subsection{RTC}
 The real-time clock was implemented as a way to give the system the
 possibility to keep track of time. It was realised at a later point
 that \arinc{} specifies that time keeping should be done in nanoseconds,
-a range that the RTC is not capable of.
+a range that the RTC is not capable of. This was the reason for continuing 
+researching other ways of timing the system, as see in:
+\todo{ref to Timing}
 
-Anyway, the RTC is a good-to-have feature, since it operates in the 
-Stop and Standby modes
-of the microcontroller, and can generate interrupts to wake the system up.
-Its registers contain all the time components, as well as correction for
-leap years.
-
-\todo[inline,color=green]
-{The notion of time used here is local to a module and is needed for time
-management within the partitions on one module. If a partition needs 
-a timestamp for
-a reason such as fault reporting, a different time may be used. That time
- value could
-come from an aircraft clock via normal interpartition communication means
-page 26}
+Anyway, the RTC could be used for timestamps on error logs and such,
+as the standard specifies \cite{page_26}. The use of the LSE oscillator,
+as well as the design of the RTC (having all time components, including
+subseconds, as well as leap year correction), make this clock a reliable
+secondary time source.
 
 \section{System Calls}
 \todo[inline,color=green]{needs to be moved}

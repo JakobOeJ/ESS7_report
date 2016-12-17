@@ -27,7 +27,7 @@ instead of directly on top of the hardware, creating an extra layer of
 		modules and
 		interact with other partitions or the OS, running
 		on the same core module or connected to other ARINC systems.
-	\item [\textbf{OS}]
+	\item [\textbf{OS kernel}]
 		provides the infrastructure for partitions to operate. This 
 		includes their scheduling, message passing and processes 
 		the APEX calls.
@@ -233,7 +233,7 @@ The basic functionalities of a driver are:
 	\item de initialisation (if needed) \todo {spelling}
 \end{itemize}
 
-\section{OS}
+\section{OS kernel}
 The OS kernel has the purpose to link the APEX interface with the hardware.
 This is a monolithic kernel. The following sections contain
 the kernel\textquotesingle s features and functionalities.

@@ -654,113 +654,30 @@ as well as the design of the RTC (having all time components, including
 subseconds, as well as leap year correction), make this clock a reliable
 secondary time source.
 
-\section{System Calls}
-\todo[inline,color=green]{needs to be moved}
-System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
-Call). When this instruction is executed, a interrupt will be triggered. Already
-set up by the CMSIS library, any SVC interrupts will trap into the function
-named \texttt{SVC\_Handler}.
-In order to avoid having to deal with assembly\footnote{It is necessary to use
-assembly code to issue an \texttt{SVC} instruction} code in partition level
-software, system call functions (including the APEX functions) are implemented
-as a library that entirely handles the system call.
-The sequence of steps for making a system call is a follows:\\
-
-\begin{tabular}{ r l p{10.5cm} }
-    1. & Userspace & Partition code calls one of the system call wrapper
-    functions.\\
-    2. & Userspace & The wrapper function moves the number denoting the system
-    call function into register R0.\\
-    3. & Userspace & The wrapper function moves any input arguments into the
-    registers R1-R3 and R12. If the function has more than four input arguments,
-    those must be stacked.\\
-    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
-    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
-    branches to the \texttt{SVC\_Handler} function.\\
-    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
-    stacked value of register R0 to determine which function the partition level
-    code wished to execute.\\
-    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
-    function with the input arguments from the stacked registers.\\
-    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
-    function in the stacked registers. The return code is moved to R0, and
-    additional output is put in the registers R1-R3 and R12. If necessary, more
-    output is put in the stack.\\
-    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
-    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
-    the stack and returns execution to the system call wrapper function.\\
-    11. & Userspace & The wrapper function returns the output from the system
-    call as stored in the registers to the calling partition code.\\
-\end{tabular}\\
-
-
-Only the registers R0-R3 and R12 are available for argument passing, as these
-are the only general purpose registers that are stacked by the NVIC. The NVIC
-does not clear the registers before entering the \texttt{SVC\_Handler} function,
-and thus all the general purpose registers may contain the same values as when
-the \texttt{SVC} instruction was executed, but their consistency is not
-garantued, as other interrupt service routines could have run before the
-\texttt{SVC\_Handler} function started execution.\\
-To avoid rescheduling occuring during a system call, the SysTick interrupt is
-turned off during the execution of the \texttt{SVC\_Handler} function.\\
-Each system call is identified by the number the caller has moved into the R0
-register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
-instruction does supply a way to embed this number directly as a part of the
-instruction as an immediate value, instead of using a seperate register, but
-dedicating a register to this was chosen for two reason: One, it is poorly
-documented how software can read the value embedded in the instruction, and two,
-to keep it consistent with how system calls are handled on other architectures
-such as x86.\\
-Table \ref{tab:syscalls} shows all the implemented system calls and their
-identifier.
-
-\begin{table}
-\centering
-	\begin{tabular}{| l | l |}
-		\hline
-		Identifier		&	Name \\
-		\hline
-		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
-		\hline
-		0xC0FFEE0B		&	GET\_TIME					\\
-		\hline
-		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
-		\hline
-		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
-		\hline
-		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
-		\hline
-		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
-		\hline
-	\end{tabular}
-\caption{A table of the implemented system calls and their identifier.}
-\label{tab:syscalls}
-\end{table}
-
 \section{XML configuration file}
-\todo{Write about the manual writing of the XML config file?}
+
+Writing the XML configuration file was an evolutionary process throughout the implementation phase. To begin with, the example XML provided by the ARINC 653 standard was used. As functionality within the system became available, the example XML values were modified for the desired purposes. All content in the XML was written by hand, there is no tool support to modify the content.
 
 \section{XML Parser}
 
-The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python called createCStructs.py has been created to translate the XML and generate C structs.
 \todo{reference for xmltodict}
 Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
 The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
 
 \subsection{xml\_data.h}
 
-xml\_data.h is \todo{expand on xmldata.h file}.
+xml\_data.h contains the static declarations for the structs written to the xml\_data.c, and the symbols for the xml\_data.c functions and variables. 
+\\
+The declarations for the structs are included into xml\_data.h from a file called type.h. The symbols for the functions and variables are written to the file whilst parsing the XML.
 
 \subsection{xml\_data.c}
 
 xml\_data.c is mostly dynamic and generated from the elements in the XML. 
-The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
-The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
-There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+The static elements of its generation are handled by two functions and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif.
+The idle partition is not included in the XML. It is hard-coded into the partition loop as it is always required to exist. For more info about the idle partition refer to (chapter \ref{ssec:idle_part}) 
+\\\\
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure. They and are looped through, populating formatted strings, and are then written to xml\_data.c.
 
 \section{C Structures}
 
@@ -944,6 +861,91 @@ will fault, so each partition must have at least one process in the READY state.
 
 \subsection{Error Handling}
 
+\subsection{System Calls}
+System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
+Call). When this instruction is executed, a interrupt will be triggered. Already
+set up by the CMSIS library, any SVC interrupts will trap into the function
+named \texttt{SVC\_Handler}.
+In order to avoid having to deal with assembly\footnote{It is necessary to use
+assembly code to issue an \texttt{SVC} instruction} code in partition level
+software, system call functions (including the APEX functions) are implemented
+as a library that entirely handles the system call.
+The sequence of steps for making a system call is a follows:\\
+
+\begin{tabular}{ r l p{10.5cm} }
+    1. & Userspace & Partition code calls one of the system call wrapper
+    functions.\\
+    2. & Userspace & The wrapper function moves the number denoting the system
+    call function into register R0.\\
+    3. & Userspace & The wrapper function moves any input arguments into the
+    registers R1-R3 and R12. If the function has more than four input arguments,
+    those must be stacked.\\
+    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
+    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
+    branches to the \texttt{SVC\_Handler} function.\\
+    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
+    stacked value of register R0 to determine which function the partition level
+    code wished to execute.\\
+    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
+    function with the input arguments from the stacked registers.\\
+    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
+    function in the stacked registers. The return code is moved to R0, and
+    additional output is put in the registers R1-R3 and R12. If necessary, more
+    output is put in the stack.\\
+    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
+    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
+    the stack and returns execution to the system call wrapper function.\\
+    11. & Userspace & The wrapper function returns the output from the system
+    call as stored in the registers to the calling partition code.\\
+\end{tabular}\\
+
+
+Only the registers R0-R3 and R12 are available for argument passing, as these
+are the only general purpose registers that are stacked by the NVIC. The NVIC
+does not clear the registers before entering the \texttt{SVC\_Handler} function,
+and thus all the general purpose registers may contain the same values as when
+the \texttt{SVC} instruction was executed, but their consistency is not
+garantued, as other interrupt service routines could have run before the
+\texttt{SVC\_Handler} function started execution.\\
+To avoid rescheduling occuring during a system call, the SysTick interrupt is
+turned off during the execution of the \texttt{SVC\_Handler} function.\\
+Each system call is identified by the number the caller has moved into the R0
+register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
+instruction does supply a way to embed this number directly as a part of the
+instruction as an immediate value, instead of using a seperate register, but
+dedicating a register to this was chosen for two reason: One, it is poorly
+documented how software can read the value embedded in the instruction, and two,
+to keep it consistent with how system calls are handled on other architectures
+such as x86.\\
+Table \ref{tab:syscalls} shows all the implemented system calls and their
+identifier.
+
+\begin{table}
+\centering
+	\begin{tabular}{| l | l |}
+		\hline
+		Identifier		&	Name \\
+		\hline
+		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
+		\hline
+		0xC0FFEE0B		&	GET\_TIME					\\
+		\hline
+		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
+		\hline
+		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
+		\hline
+		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
+		\hline
+	\end{tabular}
+\caption{A table of the implemented system calls and their identifier.}
+\label{tab:syscalls}
+\end{table}
 
 \section{Partitions and processes}
 

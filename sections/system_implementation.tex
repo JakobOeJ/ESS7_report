@@ -572,7 +572,8 @@ The microcontroller has two watchdog timers ready to reset the program, in case 
 The first one, the independent watchdog timer is based on an oscillator
 \footnote{LSI running at 32 kHz, seen in the upper part of
  \ref{fig:system_clock}}
-that can only be used by it. This way,
+that can only be used by it.
+\todo{focuses on hardware fails} This way,
 the the watchdog could catch a fault in the program, even if the other
 oscillators fail. Its basic functionality is represented in figure
 \ref{fig:watchdog}. After the program starts running, a function is called
@@ -589,12 +590,19 @@ timer restarts the program (depicted with the red arrow).
 \end{figure}
 
 
-The second watchdog timer, is called a window watchdog. In contrast 
+The second watchdog timer, is called a window watchdog.
+\todo{focuses on software fails} In contrast 
 to the independent watchdog, one can provide a time interval in which
 the timer has to be reset. Resetting the timer outside this interval
 (as well as not resetting it in the mentioned time window) would restart
 the program. It uses the system clock, which means that if this fails,
-the watchdog won\textquotesingle t be able to reset the system.
+the watchdog won\textquotesingle t be able to reset the system. this 
+watchdog has not been implemented, but its functionality is relevant 
+to \OSname{}.
+
+In regards to what the standard specifies, that the processor should be able
+to isolate a partition that fails \cite{page12}. This could be done by 
+using the window watchdog timer
 \todo{explain the watchdog in the context of partitions}
 
 \subsection{RTC}

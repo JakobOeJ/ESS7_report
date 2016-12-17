@@ -715,25 +715,29 @@ identifier.
 \end{table}
 
 \section{XML configuration file}
-\todo{Write about the manual writing of the XML config file?}
+
+Writing the XML configuration file was an evolutionary process throughout the implementation phase. To begin with, the example XML provided by the ARINC 653 standard was used. As functionality within the system became available, the example XML values were modified for the desired purposes. All content in the XML was written by hand, there is no tool support to modify the content.
 
 \section{XML Parser}
 
-The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python called createCStructs.py has been created to translate the XML and generate C structs.
 \todo{reference for xmltodict}
 Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
 The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
 
 \subsection{xml\_data.h}
 
-xml\_data.h is \todo{expand on xmldata.h file}.
+xml\_data.h contains the static declarations for the structs written to the xml\_data.c, and the symbols for the xml\_data.c functions and variables. 
+\\
+The declarations for the structs are included into xml\_data.h from a file called type.h. The symbols for the functions and variables are written to the file whilst parsing the XML.
 
 \subsection{xml\_data.c}
 
 xml\_data.c is mostly dynamic and generated from the elements in the XML. 
-The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
-The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
-There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+The static elements of its generation are handled by two functions and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif.
+The idle partition is not included in the XML. It is hard-coded into the partition loop as it is always required to exist. For more info about the idle partition refer to (chapter \ref{ssec:idle_part}) 
+\\\\
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure. They and are looped through, populating formatted strings, and are then written to xml\_data.c.
 
 \section{C Structures}
 

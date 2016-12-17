@@ -500,20 +500,47 @@ basic timing tasks.
 \todo {reference to systick in the OS section}
 
 \subsection{MPU}
-As the regions are power of 2, as shown in the picture, the bigger is the partition the more likely it 
+As the regions are power of 2, as shown in the picture, the bigger partition is the more likely it 
 is to have spare space, since it becomes harder to fit it completely in a region.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions2.png}
-Let's take as an example 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
+\captionof{figure}{Example of 3 memory region sizes}
+\label{fig:simple_system}
+\end{figure}
+Lets take, as an example, 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions1.png}
-If we just putted them in the most suited region, we would have to reserve 480bits.\\
+\captionof{figure}{Example of 5 partitions sizes}
+\label{fig:simple_system}
+\end{figure}
+If they were just allocated in the most suited region for each, the memory needed would be of 480bits, 
+leaving 155bits unused.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions3.png}
-But if we first allocate the bigger partitions and try to fullfill the subreagions not occupied with the smaller ones we can reduce the memory needed, like shown in the figure, using only 384bits.\\
+\captionof{figure}{Partition memory distribuition in different regions}
+\label{fig:simple_system}
+\end{figure}
+The first allocate are the biggest partitions and if there are empty subregions, the system tries to 
+allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions4.png}
-In case that a certain partition doesn't full fill the subregions we 
-update the partition size with that free space, 
-instead of being always empty. That can also help to avoid some errors, for example if the initial 
-defined size wasn't enough for the different processes allocated by that partition.\\
+\captionof{figure}{Partition memory distribuition in the same regions}
+\label{fig:simple_system}
+\end{figure}
+In case that a certain partition doesn't full fill the subregion, their size gets updated with the full 
+remaining subregion area, 
+instead of leaving those parts always empty. That can also help to avoid some errors, for example if the 
+initial defined size wasn't enough for the different processes allocated by that partition.\\
+\begin{figure}[H]
+\centering
 \includegraphics[width=15cm]{partitions/partitions5.png}
+\captionof{figure}{Memory extension of the partitions sizes}
+\label{fig:simple_system}
+\end{figure}
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different

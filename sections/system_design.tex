@@ -411,10 +411,10 @@ Regions can be nested and overlap.
 The behavior when nesting and overlapping is dictated by the priority of the region as shown in figure \ref{fig:stm32_mpu}.
 
 \subsection{memory strategy}
-As the memory space is not abundant, there is the need of avoiding wasting or having gaps of unused 
-memory. For that the memory needed by the partitions is optimized by a sorting algorithm in order to fit 
+\\
+As the memory available is not abundant, there is the need of avoiding wasting memory. For that, the memory needed by the partitions is optimized by a sorting algorithm in order to fit 
 the most partitions possible in a limited region of memory and by expanding the partition size fullfilling 
-the gaps.
+the empty gaps. It is important to keep the size, initial pointer and the region of each partition for enable and disable the right area of memory when a different partition is active.
 
 \subsection{System calls}
 To improve security and robustness, many modern operating systems make clear 

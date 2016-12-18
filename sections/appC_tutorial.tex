@@ -1,2 +1,27 @@
-\chapter{Tutorial (rename me!)}
+\chapter{Compile Tutorial}
 \label{app:tutorial}
+This tutorial is gives a quick step-by-step introduction on how to compile the open653.
+It assumes that the reader already have the code and is pursuing the task using a Linux environment
+with the following tools already installed:
+
+\begin{itemize}
+	\item arm-none-eabi-gcc
+	\item make
+	\item cmake
+	\item openocd
+\end{itemize}
+
+The steps to compiling the OS with partitions and
+flashing it to the chip are as follows:
+
+\begin{enumerate}
+	\item Locate the root folder of the project
+	\item Make a new folder to contain the build files (eg. mkdir build)
+	\item From within the build fonder run the command `cmake ..'.
+		This reads the CMakeLists.txt files and builds make files
+	\item Run `make' to build the project or use `make help' to get a list of available targets
+	\item If hardware is connected the computer the command `make OS_writeflash'
+		can be used to compile the code and flash the hardware.
+\end{enumerate}
+
+The hardware is reset after being (re-)programmed.

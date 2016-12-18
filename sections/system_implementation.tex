@@ -1337,13 +1337,15 @@ void worker(void)
 {
     QUEUING_PORT_ID_TYPE QUEUING_PORT_ID;
     RETURN_CODE_TYPE RETURN_CODE;
-    CREATE_QUEUING_PORT("sys_stio", 32, 32, DESTINATION, FIFO, &QUEUING_PORT_ID, &RETURN_CODE);
+    CREATE_QUEUING_PORT("sys_stio", 32, 32, DESTINATION, FIFO,
+		&QUEUING_PORT_ID, &RETURN_CODE);
 
     char str[1024];
     while(1) {
         RETURN_CODE_TYPE RETURN_CODE;
         MESSAGE_SIZE_TYPE len;
-        RECEIVE_QUEUING_MESSAGE(QUEUING_PORT_ID, 0, (uint8_t *)str, &len, &RETURN_CODE);
+        RECEIVE_QUEUING_MESSAGE(QUEUING_PORT_ID, 0, (uint8_t *)str,
+			&len, &RETURN_CODE);
         if (RETURN_CODE == NO_ERROR) {
             BSP_UARTx_transmit((uint8_t *)str, len);
         }
@@ -1354,8 +1356,8 @@ void worker(void)
 \end{lstlisting}
 \end{minipage}
 
-Line 36-38 in listing shows how the port \texttt{sys\_stdio} is initialized and line
-42-47 shows how messages are read from the port and how on success the message
+Line 36-39 in listing shows how the port \texttt{sys\_stdio} is initialized and line
+43-49 shows how messages are read from the port and how on success the message
 is transmitted on the UART with the \texttt{BSP\_UARTx\_transmit()} function.
 
 
@@ -1378,14 +1380,16 @@ void worker(void)
 {
     QUEUING_PORT_ID_TYPE QUEUING_PORT_ID;
     RETURN_CODE_TYPE RETURN_CODE;
-    CREATE_QUEUING_PORT("yellow_print", 32, 32, SOURCE, FIFO, &QUEUING_PORT_ID, &RETURN_CODE);
+    CREATE_QUEUING_PORT("yellow_print", 32, 32, SOURCE, FIFO,
+		&QUEUING_PORT_ID, &RETURN_CODE);
 
 
     while (1) {
         char *str = "Yellow toggler\n\r";
         size_t len = strlen(str);
         RETURN_CODE_TYPE RETURN_CODE;
-        SEND_QUEUING_MESSAGE(QUEUING_PORT_ID, (uint8_t *)str, len, 0, &RETURN_CODE);
+        SEND_QUEUING_MESSAGE(QUEUING_PORT_ID, (uint8_t *)str,
+			len, 0,	&RETURN_CODE);
 
         for (size_t i = 0; i < 8; i++) {
             onboard_led_toggle(yellow_led);
@@ -1396,10 +1400,10 @@ void worker(void)
 \end{lstlisting}
 \end{minipage}
 
-Line 36-38 in listing \ref{list:yellow_toggler} shows how the port
-\texttt{yellow\_print} is initialized and line 41-44 shows how messages are sent
+Line 36-39 in listing \ref{list:yellow_toggler} shows how the port
+\texttt{yellow\_print} is initialized and line 43-47 shows how messages are sent
 to the \texttt{stdio\_sys} partition. For every message the yellow led is
-toggled eight times with 100 milliseconds in between (line 46-49). In a complete
+toggled eight times with 100 milliseconds in between (line 49-52). In a complete
 ARINC 653 compliant operating system direct calls to the driver to toggle LEDs
 should not be possible, but might be implemented with the use of sampling ports.
 This has not been addressed at this stage of development, because of time

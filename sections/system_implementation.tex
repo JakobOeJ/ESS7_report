@@ -849,7 +849,7 @@ before ending a function.}, to avoid the compiler changing registers before the
 context can be saved, and to give complete control over which value is pushed to
 the PC register at the end of the ISR. Listing \ref{list:context_save} show the
 code that saves contexts on the stack.\\
-\begin{minipage}{\textwidth}
+\begin{figure}
 \lstset{
 	language=C,
 	basicstyle=\footnotesize,
@@ -893,24 +893,65 @@ static inline uint32_t context_save()
     return stackpointer;
 }
 	\end{lstlisting}
-\end{minipage}
+\end{figure}
+
 After the context has been saved, control is handed over to the scheduler, which
-can then decide which process should be running next.\\
+then decides which process should run next.\\
 Once all the operations the ISR has completed, the context of the process
-selected by the scheduler must be restored. From this point, the code must once
-again be written in assembly to avoid overwriting a register after it has been
+selected by the scheduler must be restored. From this point, the code is once
+again written in assembly to avoid overwriting a register after it has been
 restored. First, the registers saved by software on the stack must be restored,
-then based on the \excreturn\ value the process interrupted with, it can be
+then based on the \excreturn\ value that the process interrupted with, it can be
 determined to which stack pointer register the new stack pointer must be pushed
 to. Lastly, execution must return to the process by pushing the \excreturn\ value
 to the PC register. The \excreturn\ value pushed to the PC register must be the
 same as that read from the LR register when the process was interrupted.
 Figure \ref{fig:scheduling_sequence_diagram} shows the flow when switching contexts.
-\begin{figure}
-    \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
+Listing \ref{list:context_restore} show the source code that restores the
+context of a process and branches to the \excreturn .
+\begin{figure}[H]
+	\centerline{\includegraphics[width=\paperwidth-2cm,]{figures/scheduling_sequence_diagram.pdf}}
     \caption{This figure shows the steps involved in switching context from one
 	process to another}
     \label{fig:scheduling_sequence_diagram}
+\end{figure}
+\begin{figure}[H]
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	tabsize=4,
+	breaklines=true
+}
+\begin{lstlisting}[
+	firstnumber=66,
+	label=list:context_restore,
+	caption=\textit{src/kernel/context.h}
+]
+__attribute__((always_inline))
+static inline void context_restoreAndSwitch(uint32_t stackpointer, uint8_t exc_return_value)
+{
+    // Restore the software context of the new process.
+    // Variable data is loaded into static registers in the beginnning
+    // to make sure the GCC doesn't decide to use the registers R4-R11 after
+    // they've been restored; that would be catastrophic!
+    __asm volatile (
+        "MOV	R0, %[stack]			\n\t"		// Move the stack pointer to R0
+        "MOV	R2, %[exc]				\n\t"		// Move the process specific EXC_RETURN value to R2
+        "LDR	R1, =0xFFFFFF00 		\n\t"		// Load R1 with the constant part of EXC_RETURN values
+        "LDMFD  R0!, {R4-R11}     		\n\t"		// Restore the stacked registers R4-R11
+        "TST	R2, #0x4    			\n\t"		// Test bit 2 of EXC_RETURN
+        "ITE	EQ      				\n\t"		// Which stack pointer was used?
+        "MSREQ	MSP, R0		 			\n\n"		// Update MSP if EQ is set
+        "MSRNE 	PSP, R0					\n\t"		// Update PSP if NE is set
+        "ADD	R1, R1, R2				\n\t"		// Add the process specific part of the EXC_RETURN value to the constant
+        "BX		R1						\n\t"		// Branch to the EXC_RETURN value to active the NVIC's context restore
+        : : [stack] "r" (stackpointer), [exc] "r" (exc_return_value) :
+    );
+}
+\end{lstlisting}
 \end{figure}
 \subsubsection{Windows}
 \label{sssec:impl_windows}

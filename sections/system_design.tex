@@ -474,6 +474,7 @@ All of this information is important for different reasons when setting up the s
 The rest of this section will deal with the subject of managing memory regions on a STM32F415 chip and categorizing and analysing the memory requirements into a single memory strategy to implement in \todo[inline]{ref to memory management implementation}.
 
 \subsection{the MPU on a STM32F415}
+\label{ssec:design_mpu}
 The memory protection unit (MPU) can be used to prohibit partitions from corrupting data used by kernel code and other partitions.
 The MPU can protect up to eight memory regions and is unified, meaning that it doesn't distinguish between code sections and data sections.
 Regions can have sub-regions but because the minimum (sub-)region size is the size of a cache line length (32 bytes), sub-regions is only available for regions of at least 256 bytes of size.
@@ -489,6 +490,7 @@ the most partitions possible in a limited region of memory and by expanding the 
 the empty gaps. It is important to keep the size, initial pointer and the region of each partition for enable and disable the right area of memory when a different partition is active.
 
 \subsection{System calls}
+\label{ssec:design_system_calls}
 To improve security and robustness, many modern operating systems make clear 
 distinctions between the kernel and applications, and they restrict application
 code from accessing certain periphrial hardware (e.g. storage devices, I/O

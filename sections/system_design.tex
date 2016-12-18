@@ -618,6 +618,43 @@ The figure shows the intended schema for a fully compliant ARINC 653 implementat
 XML is the chosen configuration file format. XML was chosen as opposed to alternatives due to its easy to read and write nature, ARINC\textquotesingle s XML example providing guidance and previous experience with XML in the project group.
 
 \section{APEX}
+The APEX is basically the API for applications running on \OSname{}.
+It is defined by the standard, and the functions are grouped into 
+seven major categories \cite{arinc_page_45}. Table \ref{tab:apex_calls}
+contains these the libraries defining these calls in the source code
+(column on the right),
+classified according to the standard.
+
+\begin{table}[H]
+
+	\centering
+	\begin{tabular}{|c|p{3.1cm}|}
+		\hline
+		Category			&	Library	\\
+		\hline
+		Partition management 	&	apex\_partition.h	\\
+		\hline
+		Process Management	&	apex\_process.h\\
+		\hline
+		Time management	&	apex\_time.h\\
+		\hline
+		Memory management	&	\textit{No APEX calls}\\
+		\hline
+	\multirow{2}{*}{Interpartition communication}	&	apex\_sampling.h\\
+											& 	apex\_queuing.h\\
+		\hline
+	\multirow{4}{*}{Intrapartition communication}	&	apex\_buffer.h		\\
+											& 	apex\_blackboard.h	\\
+											& 	apex\_semaphore.h \\
+											& 	apex\_event.h	\\
+		\hline
+		Health monitoring	& 	apex\_error.h\\
+		\hline
+	\end{tabular}
+	\captionof{table}{
+		APEX calls}
+	\label{tab:apex_calls}
+\end{table}
 
 \section{Partitions and processes}
 

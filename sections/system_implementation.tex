@@ -1456,12 +1456,22 @@ should not be possible, but might be implemented with the use of sampling ports.
 This has not been addressed at this stage of development, because of time
 restrictions. The same goes for the \texttt{delay\_ms()} function (line 48),
 used to delay a process with a time interval. This functionality is ideally
-accessed through an APEX, with added integration with the process scheduler.
+accessed through an APEX call, with added integration with the process scheduler.
 The same is the case for the \texttt{stdio\_sys} partition in section
 \ref{impl:stdio_sys}.
 
 \subsection{evil}
-The 
+The evil partition is implemented to validate the space separation of partitions.
+In two ways, it attempts to overcome the space separation and either change
+memory belonging to other partitions or branch to a code belonging to another
+partition.\\
+By default, both of these attempts to overcome the space separation are disabled.
+This is done because the MPU is not currently being used to protect memory, and
+therefore it is moot to check its implementation. Additionally, as the Health
+Monitor is not implemented, issuing an instruction that requires privilege
+or modifying a register that requires privilege will crash the entire system,
+not only the partition. Therefore, there is no test to validate that partitions
+do in fact run in unpriviledged mode.
 
 \section{Features of the system}
 \todo[inline, color=green]{Here we can have a table showing what features

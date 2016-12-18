@@ -81,7 +81,7 @@ One partition should only have writing rights to its own memory space.
 The resources used by the partitions are specified at build time.
 \cite{arinc_page_14}
 The standard differentiates between partitions that run applications and system partitions. The latter are optional, and can be used to contain
-services not provided in the APEX \cite{scarlett}.
+services not provided in the APEX \cite{arinc_scarlett}.
 \\\\
 \textbf{Processes}
 These are the parts of the program running on partitions. One partition
@@ -187,80 +187,86 @@ in the system configuration phase, in order to
 satisfy the applications\textquotesingle requirements \cite{arinc_page_42}.
 
 \subsection{Decision}
-The idea is to bring such an operating system  based on \arinc{}
+The idea is to bring such an operating system based on \arinc{}
 in to the wider embedded world.
-The focus will now change to understanding if, and how other project
-approached this idea. 
+The focus will now change to understanding if, and how other projects
+have approached this idea. 
 
 \section{Other existing standards}
 While \arinc{} defines the architecture of a system for safety-critical
-avionics applications, there is no way to categorize how such a system
+avionics applications, there are other ways to categorize how such a system
 would perform. Usually this could be measured by looking at the number 
 of failures occurring in time. There is a standard that specifies exactly this.
 
-\subsection{DO-178}
-DO-178 is a set of guidelines to be used for software assurance in safety-critical software in avionics systems.
+\subsection{DO-178B}
+DO-178B\cite{do178b_wiki} is a set of guidelines to be used for 
+software assurance in safety-critical software in avionics systems.
 Use of the standard can determine the reliability of the software in an airborne environment.
-There is a ``safety assessment process'' and ``hazard analysis'' to determine the result of failure conditions on the system.
-The final result of the standard applied to the software system will give the system a ``software level'' of A to E compliance,
+There is a \textit{safety assessment process} and \textit{hazard analysis} to determine the result of failure conditions on the system.
+The final result of the standard applied to the software system will give the system a \textit{software level} of A to E compliance,
 where A is the best level to be achieved and E is the worst.
-A level A compliance mean the system has been verified and validated against catastrophic failures,
+A level A compliance means the system has been verified and validated against catastrophic failures,
 whereas an E compliance has been verified against trivial failures.
+Its successor, DO-178C\cite{do178c_wiki} was released in January 2012.
 
-\subsection{ARINC comes into play}
-Here is where ARINC comes into play. The concept of having partitions 
+\subsection{Certification of \arinc{}}
+One might wonder what \arinc{} has to do with DO-178B. 
+The concept of having partitions 
 to host avionics applications is from the beginning seen as a step 
-forward in terms of safety (as described in the previous section).
-By applying the DO-178 standard on an ARINC implementation would certify
+forward in terms of safety.
+Applying the DO-178B standard on an ARINC implementation would certify
 that this is ready to be deployed in the avionics field (Level A).
-In fact this is what is going on in similar projects.
+In fact this is what similar projects are doing.
 
-\subsection{Alternative ARINC platforms}
-When considering how to implement ARINC 653 we first explored existing platforms that might meet our needs.
-There are COTS (Commercial of the Shelf) OSs, and there are open source OSs.
-An existing platform would save us time to get an ARINC platform running,
-but with varying levels of limitations between the COTS and open source.
+\subsection{Alternative \arinc{} platforms}
+There are a number of \arinc{} implementations available, which is not
+surprising, having understood the benefits of IMA.
+These are divided into and open source OSs and COTS\footnote{Commercial of the Shelf} OSs.
+An existing platform could be used as a starting point for 
+the implementation of \OSname{}.
 
+\textbf{ARLX}\cite{arlx}
+is the only open-source platform available. It is a prototype hypervisor
+for ARINC 653 that uses Linux to partition the system.
+It has been developed in accordance with DO-178C.
+\todo{explain this better}
 
-\textbf{ARLX - the only open source solution}
-ARLX is a prototype hypervisor for ARINC 653 which is an extension to the Xen hypervisor.
-Linux is used to partition the system.
-It has been developed in accordance with DO-178.
+\textbf{Commercial platforms}
+such as VxWorks 653 (DO-178C certified)\cite{vxworks},
+PikeOS (DO-178 compliant)\cite{pikeos},
+LynxOS-178 (DO-178B certified)\cite{linxos}
+support \arinc{}.
 
-\textbf{COTS OS platforms}
-There are several commercial OSs that support ARINC:
-VxWorks, PikeOS, LynksOS, WindowsCE, Linux RTAI and CsLEOS OS to name the main ones.
+As an example, \textbf{VxWorks 653}
+is marketed as \textit{The Industry's Leading Operating System for Embedded devices}.
+It contains an \arinc{} compliant platform and is compliant with DO-178C to level A.
 
-\textbf{VxWorks - example}
-Called VxWorks 653, is it marketed as ``The Industry's Leading Operating System for Embedded devices''.
-It contains an ARINC 653 compliant platform and compliance with DO-178C to level A, DO-254 and DO-297.
-Capable of full virtualization on a shared multi-core processor.
-
-As mentioned before, there is no surprise that the mentioned examples 
-of ARINC implementations are all DO 178 certified. While it is 
-important for them to work properly, the compliance to ARINC and the
-certification of a high level in DO 178 shows that they are safe to use
-in critical applications. Apart from this, it makes the developer's
+As mentioned, there is no surprise that the existing  
+\arinc{} implementations are all DO-178 certified. While it is 
+important for them to work properly, the compliance to \arinc{} and the
+certification of a high level in DO-178 shows that they are safe to use
+in critical applications. Apart from this, it makes the developer\textquotesingle s
 life easier as well as the life of the administrative department.
 
 \subsubsection{The developer's point of view}
-It is easy to create and maintain a framework that has strict time and space partitioning.
+It is easy for a developer to create and maintain a framework that has
+strict time and space partitioning.
 When new applications need to be added to the system, all the developer 
-needs to know is the level the applications have been DO 178 certified.
+needs to know is the level the applications have been DO-178 certified to.
 This way he could then provide the proper resources for the application
 to meet its goal.
-
+\iffalse
 ("Assuming each application is certified for DO-178B/C at a given level (A through E), safety integrity of the overall avionics systems can be achieved since data integrity can be guaranteed and a sufficient time budget can be allocated to each application so that it can run in due time. ")
-
+\fi
 \subsubsection{The administrative point of view}
-It is easier to get an ARINC framework DO178 certified, and build on top
+It is easier to get an \arinc{} framework DO-178 certified, and build on top
 of that. The partitions would make it easier to divide the application
 code into multiple sections, that could be certified independently.
 Updating an application would be a matter of rewriting the code and 
 getting just this part recertified, instead of the whole system.
-
+\iffalse
 ("The ability to achieve incremental certification is a direct benefit of the ARINC 653 partitioning mechanisms since certification can be achieved first for each application and then for the overall systems. Moreover, changing an application does not require recertification of the other applications.")
-
+\fi
 \subsection{Decision}
 \todo[inline,color=green] {why we did not use any of the Arinc implementations mentioned above?}
 Since we decide not to use any of the existing implementations...

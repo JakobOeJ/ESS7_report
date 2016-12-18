@@ -1248,7 +1248,36 @@ identifier.
 \section{Partitions and processes}
 
 \subsection{Partitions}
+Partitions are wrapped in the struct \texttt{partition_t} (see listing
+\ref{list_partition_t}).
+\begin{figure}
+\begin{lstlisting}[
+	firstnumber=58,
+	label=list:partition_t,
+	caption=\textit{src/kernel/types.h}
+]
+typedef struct {
+    uint8_t                   id;
+    NAME_TYPE                 partitionname;
+    CRITICALITY	              criticality; /* Not used */
+    bool                      systempartion; /* Not used*/
+    void                      (*entrypoint)(void);
+    APEX_INTEGER              nb_ports;
+    port_t                    *ports;
+    uint32_t                  nb_processes;
+    uint32_t                  index_running_process;
+    process_t                 processes[MAX_PROCESSES_PER_PARTITIONS];
+} partition_t;
+\end{lstlisting}
+\end{figure} 
+The data in this structure is filled in by both the
+XML schema parser, through the xml-data.c file, and by the kernel itself.
+The XML schema parser defines all but process information; as processes are
+dynamic, they are not defined in the XML schema.
 
+As there is no compile-time knowledge of the number of processes each partition
+may create, the \texttt{processes} array has a static size of 
+MAX\_PROCESSES\_PER\_PARTITIONS (defined as 3).
 \subsection{Processes}
 
 \subsection{idle\_sys}

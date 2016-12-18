@@ -693,6 +693,26 @@ Module\_schedule has also been removed, leaving its attribute majorFrameSeconds 
 partition\_memory(part\_mem\_t) and partition\_schedule have maintained their one to many structures with their sub elements. 
 Partitions sub elements, sampling and queuing ports, have combined into a single element called ports. 
 The Connection\_Table has been removed, and StandardPartition has been transformed into a port reference list called ports\_t which shares an association with partitions\_t ports.
+\\\\
+part\_mem\_t has two new attributes.
+nummemory is
+memory\_arr is
+\\\\
+partition\_schedule has two new attributes.
+numWindows is 
+windows\_arr is
+\\\\
+partitions\_t has two new attributes.
+nb\_ports is
+ports is
+\\\\
+port\_t has x new attributes.
+is\_queuing\_port is
+\\\\
+channel\_t has two new attributes.
+nb\_ports is
+ports is
+\\\\
 
 \section{OS kernel}
 This section gives an overview of the the features in open653 and how they are

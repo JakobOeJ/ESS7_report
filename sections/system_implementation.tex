@@ -1318,11 +1318,10 @@ more efficiently.
 \label{impl:stdio_sys}
 The stdio\_sys partition is named after the `standard IO' (stdio.h) from the
 standard C library, with the \_sys being present to indicate it being a system
-partition. Since standard partitions, according to the ARINC 653 standard can
-only interface with the rest of the system through APEX calls (\ref{}), they can
-not directly communicate with the UART. This partition makes this interface
-possible by offering a port, which to send strings or raw data to be send by
-UART.\\
+partition. Standard partitions should only interface with the rest of the system
+through APEX calls, so not to enter kernel space and directly communicate with
+the UART. This partition makes this interface possible by offering a port, by
+which to send strings or raw data to be send by UART.\\
 
 stdio\_sys' entrypoint is \texttt{stdio\_sys\_main()}, which only job is to
 start a new process with the \texttt{worker()} function, shown in listing

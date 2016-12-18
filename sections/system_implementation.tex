@@ -1189,6 +1189,47 @@ attempt has been made to prove it, that this will allow the CPU to run slightly
 more efficiently.
 
 \subsection{stdio\_sys}
+The stdio\_sys partition is named after the `standard IO' (stdio.h) from the
+standard C library, with the \_sys being present to indicate it being a system
+partition. Since standard partitions, according to the ARINC 653 standard can
+only interface with the rest of the system through APEX calls (\ref{}), they can
+not directly communicate with the UART. This partition makes this interface
+possible by offering a port, which to send strings or raw data to be send by
+UART.\\
+
+stdio\_sys' entrypoint is \texttt{stdio\_sys\_main()}, which only job is to
+start a new process with the \texttt{worker()} function, shown in listing
+\ref{list:stdio_sys}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=34,
+	label=list:stdio_sys,
+	caption=\textit{src/partitions/stdio\_sys.c}]
+void worker(void)
+{
+    QUEUING_PORT_ID_TYPE QUEUING_PORT_ID;
+    RETURN_CODE_TYPE RETURN_CODE;
+    CREATE_QUEUING_PORT("sys_stio", 32, 32, DESTINATION, FIFO, &QUEUING_PORT_ID, &RETURN_CODE);
+
+    char str[1024];
+    while(1) {
+        RETURN_CODE_TYPE RETURN_CODE;
+        MESSAGE_SIZE_TYPE len;
+        RECEIVE_QUEUING_MESSAGE(QUEUING_PORT_ID, 0, (uint8_t *)str, &len, &RETURN_CODE);
+        if (RETURN_CODE == NO_ERROR) {
+            BSP_UARTx_transmit((uint8_t *)str, len);
+        }
+
+        HAL_Delay(10);
+    }
+}
+\end{lstlisting}
+\end{minipage}
+
+Line 36-38 in listing shows how the port sys\_stdio is initialized and line
+42-47 shows how messages are read from the port and the on success the message
+is transmitted on the UART with the \texttt{BSP\_UARTx\_transmit()} function.
 
 \subsection{dummy1}
 

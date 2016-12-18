@@ -630,7 +630,7 @@ watchdog has not been implemented, but its functionality is relevant
 to \OSname{}.
 
 In regards to what the standard specifies, that the processor should be able
-to isolate a partition that fails \cite{page12}. This could be done by 
+to isolate a partition that fails \cite{arinc_page_12}. This could be done by 
 using the window watchdog timer to define the time intervals for partitions 
 to run. The feature called Early Wakeup Interrupt can be used to do some
 safety operations, just before the reset is done by the watchdog.
@@ -649,7 +649,7 @@ researching other ways of timing the system, as seen in:
 \todo{ref to Timing}
 
 Anyway, the RTC could be used for timestamps on error logs and such,
-as the standard specifies \cite{page_26}. The use of the LSE oscillator,
+as the standard specifies \cite{arinc_page_26}. The use of the LSE oscillator,
 as well as the design of the RTC (having all time components, including
 subseconds, as well as leap year correction), make this clock a reliable
 secondary time source.
@@ -767,7 +767,7 @@ driven rescheduling. Partitions are exclusively rescheduled because of time,
 whereas processes may be rescheduled because of both time and events.
 As for temporal scheduling, the ARINC 653 specification does not explicitly
 specify a minimum or maximum time resolution for scheduling, though it does
-imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
+imply a resolution of 1 nanosecond should be available\cite{arinc_time}.
 
 For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
 also led to the choice of a time resolution of 1 millisecond. Scheduling is
@@ -1277,7 +1277,10 @@ dynamic, they are not defined in the XML schema.
 
 As there is no compile-time knowledge of the number of processes each partition
 may create, the \texttt{processes} array has a static size of 
-MAX\_PROCESSES\_PER\_PARTITIONS (defined as 3).
+MAX\_PROCESSES\_PER\_ PARTITIONS (defined as 3). This makes the memory
+consumption of a partition in the kernel more consistent, but moreover, it makes
+the dynamically created processes statically allocated.\\
+
 \subsection{Processes}
 
 \subsection{idle\_sys}

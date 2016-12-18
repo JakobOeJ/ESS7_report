@@ -1248,7 +1248,7 @@ identifier.
 \section{Partitions and processes}
 
 \subsection{Partitions}
-Partitions are wrapped in the struct \texttt{partition_t} (see listing
+Partitions are wrapped in the struct \texttt{partition\_t} (see listing
 \ref{list_partition_t}).
 \begin{figure}
 \begin{lstlisting}[
@@ -1359,7 +1359,7 @@ Line 36-38 in listing shows how the port \texttt{sys\_stdio} is initialized and 
 is transmitted on the UART with the \texttt{BSP\_UARTx\_transmit()} function.
 
 
-\subsection{yellow\_toggler & red\_toggler}
+\subsection{yellow\_toggler and red\_toggler}
 Two standard partitions is implemented called \texttt{yellow\_toggler} and
 \texttt{red\_toggler} to demonstrate partition use. Their job is to print a line
 to USART and to toggle and LED. Since they both execute the same job, only using

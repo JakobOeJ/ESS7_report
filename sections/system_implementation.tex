@@ -683,11 +683,43 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 
 \section{OS kernel}
 
-\subsection{Init\/main}
+\subsection{OS Initialization}
+open653 is initialized from the \texttt{main()} function in /src/kernel/main.c.
+Its job is to set up the following:
 
-\subsubsection{MPU Setup}
+\begin{enumerate}
+	\item The main clock
+	\item UART and clear the terminal
+	\item Red and yellow LED
+	\item The ports
+	\item Partitions and their processes
+	\item Construct a partition schedule
+	\item Enter unprivileged mode by setting a bit in a register
+\end{enumerate}
+
+A more complete implementation of ARINC 653 would also have to setup the MPU.
+Though the MPU is designed and testable code does exist, it is at this point yet
+to be included into the kernel as a service and for this reason no setup is done.\\
+
+The setup of the UART is fixed to use port C pin 10 and 11 with a baud-rate of
+115200 baud. Setting it up is a matter of passing these arguments to the HAL
+library and is not covered further in the report.\\
+The same argument can be made about the LEDs which also not will be described.\\
+
+The last action taken by the main function is enabling the SysTick interrupt and
+entering unprivileged mode start the scheduler.\\
+
+In the following the sections the main clock setup (section \ref{impl:clock_setup},
+the partition setup (section \ref{impl:part_setup}), the process setup (section
+\ref{impl:proc_setup}) and partition schedule setup (section \ref{sssec:build_schedule})
+is explained in further detail.
+
+\subsubsection{Main Clocl Setup}
+\label{impl:clock_setup}
 \subsubsection{Partition Setup}
+\label{impl:part_setup}
 \subsubsection{Process Setup}
+\label{impl:proc_setup}
 \subsubsection{Building the schedule}
 \label{sssec:build_schedule}
 The partition schedule is defined in the XML schema file as windows (see 

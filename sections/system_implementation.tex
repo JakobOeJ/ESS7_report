@@ -681,6 +681,19 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 
 \section{C Structures}
 
+The data undergoes change during the translation from XML to C structs to support ease of use. The structure of the data and relationships of the elements are presented in the figure below.
+
+\begin{figure}[H]	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/cstructs.pdf}
+	\caption{C structs design and relationships}
+	\label{fig:cstructs}
+\end{figure}
+
+The global structure of ARINC\_653\_Module has been removed, its sub elements now exist without a dependency. 
+Module\_schedule has also been removed, leaving its attribute majorFrameSeconds as an independent piece of configuration used directly. 
+partition\_memory(part\_mem\_t) and partition\_schedule have maintained their one to many structures with their sub elements. 
+Partitions sub elements, sampling and queuing ports, have combined into a single element called ports. 
+The Connection\_Table has been removed, and StandardPartition has been transformed into a port reference list called ports\_t which shares an association with partitions\_t ports.
+
 \section{OS kernel}
 
 \subsection{Init\/main}

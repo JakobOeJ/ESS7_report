@@ -1277,7 +1277,10 @@ dynamic, they are not defined in the XML schema.
 
 As there is no compile-time knowledge of the number of processes each partition
 may create, the \texttt{processes} array has a static size of 
-MAX\_PROCESSES\_PER\_PARTITIONS (defined as 3).
+MAX\_PROCESSES\_PER\_ PARTITIONS (defined as 3). This makes the memory
+consumption of a partition in the kernel more consistent, but moreover, it makes
+the dynamically created processes statically allocated.\\
+
 \subsection{Processes}
 
 \subsection{idle\_sys}

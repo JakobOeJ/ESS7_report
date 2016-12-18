@@ -35,15 +35,20 @@ In order to test a system for compliance with \arinc{}, Aeronautical
 Radio Inc., the authors of the standard provide a conformity test
 specification. This comes as a separate document, as a part of the
 \arinc{} specification:
-\begin{labeling}{Part 1}
-	\item[\textbf{Part 0}]Introduction to ARINC 653
-	\item[\textbf{Part 1}]Required services. This includes system services,
+\begin{itemize}[noitemstep]
+	\item\textbf{Part 0}Introduction to ARINC 653
+	\item\textbf{Part 1}Required services. This includes system services,
 	data structures and functional behaviour.
-	\item[\textbf{Part 2}]Extended services. For example file handling or external events
-	\item[\textbf{Part 3}]\textbf{Conformity test}
-	\item[\textbf{Part 4}]Subset Services
-	\item[\textbf{Part 5}]Core Software Recommended Capabilities
-\end{labeling}
+	\item\textbf{Part 2}Extended services. For example file handling or external events
+	\item\textbf{Part 3}\textbf{Conformity test}
+	\item\textbf{Part 4}Subset Services
+	\item\textbf{Part 5}Core Software Recommended Capabilities
+\end{itemize}
+
+Basically, software developers should use this to test the compliance with
+Part 1 of the standard. The extended services (Part 2), are not being
+tested. This could be done in the future phases of the \OSname{} OS in order
+to demonstrate the compliance of the APEX behavior.
 
 \section{Message passing}
 

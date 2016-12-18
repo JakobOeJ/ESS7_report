@@ -967,6 +967,7 @@ is considered to be an implicit idle period.\\
 To see how windows from the XML are ordered in the kernel, and how implicit
 idle periods are filled in, see figure \ref{fig:demo_windows}.
 \subsubsection{Partition Scheduler}
+\label{sssec:impl_partition_scheduler}
 During the initialisation of the system, a static schedule is build based on the
 windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
 
@@ -1156,6 +1157,7 @@ which makes it simpler to implement than queuing ports, having to use less code 
 
 
 \subsection{System Calls}
+\label{ssec:impl_system_calls}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function
@@ -1251,6 +1253,9 @@ identifier.
 Partitions are wrapped in the struct \texttt{partition\_t} (see listing
 \ref{list:partition_t}).
 \begin{figure}
+	\lstset{
+		breaklines=true
+	}
 \begin{lstlisting}[
 	firstnumber=58,
 	label=list:partition_t,
@@ -1271,7 +1276,7 @@ typedef struct {
 \end{lstlisting}
 \end{figure} 
 The data in this structure is filled in by both the
-XML schema parser, through the xml-data.c file, and by the kernel itself.
+XML schema parser, through the xml\_data.c file, and by the kernel itself.
 The XML schema parser defines all but process information; as processes are
 dynamic, they are not defined in the XML schema.
 
@@ -1281,6 +1286,45 @@ MAX\_PROCESSES\_PER\_ PARTITIONS (defined as 3). This makes the memory
 consumption of a partition in the kernel more consistent, but moreover, it makes
 the dynamically created processes statically allocated.\\
 
+Partition memory spaces are allocated in the XML schema, and it is parsed by the
+XML schema parser and made available to the kernel in xml\_data.c. Listing
+\ref{list:mem_t} shows the memory structures of the generated XML data.
+\begin{figure}[H]
+	\lstset{
+		breaklines=true
+	}
+	\begin{lstlisting}[
+		firstnumber=71,
+		label=list:mem_t,
+		caption=\textit{src/kernel/types.h}
+	]
+typedef struct {
+    mem_type_t                type;
+    uint32_t                  size;
+    mem_access_t              access;
+    uint32_t                  address;
+} mem_req_t;
+
+typedef struct{
+    uint8_t                   id;
+    NAME_TYPE                 partitionname;
+    uint32_t                  arr_size;
+    mem_req_t                 *memory_arr;
+
+    /* This value could be calculated every time we make a new process,
+    but this is just way easier... */
+    uint32_t                  mem_offset;
+} part_mem_t;
+	\end{lstlisting}
+\end{figure}
+If time had allowed it, the space separation of partitions would have been
+ensured by the MPU (see \ref{ssec:design_mpu}). Time separation of partition is 
+handled by the partition scheduler (see \ref{ssec:design_scheduling} and
+\ref{sssec:impl_partition_scheduler}).\\
+
+Partitions run in unpriviledged mode; to access control registers, and to call
+APEX functions, they need to do a system call (see
+\ref{ssec:design_system_calls} and \ref{ssec:impl_system_calls}).
 \subsection{Processes}
 
 \subsection{idle\_sys}

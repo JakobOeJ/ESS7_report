@@ -682,12 +682,47 @@ There are four dynamic elements (partitions, partition\_memory, module\_schedule
 \section{C Structures}
 
 \section{OS kernel}
+This section gives an overview of the the features in open653 and how they are
+implemented. At the end a feature list is provided to give summery of the features
+and services implemented in open653.
 
-\subsection{Init\/main}
+\subsection{OS Initialization}
+open653 is initialized from the \texttt{main()} function in /src/kernel/main.c.
+Its job is to set up the following:
 
-\subsubsection{MPU Setup}
+\begin{enumerate}
+	\item The main clock
+	\item UART and clear the terminal
+	\item Red and yellow LED
+	\item The ports
+	\item Partitions and their processes
+	\item Construct a partition schedule
+	\item Enter unprivileged mode by setting a bit in a register
+\end{enumerate}
+
+A more complete implementation of ARINC 653 would also have to setup the MPU.
+Though the MPU is designed and testable code does exist, it is at this point yet
+to be included into the kernel as a service and for this reason no setup is done.\\
+
+The setup of the UART is fixed to use port C pin 10 and 11 with a baud-rate of
+115200 baud. Setting it up is a matter of passing these arguments to the HAL
+library and is not covered further in the report.\\
+The same argument can be made about the LEDs which also not will be described.\\
+
+The last action taken by the main function is enabling the SysTick interrupt and
+entering unprivileged mode start the scheduler.\\
+
+In the following the sections the main clock setup (section \ref{impl:clock_setup},
+the partition setup (section \ref{impl:part_setup}), the process setup (section
+\ref{impl:proc_setup}) and partition schedule setup (section \ref{sssec:build_schedule})
+is explained in further detail.
+
+\subsubsection{Main Clock Setup}
+\label{impl:clock_setup}
 \subsubsection{Partition Setup}
+\label{impl:part_setup}
 \subsubsection{Process Setup}
+\label{impl:proc_setup}
 \subsubsection{Building the schedule}
 \label{sssec:build_schedule}
 The partition schedule is defined in the XML schema file as windows (see 
@@ -967,7 +1002,6 @@ is considered to be an implicit idle period.\\
 To see how windows from the XML are ordered in the kernel, and how implicit
 idle periods are filled in, see figure \ref{fig:demo_windows}.
 \subsubsection{Partition Scheduler}
-\label{sssec:impl_partition_scheduler}
 During the initialisation of the system, a static schedule is build based on the
 windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
 
@@ -1157,7 +1191,6 @@ which makes it simpler to implement than queuing ports, having to use less code 
 
 
 \subsection{System Calls}
-\label{ssec:impl_system_calls}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function
@@ -1253,9 +1286,6 @@ identifier.
 Partitions are wrapped in the struct \texttt{partition\_t} (see listing
 \ref{list:partition_t}).
 \begin{figure}
-	\lstset{
-		breaklines=true
-	}
 \begin{lstlisting}[
 	firstnumber=58,
 	label=list:partition_t,
@@ -1276,7 +1306,7 @@ typedef struct {
 \end{lstlisting}
 \end{figure} 
 The data in this structure is filled in by both the
-XML schema parser, through the xml\_data.c file, and by the kernel itself.
+XML schema parser, through the xml-data.c file, and by the kernel itself.
 The XML schema parser defines all but process information; as processes are
 dynamic, they are not defined in the XML schema.
 
@@ -1286,45 +1316,6 @@ MAX\_PROCESSES\_PER\_ PARTITIONS (defined as 3). This makes the memory
 consumption of a partition in the kernel more consistent, but moreover, it makes
 the dynamically created processes statically allocated.\\
 
-Partition memory spaces are allocated in the XML schema, and it is parsed by the
-XML schema parser and made available to the kernel in xml\_data.c. Listing
-\ref{list:mem_t} shows the memory structures of the generated XML data.
-\begin{figure}[H]
-	\lstset{
-		breaklines=true
-	}
-	\begin{lstlisting}[
-		firstnumber=71,
-		label=list:mem_t,
-		caption=\textit{src/kernel/types.h}
-	]
-typedef struct {
-    mem_type_t                type;
-    uint32_t                  size;
-    mem_access_t              access;
-    uint32_t                  address;
-} mem_req_t;
-
-typedef struct{
-    uint8_t                   id;
-    NAME_TYPE                 partitionname;
-    uint32_t                  arr_size;
-    mem_req_t                 *memory_arr;
-
-    /* This value could be calculated every time we make a new process,
-    but this is just way easier... */
-    uint32_t                  mem_offset;
-} part_mem_t;
-	\end{lstlisting}
-\end{figure}
-If time had allowed it, the space separation of partitions would have been
-ensured by the MPU (see \ref{ssec:design_mpu}). Time separation of partition is 
-handled by the partition scheduler (see \ref{ssec:design_scheduling} and
-\ref{sssec:impl_partition_scheduler}).\\
-
-Partitions run in unpriviledged mode; to access control registers, and to call
-APEX functions, they need to do a system call (see
-\ref{ssec:design_system_calls} and \ref{ssec:impl_system_calls}).
 \subsection{Processes}
 
 \subsection{idle\_sys}
@@ -1408,11 +1399,10 @@ is transmitted on the UART with the \texttt{BSP\_UARTx\_transmit()} function.
 
 
 \subsection{yellow\_toggler and red\_toggler}
-Two standard partitions are implemented called \texttt{yellow\_toggler} and
-\texttt{red\_toggler} to demonstrate partition use. Their job is to send 
-messages to the stdio\_sys through queuing ports and to toggle and LED. Since they
-both execute the same job, only using different symbols only the
-\texttt{yellow\_toggler} is explained here.\\
+Two standard partitions is implemented called \texttt{yellow\_toggler} and
+\texttt{red\_toggler} to demonstrate partition use. Their job is to print a line
+to USART and to toggle and LED. Since they both execute the same job, only using
+different symbols only the \texttt{yellow\_toggler} is explained here.\\
 
 Just like the \texttt{stdio\_sys} partition in section \ref{impl:stdio_sys}, the
 function entrypoints only job is to job is to initialize a new process
@@ -1456,22 +1446,12 @@ should not be possible, but might be implemented with the use of sampling ports.
 This has not been addressed at this stage of development, because of time
 restrictions. The same goes for the \texttt{delay\_ms()} function (line 48),
 used to delay a process with a time interval. This functionality is ideally
-accessed through an APEX call, with added integration with the process scheduler.
+accessed through an APEX, with added integration with the process scheduler.
 The same is the case for the \texttt{stdio\_sys} partition in section
 \ref{impl:stdio_sys}.
 
 \subsection{evil}
-The evil partition is implemented to validate the space separation of partitions.
-In two ways, it attempts to overcome the space separation and either change
-memory belonging to other partitions or branch to a code belonging to another
-partition.\\
-By default, both of these attempts to overcome the space separation are disabled.
-This is done because the MPU is not currently being used to protect memory, and
-therefore it is moot to check its implementation. Additionally, as the Health
-Monitor is not implemented, issuing an instruction that requires privilege
-or modifying a register that requires privilege will crash the entire system,
-not only the partition. Therefore, there is no test to validate that partitions
-do in fact run in unprivileged mode.
+
 
 \section{Features of the system}
 \todo[inline, color=green]{Here we can have a table showing what features

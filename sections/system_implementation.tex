@@ -1451,7 +1451,17 @@ The same is the case for the \texttt{stdio\_sys} partition in section
 \ref{impl:stdio_sys}.
 
 \subsection{evil}
-
+The evil partition is implemented to validate the space separation of partitions.
+In two ways, it attempts to overcome the space separation and either change
+memory belonging to other partitions or branch to a code belonging to another
+partition.\\
+By default, both of these attempts to overcome the space separation are disabled.
+This is done because the MPU is not currently being used to protect memory, and
+therefore it is moot to check its implementation. Additionally, as the Health
+Monitor is not implemented, issuing an instruction that requires privilege
+or modifying a register that requires privilege will crash the entire system,
+not only the partition. Therefore, there is no test to validate that partitions
+do in fact run in unprivileged mode.
 
 \section{Features of the system}
 \todo[inline, color=green]{Here we can have a table showing what features

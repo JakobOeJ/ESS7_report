@@ -1,0 +1,883 @@
+%! tex root = ../master.tex
+
+\newcommand{\excreturn}{EXC\_RETURN}
+
+\chapter{System Implementation}
+This chapter deals with how the system\textquotesingle s functionalities 
+are implemented. Diagrams will be included when necessary, as well as code 
+snippets for the interesting parts of the program. In the end, all these
+will be reviewed and compared with the actual requirements of the standard.
+
+\section{Hardware}
+The Mini-M4 board is a development board, which means that beside the 
+microcontroller, it also contains two crystal oscillators, two LEDs, a reset 
+button and the peripherals for regulating the power it gets from
+a micro-USB connector.
+Some of the GPIOs are break through using external pins.
+These pins are soldered to the board, and this is setup on a breadboard
+for practicality, as seen in \ref{fig:photo1}.
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_not_soldered}
+  \caption{MINI-M4 before soldernig}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=3cm]{hardware/board_on_breadboard}
+  \caption{MINI-M4 on a breadboard}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Preparation of the board}
+\label{fig:photo1}
+\end{figure}
+
+The JTAG connector is wired to the five corresponding pins of the
+board. The serial communication is established with two other wires, going
+to the UART pins of the board.
+The final setup can be seen in the next figures.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \caption{The JTAG lines}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \caption{Both the JTAG and serial interfaces}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{Connecting the board}
+\label{fig:photo2}
+\end{figure}
+
+After this, the board is ready to be used in the development process.
+The only drawback of this setup, is that it requires three USB ports:
+one for power for the board, another one for the JTAG interface, and last
+the serial communication. For detailed photos of the process, consult
+Appendix \ref{app:hardware_setup}.
+
+\subsection{JTAG Interface}
+\label{ssec:JTAG_Interface}
+Figure \ref{fig:sub1} represents the physical layout of the JTAG interface.
+Since the JTAG connector has 20 pins, and only some of these are required
+to communicate with the board, the set up process took some time to figure
+out. The following diagram, shows the pinout of the JTAG and the 
+corresponding pins on the microcontroller\textquotesingle s JTAG port.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{jtag_interface.pdf}
+\captionof{figure}{The connection of the JTAG interface}
+\label{fig:jtag_interface}
+\end{figure}
+
+The tags on the upper part of figure \ref{fig:jtag_interface}, are
+JTAG specific:
+\begin{labeling}{RESET}
+	\item [\textbf{TDI}]
+		Test Data In pin
+	\item [\textbf{TMS}]
+		Test Mode State pin
+	\item [\textbf{TCK}]
+		Test Clock pin
+	\item [\textbf{TDO}]
+		Test Data Out pin
+	\item [\textbf{RESET}]
+		used for resetting the target device. This is connected to the 
+		MCLR (Master Clear or Reset) pin of the board
+\end{labeling}
+
+The tags on the lower part of the figure represent the pins of the 
+microcontroller, where $P$ stand for port, $A$ or $B$ for the port
+identity ($PORTA$ or $PORTB$) and the number is the individual GPIO needed.
+
+A driver \footnote{STSW-LINK009 v1.02} 
+is needed to be installed on Windows machines, in order to
+recognize and program using ST-LINK/v2.
+
+\section{Source Structure}
+The following sections describes different aspects the software used and
+the source code located in the project root directory (ESS7\_project) denoted as `/'.
+Below the root folder,
+all the source code and compiled binaries are roughly structured as listed
+in figure \ref{fig:source_structure}:
+
+\begin{figure}[H]
+	\dirtree{%
+.1 /.
+	.2 build.
+		.3 ....
+	.2 src.
+		.3 drivers.
+			.4 ....
+		.3 kernel.
+			.4 ....
+		.3 partitions.
+			.4 ....
+			.4 utils.
+	.2 third\_party.
+		.3 ARINC.
+			.4 APEX.
+				.5 ....
+		.3 CMSIS.
+			.4 ....
+		.3 linker\_scripts.
+		.3 STM32F4xx\_HAL\_Driver.
+			.4 ....
+	.2 ....
+	}
+	\caption{A rough depiction of the source file structure.}
+	\label{fig:source_structure}
+\end{figure}
+
+
+\section{Toolchain}
+To write, compile and load code to the embedded platform,
+a regular computer is used with ones editor of choice,
+a C compiler and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
+The toolchain is adopted from AAURacing\cite{aauracing} which uses a similar chip and develop on Linux\/OSX.
+For this project the toolchain has been generalized to also work in windows 10 (later edition?).
+In the rest of the section the toolchain and source code(one or two words?) structure is explained.
+
+\subsection{CMAKE}
+\label{ssec:cmake}
+CMake is used to setup construct the makefiles for the project.
+It's of little benefit comparing to write the makefiles from scratch,
+but has been adopted in (this OS), since it came with the toolchain.
+
+\begin{displayquote}
+CMake is an open-source, cross-platform family of tools designed to build,
+test and package software.
+CMake is used to control the software compilation process
+using simple platform and compiler independent configuration files,
+and generate native makefiles and workspaces
+that can be used in the compiler environment of your choice\cite{cmake}.
+\end{displayquote}
+
+Like Make, CMake is run from a file containing a set instructions on a project.
+The instructions can be seperated in a nested structure of files to contain complexity (can you say that?).
+A project can have multiple CMake files,
+they all have to be named CMakeLists.txt and hence are placed in seperate folders.
+The main CMake file is placed in the root-folder of the project and contains the main compiler information.
+Specific information about compile targets and their files
+are placed in sub files in folders as depicted in figure \ref{fig:cmake_files}.
+
+\begin{figure}[H]
+	\dirtree{%
+.1 /.
+	.2 src.
+		.3 CMakeLists.txt.
+	.2 third\_party.
+		.3 CMakeLists.txt.
+	.2 CMakeLists.txt.
+	}
+	\caption{Placement of CMakeLists.txt files in source directory.}
+	\label{fig:cmake_files}
+\end{figure}
+
+As denoted by the first line of the CMakeLists.txt file in `/', no less than version 2.8.8 of CMake is required.
+The rest of the file set up:
+
+\begin{itemize}
+	\item the compiler to use
+	\item a list of compiler flags (section \ref{sssec:compiler_flags})
+	\item commonly used include paths
+	\item two required defines (section \ref{ssec:gcc})
+	\item a command to flash the target device using OpenOCD (section \ref{ssec:openocd})
+\end{itemize}
+
+Using CMake followed by Make results in a tree of makefiles and objects,
+which can be contained by running CMake and Make from within a build folder.
+A complete tutorial on how to get started using the build system can be found in Appendix \ref{app:tutorial}.
+
+Make is a UNIX tool\cite{gnu_make} often used to order many calls to GCC in C language projects.
+Objects are compiled in separate calls to GCC and
+Make provides features to set up a dependency tree of calls when many objects are linked together in a target.
+
+\subsection{GCC}
+\label{ssec:gcc}
+The GNU Compiler Collection or GCC is used for compiling and linking the C files into a target called `OS'.
+Compiling to the ARM architecture a cross compiled version of GCC is necessary,
+in this case the arm-none-eabi-gcc compiler which is available in all never Ubuntu versions\cite{arm_gcc}.
+
+\subsubsection{Compiler Flags}
+\label{sssec:compiler_flags}
+The compiler relies on a list of flags to compile the code to the programmers liking.
+The sub section will cover the necessary or otherwise important flags for compiling the (OS).
+The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as referred to in section \ref{ssec:cmake}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|p{10cm}|}
+		\multicolumn{2}{c}{\textbf{MCU flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_arm_options}.} \\
+		\hline
+		-mcpu=cortex-m4   &
+		This specifies the name of the target ARM processor. \\
+		\hline
+		-mtune=cortex-m4  &
+		This option specifies the name of the target ARM processor for which GCC should tune the performance of the code. \\
+		\hline
+		-mthumb           &
+		Generate code that executes in Thumb state. \\
+		\hline
+		-mlittle-endian   &
+		Generate code for a processor running in little-endian mode. \\
+		\hline
+		-mfpu=fpv4-sp-d16 &
+		This specifies what floating-point hardware is available on the target. \\
+		\hline
+		-mfloat-abi=hard  &
+		Specifies which floating-point ABI to use.
+		`hard' allows generation of FPU-specific floating-point instructions. \\
+		\hline
+		-mthumb-interwork &
+		Generate code that supports calling between the ARM and Thumb instruction sets. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{Linker flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_linking_options}.} \\
+		\hline
+		-Wl, -T.../file.ld &
+		Use the linker-script STM32F415RG\_FLASH.ld in the folder
+		/third\_party/linker\_scipts (section \ref{ssec:linker_script}). \\
+		\hline
+		-nostartfiles   &
+		Do not use the standard system startup files when linking.
+		Used to force GCC to use a custom implementation of Newlibc implemented functions. \\
+		\hline
+		-Map=./result.map &
+		Print a link map to the file result.map showing where object files and symbols are mapped into memory. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{Debugging flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_debug_options}.} \\
+		\hline
+		-g &
+		Produce debugging information. \\
+		\hline
+		-ggdb &
+		Produce debugging information for use by GDB. \\
+		
+		\hline
+		\multicolumn{2}{c}{} \\
+		\multicolumn{2}{c}{\textbf{C flags}} \\
+		\multicolumn{2}{c}{These options can be found at gcc.gnu.org \cite{gcc_c_dialects}.} \\
+		\hline
+		-std=c99 &
+		Determine the language standard to be ISO C99. \\
+		\hline
+		-fms-extensions &
+		Accept some non-standard constructs, useful in some static structures (section ref). \\
+		\hline
+	\end{tabular}
+	\caption{Showing the important GCC flags used to compile the OS.}
+	\label{tab:gcc_flags}
+\end{table}
+
+There are two important flags, which haven't been mentioned in table \ref{tab:gcc_flags}.
+the \texttt{-DHSE\_VALUE=16000000} and \texttt{-DSTM32F415xx} aren't compiler options but definitions passed to GCC to use at compile-time.
+
+\texttt{-DHSE\_VALUE=16000000} defines the value of the external oscillator in hertz.
+Specifically it defines \texttt{HSE\_VALUE} to be 16 million hertz as is specified in \cite{hse_value}.
+The input of the external oscillator is used as the source for the main clock (some ref to clock setup?).
+
+\texttt{-DSTM32F415xx} simply adds \texttt{STM32F415xx} as a definition at compile-time.
+It's used by the HAL library to determine which processor to set up for.
+
+\subsubsection{Linker Script}
+\label{ssec:linker_script}
+A linker script is used by the compiler to determine where to place different sections of the compiled binary.
+Because of this, everything in the output binary gets an offset that matches the memory layout described in section \ref{sec:memory_map}.
+The file \texttt{result.map} (table \ref{tab:gcc_flags}) can be used post compilation to determine the location of all symbols in the binary,
+as a way to debug the linker-script.\\
+
+The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to edit to fit any member of the STM32F4 family.
+In this project the only necessary change is the definition of flash to be 1MB of size.
+Beyond that, the changes depends on the partition requirements on the system.\\
+
+Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linkerscript.
+While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
+\texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
+In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memmory
+and \texttt{LENGTH} denotes the size of the section.\\
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=40,
+	label=linker_mem_overview,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+/* Specify the memory areas */
+MEMORY
+{
+  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 1024K
+  OS (rx)        : ORIGIN = 0x08000000, LENGTH =   64K
+  DUMMY1 (rx)    : ORIGIN = 0x08010000, LENGTH =    8K
+  DUMMY2 (rx)    : ORIGIN = 0x08012000, LENGTH =    8K
+  STDIO_SYS (rx) : ORIGIN = 0x08014000, LENGTH =    8K
+  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH =  128K
+  CCMRAM (rw)    : ORIGIN = 0x10000000, LENGTH =   64K
+}
+\end{lstlisting}
+\end{minipage}
+
+By default all symbols and associated memory goes into the \texttt{OS},
+Only when a partition is specifically defined to a location in the linker-script,
+can it be seperated from the OS.
+Listing \ref{linker_example} shows how to allocate a specific partition.
+The linker-script uses the fact that every partition is compiled as a library,
+and the library name is added in the listed format under its corresponding label
+(in this example: \texttt{STDIO\_SYS}).
+This scheme insures the code is separated from the kernel in flash.
+It does not, however, separate the statically allocated variables and structures in RAM.\\
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=77,
+	label=linker_example,
+	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
+.stdio_sys :
+{
+  . = ALIGN(4);
+  libstdio_sys.a:*
+  . = ALIGN(4);
+} >STDIO_SYS
+\end{lstlisting}
+\end{minipage}
+
+Simular to listing \ref{linker_example},
+the other partitions compiled libraries are confined to a space in flash,
+as defined by their labels in \ref{linker_mem_overview}.
+
+\subsection{OpenOCD}
+\label{ssec:openocd}
+Open On-Chip Debugger or OpenOCD \cite{openocd} is used together with the (hardware goes here) to program the chip and create a channel for GDB to debug the system on-chip.
+The CMakeLists.txt file in project root defines a function running the following commands using OpenOCD:
+
+\begin{itemize}
+	\item \texttt{init} - Initialize connection
+	\item \texttt{reset halt} - Reset and halt the system
+	\item \texttt{flash write\_image erase \$\{elf\_file\}} - Write binary image to chip
+	\item \texttt{reset run} - Reset chip and start normal execution
+\end{itemize}
+
+Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
+
+After execution of this command, OpenOCD will remain open and connected to the
+chip and it will accept incoming connections on port 3333 for
+GDB debugging as a GDB server (see more in \ref{ssec:gdb}.
+
+\subsection{GDB}
+\label{ssec:gdb}
+\todo{Write GDB version}
+The GNU Project debugger\cite{gdb}, GDB, is an open source software debugger
+built to compliment the GNU Project compilers, GCC (see \ref{ssec:gcc}). It
+allows programmers to more intelligently debug their applications.
+GDB can\\
+\begin{itemize}
+	\item attach to a remote program, even running on a different piece of
+	hardware. 
+	\item pause execution of a program at specified lines of code with
+	breakpoints.
+	\item show the content of memory, either by direct a addressing or by
+	variable name.
+	\item if the hardware supports it, show the value of each CPU register.
+	\item execute code line by line, letting the programmer see how each line
+	affects the state of the program, and in case of crashing code, which line
+	of code crashes the program.
+\end{itemize}
+This feature set, makes GDB especially useful for tracking down complex bugs and
+bugs in otherwise inaccessible systems, e.g. systems with no screen to directly 
+print to. GDB also allows programmers to investigate buggy code while it is
+running, as opposed to after-the-fact debugging of logging, printing, etc.
+Many advanced text editors and integrated development environments feature
+direct seamless GDB integration. Outside of such programs, GDB can be run in 
+command line.
+
+To debug the code running on the chip, an active OpenOCD connection to the chip
+is required. When OpenOCD is connected, it will act as a GDB server. GDB can
+be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
+
+\section{Drivers}
+
+Setting up the drivers took place in the early phases of the project. Their
+functionality rely a lot on the HAL library. Even though the process is
+quite straightforward, there is some learning involved in how to use the
+HAL library. The library\textquotesingle s documentation is a good starting
+point, and the things it lacks can be found in the 
+microcontroller\textquotesingle s datasheet.
+
+\subsection{System clock}
+The initial setting for the clock is that it uses the internal oscillator,
+which runs at 16MHz. In order to get the maximum speed supported by the
+CPU, the board needs to be configured to multiply this frequency.
+However, instead of using the internal oscillator, which can be imprecise, 
+the Mini-M4 
+board has an external oscillator\footnote{Featuring less wander (slow
+ variations due to temperature and aging) and jitter(fast variations)} 
+that can be used as the main clock 
+source. This is represented in figure \ref{fig:system_clock} with the HSE
+tag. These tags refer to the location and the speed of the oscillators
+present on the board or inside the microcontroller:
+
+\begin{labeling}{HSE}
+	\item[\textbf{HSE}]
+		high-speed external oscillator, the main clock source
+	\item[\textbf{HSI}]
+		high-speed internal oscillator, not used
+	\item[\textbf{LSE}]
+		low-speed external oscillator, used by the real-time clock
+	\item[\textbf{LSI}]
+		low-speed internal oscillaror, used by the independent watchdog
+		timer
+\end{labeling}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{system_clock.pdf}
+\caption{System clock overview \cite{reference_manual_74}}
+\label{fig:system_clock}
+\end{figure}
+
+The lower part of figure \ref{fig:system_clock} shows that the frequency
+of the HSE is multiplied by a PLL(Phase-locked loop) system, before it gets
+to the clock selection block. This is the frequency supplied to
+the CPU and memory through the AHB bus, and scaled down for the peripheral busses. These busses are divided into low and high speed domains as:
+
+\begin{labeling}{APB1 domain}
+	\item[\textbf{AHB}]
+		Advanced High-speed bus. This runs at 168 MHz, and connects
+		mainly the CPU, memory and the GPIOs.
+	\item[\textbf{APB1 domain}]
+		low-speed domain, running at 42 MHz. This includes among other 
+		peripherals the UART.		
+	\item[\textbf{APB2 domain}]
+		high-speed domain, running at 84 MHz.
+	\end{labeling}
+
+\subsection{UART}
+
+\todo[inline,color=green]{
+The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
+It is also possible to communicate with the UART using a screen, getting some important output for debugging.}
+
+\subsection{LEDs}
+The LEDs are used mainly for debugging. There are three LEDs on the 
+Mini-M4 board, two of them being programmable. Since they are connected
+to two pins of a GPIO ports, these pins needs to be initialised first.
+Afterwards, 
+by using the functions defined in the HAL library, these pins can be 
+turned high, low or toggled, thus changing the state of the LEDs.
+
+\subsection{Delay}
+\label{ssec:delay}
+The delay function is also used for debugging, giving the developers the 
+chance of seeing \textit{when things are happening}. This is because most of the
+program instructions are executed so fast, that the they appear to be
+instant to humans. 
+Delay is defined in the HAL library, and relies on the SysTick API.
+
+SysTick is a timer\footnote{Fed with the AHB clock divided by 8} that can 
+be used to generate the main system event clock.
+In fact, that is exactly how the HAL library has it implemented. Its
+default time base is 1 millisecond. This means that every millisecond,
+SysTick generates an interrupt to look after sensor values, scheduling or
+basic timing tasks.
+
+\subsection{MPU}
+
+\subsection{Timing}
+This driver is used for accurately measuring the execution time of different
+functions. It uses the DWT (Data Watchpoint  and Trace support)
+internal peripheral registers defined in the ARM-M4 Architecture 
+manual \cite{arm_architecture}.
+Since the HAL library does not define them, there is need to access them
+by their addresses. Their address range can be seen in the upper part of
+figure \ref{fig:memory_model}, while the register used by this driver are 
+shown in listing \ref{list:time_get}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=9,
+	label=list:time_get,
+	caption=\textit{src/drivers/time\_get.c}]
+volatile unsigned int *DWT_CYCCNT  = (unsigned int *)0xE0001004;
+volatile unsigned int *DWT_CONTROL = (unsigned int *)0xE0001000;
+volatile unsigned int *SCB_DEMCR   = (unsigned int *)0xE000EDFC;
+\end{lstlisting}
+\end{minipage}
+
+\textit{DWT\_CYCCNT} is a 32 bit counter, that when enabled counts
+the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
+as DWT\_CTRL in the ARM documentation} is the control register for the
+Data Watchpoint and Trace support. By setting its least significant bit,
+the cycle counter mentioned above is enabled. The last register,
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
+
+At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
+incremented every 5.45 nanoseconds. In order to convert the number 
+of cycles into time, the function in listing \ref{list:time_convert}
+was used.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=33,
+	label=list:time_convert,
+	caption=\textit{src/drivers/time\_get.c}]
+int64_t convert_cycles_to_time(uint32_t cycles)
+{
+    return (int64_t)((cycles / 168) * 1000);
+}
+\end{lstlisting}
+\end{minipage}
+
+The returned value is a 64 bit signed integer, as the \arinc{} standard 
+specifies \cite{arinc_time}. the only problem with this, is that while 
+the count is done in the range of nanoseconds, the sampling frequency
+gives a 5,45 nanosecond step. In order to fully comply with the standard,
+we would need a timer running at at least 1 GHz\footnote{Produces 1
+ nanosecond steps}.
+
+\subsection{Watchdog timer}
+% \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
+The microcontroller has two watchdog timers ready to reset the program, in case of an error.
+The first one, the independent watchdog timer is based on an oscillator
+\footnote{LSI running at 32 kHz, seen in the upper part of
+ \ref{fig:system_clock}}
+that can only be used by it. This way,
+the the watchdog could catch a fault in the program, even if the other
+oscillators fail. Its basic functionality is represented in figure
+\ref{fig:watchdog}. After the program starts running, a function is called
+that initialises and starts the watchdog timer. Here, a period of time is defined, in which the program has to refresh (reload) the watchdog timer.
+If this fails to happen, either by mistake, the developer forgetting to 
+call the refresh function, or by a software/hardware fault, the watchdog 
+timer restarts the program (depicted with the red arrow).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,keepaspectratio]{watchdog.pdf}
+\captionof{figure}{Basic watchdog timer functionality}
+\label{fig:watchdog}
+\end{figure}
+
+
+The second watchdog timer, is called a window watchdog. In contrast 
+to the independent watchdog, one can provide a time interval in which
+the timer has to be reset. Resetting the timer outside this interval
+(as well as not resetting it in the mentioned time window) would restart
+the program. It uses the system clock, which means that if this fails,
+the watchdog won\textquotesingle t be able to reset the system.
+\todo{explain the watchdog in the context of partitions}
+
+\subsection{RTC}
+The real-time clock was implemented as a way to give the system the
+possibility to keep track of time. It was realised at a later point
+that \arinc{} specifies that time keeping should be done in nanoseconds,
+a range that the RTC is not capable of.
+
+Anyway, the RTC is a good-to-have feature, since it operates in the 
+Stop and Standby modes
+of the microcontroller, and can generate interrupts to wake the system up.
+Its registers contain all the time components, as well as correction for
+leap years.
+
+
+\section{System Calls}
+\todo[inline,color=green]{needs to be moved}
+System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
+Call). When this instruction is executed, a interrupt will be triggered. Already
+set up by the CMSIS library, any SVC interrupts will trap into the function
+named \texttt{SVC\_Handler}.
+In order to avoid having to deal with assembly\footnote{It is necessary to use
+assembly code to issue an \texttt{SVC} instruction} code in partition level
+software, system call functions (including the APEX functions) are implemented
+as a library that entirely handles the system call.
+The sequence of steps for making a system call is a follows:\\
+
+\begin{tabular}{ r l p{10.5cm} }
+    1. & Userspace & Partition code calls one of the system call wrapper
+    functions.\\
+    2. & Userspace & The wrapper function moves the number denoting the system
+    call function into register R0.\\
+    3. & Userspace & The wrapper function moves any input arguments into the
+    registers R1-R3 and R12. If the function has more than four input arguments,
+    those must be stacked.\\
+    4. & Userspace & The wrapper function issues an \texttt{SVC} instruction.\\
+    5. & Hardware & The NVIC stacks the registers R0-R3, R12, PC and LR and
+    branches to the \texttt{SVC\_Handler} function.\\
+    6. & Kernelspace & The \texttt{SVC\_Handler} function investigates the
+    stacked value of register R0 to determine which function the partition level
+    code wished to execute.\\
+    7. & Kernelspace & The \texttt{SVC\_Handler} function calls the appropriate
+    function with the input arguments from the stacked registers.\\
+    8. & Kernelspace & The \texttt{SVC\_Handler} puts the results of the
+    function in the stacked registers. The return code is moved to R0, and
+    additional output is put in the registers R1-R3 and R12. If necessary, more
+    output is put in the stack.\\
+    9. & Kernelspace & The \texttt{SVC\_Handler} returns.\\
+    10. & Hardware & The NVIC restores the registers R0-R3, R12, PC and LR from
+    the stack and returns execution to the system call wrapper function.\\
+    11. & Userspace & The wrapper function returns the output from the system
+    call as stored in the registers to the calling partition code.\\
+\end{tabular}\\
+
+
+Only the registers R0-R3 and R12 are available for argument passing, as these
+are the only general purpose registers that are stacked by the NVIC. The NVIC
+does not clear the registers before entering the \texttt{SVC\_Handler} function,
+and thus all the general purpose registers may contain the same values as when
+the \texttt{SVC} instruction was executed, but their consistency is not
+garantued, as other interrupt service routines could have run before the
+\texttt{SVC\_Handler} function started execution.\\
+To avoid rescheduling occuring during a system call, the SysTick interrupt is
+turned off during the execution of the \texttt{SVC\_Handler} function.\\
+Each system call is identified by the number the caller has moved into the R0
+register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
+instruction does supply a way to embed this number directly as a part of the
+instruction as an immediate value, instead of using a seperate register, but
+dedicating a register to this was chosen for two reason: One, it is poorly
+documented how software can read the value embedded in the instruction, and two,
+to keep it consistent with how system calls are handled on other architectures
+such as x86.\\
+Table \ref{tab:syscalls} shows all the implemented system calls and their
+identifier.
+
+\begin{table}
+\centering
+	\begin{tabular}{| l | l |}
+		\hline
+		Identifier		&	Name \\
+		\hline
+		0xC0FFEE0A		&	CREATE\_PROCESS 			\\
+		\hline
+		0xC0FFEE0B		&	GET\_TIME					\\
+		\hline
+		0xC0FFEE0C		&	CREATE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0D		&	RECEIVE\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0E		&	SEND\_QUEUING\_PORT 		\\
+		\hline
+		0xC0FFEE0F		&	GET\_QUEUING\_PORT\_ID 		\\
+		\hline
+		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
+		\hline
+		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
+		\hline		
+	\end{tabular}
+\caption{A table of the implemented system calls and their identifier.}
+\label{tab:syscalls}
+\end{table}
+
+\section{XML configuration file}
+\todo{Write about the manual writing of the XML config file?}
+
+\section{XML Parser}
+
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
+\todo{reference for xmltodict}
+Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
+The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
+
+\subsection{xml\_data.h}
+
+xml\_data.h is \todo{expand on xmldata.h file}.
+
+\subsection{xml\_data.c}
+
+xml\_data.c is mostly dynamic and generated from the elements in the XML. 
+The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
+The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+
+\section{C Structures}
+
+\section{OS}
+
+\subsection{Init\/main}
+
+\subsubsection{MPU Setup}
+\subsubsection{Partition Setup}
+\subsubsection{Process Setup}
+\subsubsection{Building the schedule}
+\label{sssec:build_schedule}
+
+
+\subsection{Scheduling}
+The ARINC 653 specification defines two levels of schedulers and the rules by
+which these shcedulers decide which processes may execute at any given time.
+There are two different kinds of rescheduling, temporal rescheduling and event
+driven rescheduling. Partitions are exclusively rescheduled because of time, 
+whereas processes may be rescheduled because of both time and events.
+As for temporal scheduling, the ARINC 653 specification does not explicitly 
+specify a minimum or maximum time resolution for scheduling, though it does
+imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
+
+For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
+also led to the choice of a time resolution of 1 millisecond. Scheduling is
+never disabled; every millisecond the scheduler will be invoked and check which
+process of which partition should run next. Therefore, increasing the resolution
+of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
+would spend a greater amount of time handling scheduling compared to executing
+user code.
+
+Oppositly, decreasing the resolution would limit the places where \OSname\ is
+viable, as certain tasks require a certain minimum resolution. For example,
+assuming the system is continuously moving, a sorting robot has only a certain
+time to identify objects before they pass by its sensors. If time resolution of 
+the underlying operating system of such a robot is too low, object may pass the
+robots sensors before the code checking the sensors are rescheduled.\\
+
+Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
+timed waits, this is not supported in \OSname . Given the maximum frequency of
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
+
+\subsubsection{SysTick}
+The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
+Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
+specification. Other timers are implementation specific; the vendor decides
+which timers to add to a chip. Therefore, between two different boards, there
+may be a different number of timers, and timers may have a different resolution.
+This makes it more difficult to port code from one board to another. The SysTick
+timer however, is garantued to be 24-bit on any board that implements it. In the
+Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
+and M7; any code written for these can assume portability.\\
+
+The clock source for the SysTick timer is the CPU clock, optionally divided by
+eight. The reset value of the SysTick timer is programmable. This makes it
+possible for software to program how often this timer wraps.
+Unless otherwise specified, this timer operates in polling mode; software has to
+poll for wraps, but it is possible to program the SysTick timer to trigger an 
+interrupt upon wrapping.
+
+By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
+and to trigger an interrupt upon wrapping. 
+
+\subsubsection{Context Switching}
+There are multiple different states the processor can be in, when a context 
+switch from one process to another occurs. The state determines whether the
+Master Stack Pointer or the Process Stack Pointer was used by the process,
+and whether the FPU was used by the process or not. Because of this, the context
+switch algorithm must start by determining the processor state in order to know
+which registers
+to save and where to save them to.\\
+The processor state is saved in the Link return register, and it can be one of
+the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).\\
+If the pre-empted process used the FPU, the FPU registers S16 to S31
+should also be saved by software in addition to the general purpose regisers.
+Because of time constraint, this was not implemented.\\
+The registers are saved entirely on the stack. Therefore, it is important for
+the software to know which
+stack pointer to use when saving the remaining registers. So the very first
+thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
+the \excreturn\ value in the LR register to determine wether to use the 
+Master Stack Pointer or the Process Stack Pointer. The software must then, at 
+the address denoted by the stack pointer, save the registers that have yet to be
+saved, and update the stack pointer, before saving both the stack pointer and
+the \excreturn\ value to the process structure elsewhere in memory. This is all
+done in assembly to make sure that there is complete control over which
+registers are used, so as to avoid overwriting any registers that have yet to be
+saved. This is absolutely necessary, as otherwise the state of register for a
+process might be corrupted during a context switch. Additionally, any ISR used
+for scheduling must be declared as naked\footnote{A naked function has no
+compiler generated prologue and epilogue. This means that the compiler does not
+save any registers on the stack before using them, and it does not restore them
+before ending a function.}, to avoid the compiler changing registers before the
+context can be saved, and to give complete control over which value is pushed to
+the PC register at the end of the ISR.\\
+After the context has been saved, control is handed over to the scheduler, which
+can then decide which process should be running next.\\
+Once all the operations the ISR has completed, the context of the process
+selected by the scheduler must be restored. From this point, the code must once
+again be written in assembly to avoid overwriting a register after it has been 
+restored. First, the registers saved by software on the stack must be restored,
+then based on the \excreturn\ value the process interrupted with, it can be 
+determined to which stack pointer register the new stack pointer must be pushed
+to. Lastly, execution must return to the process by pushing the \excreturn\ value
+to the PC register. The \excreturn\ value pushed to the PC register must be the
+same as that read from the LR register when the process was interrupted.
+Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.} shows the flow when switching contexts.
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
+    \caption{This is not just a placeholder.}
+    \label{fig:scheduling_sequence_diagram}
+\end{figure}
+<<<<<<< HEAD
+\todo{Make the text larger}
+\subsubsection{windows}
+=======
+
+\subsubsection{Windows}
+Windows are the abstract concept used by system intregrators to schedule
+paritions in \arinc . A window consists of a start time, relative to the major
+frame, and a duration. These windows are specified by the system integrator in
+XML schema (for more, see \ref{sec:design_schema}).\\
+Time is allocated to partitions according to the windows specified in the XML
+schema, but windows do not have to be contiguous; there may be unused time
+between the end of one window and the start of the next. In that case, this time
+is considered to be an implicit idle period.
+>>>>>>> ca438c72e69ec635df8d988e87b08a015f502b9b
+
+\subsubsection{Partition Scheduler}
+During the initialisation of the system, a static schedule is build based on the
+windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+
+The partition scheduler is supposed to keep track of the position within a major
+frame, and based on the position, figure out which window that corrosponds to,
+and then schedule the partition of that window.
+
+The scheduler keeps track of the position within a major frame with the HAL
+tick. This tick is incremented every millisecond. This is the same tick used by
+delay function (see \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulu divided by the length of a major frame in
+milliseconds.
+
+
+\subsubsection{Process scheduler}
+
+
+\subsection{Ports}
+
+\subsubsection{Queuing Ports}
+\subsubsection{Sampling Ports}
+
+
+\subsection{APEX}
+
+\subsubsection{Syscalls}
+
+
+\subsection{Error Handling}
+
+
+\section{Partitions and processes}
+
+\subsection{Partitions}
+
+\subsection{Processes}
+
+\subsection{idle\_sys}
+\label{ssec:idle_part}
+
+\subsection{stdio\_sys}
+
+\subsection{dummy1}
+
+\subsection{dummy2}
+
+\subsection{evil}
+
+
+\section{Features of the system}
+\todo[inline, color=green]{Here we can have a table showing what features
+our system has, what features were not implemented, in regards to the
+standard}

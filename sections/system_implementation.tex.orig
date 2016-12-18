@@ -21,7 +21,7 @@ for practicality, as seen in \ref{fig:photo1}.
 \begin{subfigure}{0.5\textwidth}
   \centering
   \includegraphics[width=3cm]{hardware/board_not_soldered}
-  \caption{MINI-M4 before soldering}
+  \caption{MINI-M4 before soldernig}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
@@ -74,7 +74,7 @@ corresponding pins on the microcontroller\textquotesingle s JTAG port.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{jtag_interface.pdf}
-\caption{The connection of the JTAG interface}
+\captionof{figure}{The connection of the JTAG interface}
 \label{fig:jtag_interface}
 \end{figure}
 
@@ -305,10 +305,10 @@ The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to 
 In this project the only necessary change is the definition of flash to be 1MB of size.
 Beyond that, the changes depends on the partition requirements on the system.\\
 
-Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linker script.
+Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linkerscript.
 While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
 \texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
-In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memory
+In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memmory
 and \texttt{LENGTH} denotes the size of the section.\\
 
 \begin{minipage}{\linewidth}
@@ -332,7 +332,7 @@ MEMORY
 
 By default all symbols and associated memory goes into the \texttt{OS},
 Only when a partition is specifically defined to a location in the linker-script,
-can it be separated from the OS.
+can it be seperated from the OS.
 Listing \ref{linker_example} shows how to allocate a specific partition.
 The linker-script uses the fact that every partition is compiled as a library,
 and the library name is added in the listed format under its corresponding label
@@ -342,7 +342,7 @@ It does not, however, separate the statically allocated variables and structures
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[
-	firstnumber=85,
+	firstnumber=77,
 	label=linker_example,
 	caption=\textit{third\_party/linker\_scripts/STM32F415RG\_FLASH.ld}]
 .stdio_sys :
@@ -354,7 +354,7 @@ It does not, however, separate the statically allocated variables and structures
 \end{lstlisting}
 \end{minipage}
 
-Similar to listing \ref{linker_example},
+Simular to listing \ref{linker_example},
 the other partitions compiled libraries are confined to a space in flash,
 as defined by their labels in \ref{linker_mem_overview}.
 
@@ -437,7 +437,7 @@ present on the board or inside the microcontroller:
 	\item[\textbf{LSE}]
 		low-speed external oscillator, used by the real-time clock
 	\item[\textbf{LSI}]
-		low-speed internal oscillator, used by the independent watchdog
+		low-speed internal oscillaror, used by the independent watchdog
 		timer
 \end{labeling}
 
@@ -465,14 +465,10 @@ the CPU and memory through the AHB bus, and scaled down for the peripheral busse
 	\end{labeling}
 
 \subsection{UART}
-The UART allows the transmission and reception of the information between the STM32 and the outside. The 
-communication is made by one character at a time. The transmission is activated by the interrupts and it 
-can happen both ways simultaneously, or one way at a time. An UART has a fractional baud rate generator 
-system, yet it is limited by the GPIO frequency, which has 4 levels of frequency, input and output 
-registers, transmit/receive control, read/write control logic, and transmit/receiver buffers. It is also 
-possible to communicate with the UART using a screen, as an important output for debugging. The 
-function used allows the transmission or reception of one character of a time, of the message sent by the 
-\texttt{printf} function. The UART used was the UART4 of the STM32 connecting the wires to the PIN's 10 and 11.
+
+\todo[inline,color=green]{
+The UART sets the speed of the transmission and reception of the information between the STM32 and the outside. The communication is made by one character at a time. The transmission is activated by the interrupts and it can happen both ways simultaneously, or one way at a time. An UART has a clock generator, that we set for 16Mz, input and output registers, transmit/receive control, read/write control logic, and transmit/receiver buffers.
+It is also possible to communicate with the UART using a screen, getting some important output for debugging.}
 
 \subsection{LEDs}
 The LEDs are used mainly for debugging. There are three LEDs on the 
@@ -490,61 +486,18 @@ program instructions are executed so fast, that the they appear to be
 instant to humans. 
 Delay is defined in the HAL library, and relies on the SysTick API.
 
-SysTick is a timer\footnote{Fed with the system clock optionally 
-divided by 8} that can 
+SysTick is a timer\footnote{Fed with the AHB clock divided by 8} that can 
 be used to generate the main system event clock.
 In fact, that is exactly how the HAL library has it implemented. Its
 default time base is 1 millisecond. This means that every millisecond,
 SysTick generates an interrupt to look after sensor values, scheduling or
 basic timing tasks.
-\todo {reference to systick in the OS section}
 
 \subsection{MPU}
-As the regions are power of 2, as shown in the picture, the bigger partition is the more likely it 
-is to have spare space, since it becomes harder to fit it completely in a region.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions2.png}
-\captionof{figure}{Example of 3 memory region sizes}
-\label{fig:simple_system}
-\end{figure}
-Lets take, as an example, 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions1.png}
-\captionof{figure}{Example of 5 partitions sizes}
-\label{fig:simple_system}
-\end{figure}
-If they were just allocated in the most suited region for each, the memory needed would be of 480bits, 
-leaving 155bits unused.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions3.png}
-\captionof{figure}{Partition memory distribution in different regions}
-\label{fig:simple_system}
-\end{figure}
-The first allocate are the biggest partitions and if there are empty subregions, the system tries to 
-allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions4.png}
-\captionof{figure}{Partition memory distribution in the same regions}
-\label{fig:simple_system}
-\end{figure}
-In case that a certain partition doesn't full fill the subregion, their size gets updated with the full 
-remaining subregion area, 
-instead of leaving those parts always empty. That can also help to avoid some errors, for example if the 
-initial defined size wasn't enough for the different processes allocated by that partition.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions5.png}
-\captionof{figure}{Memory extension of the partitions sizes}
-\label{fig:simple_system}
-\end{figure}
 
 \subsection{Timing}
 This driver is used for accurately measuring the execution time of different
-functions. It uses the DWT (Data Watchpoint and Trace support)
+functions. It uses the DWT (Data Watchpoint  and Trace support)
 internal peripheral registers defined in the ARM-M4 Architecture 
 manual \cite{arm_architecture}.
 Since the HAL library does not define them, there is need to access them
@@ -568,8 +521,7 @@ the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
 as DWT\_CTRL in the ARM documentation} is the control register for the
 Data Watchpoint and Trace support. By setting its least significant bit,
 the cycle counter mentioned above is enabled. The last register,
-\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register,
-and is used to manage exception behaviour under debug.
+\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register, and is used to manage exception behaviour under debug.
 
 At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
 incremented every 5.45 nanoseconds. In order to convert the number 
@@ -601,8 +553,7 @@ The microcontroller has two watchdog timers ready to reset the program, in case 
 The first one, the independent watchdog timer is based on an oscillator
 \footnote{LSI running at 32 kHz, seen in the upper part of
  \ref{fig:system_clock}}
-that can only be used by it.
-\todo{focuses on hardware fails} This way,
+that can only be used by it. This way,
 the the watchdog could catch a fault in the program, even if the other
 oscillators fail. Its basic functionality is represented in figure
 \ref{fig:watchdog}. After the program starts running, a function is called
@@ -619,506 +570,29 @@ timer restarts the program (depicted with the red arrow).
 \end{figure}
 
 
-The second watchdog timer, is called a window watchdog.
-\todo{focuses on software fails} In contrast 
+The second watchdog timer, is called a window watchdog. In contrast 
 to the independent watchdog, one can provide a time interval in which
 the timer has to be reset. Resetting the timer outside this interval
 (as well as not resetting it in the mentioned time window) would restart
 the program. It uses the system clock, which means that if this fails,
-the watchdog won\textquotesingle t be able to reset the system. this 
-watchdog has not been implemented, but its functionality is relevant 
-to \OSname{}.
-
-In regards to what the standard specifies, that the processor should be able
-to isolate a partition that fails \cite{page12}. This could be done by 
-using the window watchdog timer to define the time intervals for partitions 
-to run. The feature called Early Wakeup Interrupt can be used to do some
-safety operations, just before the reset is done by the watchdog.
-\cite{reference_manual_716}.
-In short, if the window watchdog is not reset in the window interval it
-receives (correspondent to each partition), then the EWI will isolate the
-partition and the microcontroller will be reset to continue its operation
-with the remaining partitions.
+the watchdog won\textquotesingle t be able to reset the system.
+\todo{explain the watchdog in the context of partitions}
 
 \subsection{RTC}
 The real-time clock was implemented as a way to give the system the
 possibility to keep track of time. It was realised at a later point
 that \arinc{} specifies that time keeping should be done in nanoseconds,
-a range that the RTC is not capable of. This was the reason for continuing 
-researching other ways of timing the system, as seen in:
-\todo{ref to Timing}
+a range that the RTC is not capable of.
 
-Anyway, the RTC could be used for timestamps on error logs and such,
-as the standard specifies \cite{page_26}. The use of the LSE oscillator,
-as well as the design of the RTC (having all time components, including
-subseconds, as well as leap year correction), make this clock a reliable
-secondary time source.
-
-\section{XML configuration file}
-
-Writing the XML configuration file was an evolutionary process throughout the implementation phase. To begin with, the example XML provided by the ARINC 653 standard was used. As functionality within the system became available, the example XML values were modified for the desired purposes. All content in the XML was written by hand, there is no tool support to modify the content.
-
-\section{XML Parser}
-
-The configuration of the OS is not usable in its XML format. \OSname\ is written in C; therefore a dynamic parser written in Python called createCStructs.py has been created to translate the XML and generate C structs.
-\todo{reference for xmltodict}
-Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
-The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
-
-\subsection{xml\_data.h}
-
-xml\_data.h contains the static declarations for the structs written to the xml\_data.c, and the symbols for the xml\_data.c functions and variables. 
-\\
-The declarations for the structs are included into xml\_data.h from a file called type.h. The symbols for the functions and variables are written to the file whilst parsing the XML.
-
-\subsection{xml\_data.c}
-
-xml\_data.c is mostly dynamic and generated from the elements in the XML. 
-The static elements of its generation are handled by two functions and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif.
-The idle partition is not included in the XML. It is hard-coded into the partition loop as it is always required to exist. For more info about the idle partition refer to (chapter \ref{ssec:idle_part}) 
-\\\\
-There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure. They and are looped through, populating formatted strings, and are then written to xml\_data.c.
-
-\section{C Structures}
-
-\section{OS kernel}
-
-\subsection{Init\/main}
-
-\subsubsection{MPU Setup}
-\subsubsection{Partition Setup}
-\subsubsection{Process Setup}
-\subsubsection{Building the schedule}
-\label{sssec:build_schedule}
-The partition schedule is defined in the XML schema file as windows (see 
-\ref{sssec:impl_windows}). Windows in the XML schema, as well as in xml\_data.c
-file output by the schema parser, are ordered by partition, not chronologically.
-Additionally, windows in the XML schema are not subelements of partitions, but
-are instead separate elements, referencing the partition they belong to by ID.
-
-As a result, to do any scheduling of windows, it is necessary to search through
-all windows to find the next one within a major frame, and then search through
-all partitions to find the partition with the same ID. To make matters more
-complicated, the XML schema may contain implicit idle periods (periods with no
-defined windows). To lighten the burden on the scheduler, the work to build a
-schedule by ordering the windows chronologically and inserting explicit idle
-periods are done during initialisation.\\
-
-The algorithm to build the schedule is as follows:\\
-\begin{algorithm}[H]
-\tcc{excluding implicit idle periods}
-$totalWindows \leftarrow$ number of windows in xml\;
-$desiredStartTime \leftarrow 0$\;
-\tcc{This is just an arbitrary high number}
-$earliestNextStartTime \leftarrow 5000$\;
-$matchingWindow \leftarrow NULL$\;
-\While{windows in schedule < $totalWindows$}{
-	\ForEach{window $w$ in xml schema}{
-		\If{start time of $w$ = $desiredStartTime$} {
-			$matchingWindow \leftarrow w$\;
-			break\;
-		}
-		\ElseIf{start time of $w$ > desiredStartTime and earlier than $earliestNextStartTime$}{
-			$earliestNextStartTime \leftarrow$ start time of $w$\;
-		}
-	}
-	\If{matching window is found}{
-		$partition$\;
-		\ForEach{partition $p$}{
-			\If{ID of $p$ = ID of partition of $matchingWindow$}{
-				$partition \leftarrow p$\;
-				break\;
-			}
-		}
-		insert window for $partition$ into schedule\;
-		$desiredStartTime \leftarrow$ start time of $w$\;
-	}
-	\Else{
-		insert window starting at $desiredStartTime$ and lasting
-		$earliestNextStartTime - desiredStartTime$ for idle partition into schedule\;
-		\tcc{This is just an arbitrary high number}
-		$earliestNextStartTime \leftarrow 5000$\;
-		$totalWindows++$\;
-	}
-}
-\end{algorithm}
-
-Provided that the data in the XML schema is valid, i.e. there is window 
-referencing a partition that does not exist, and provided that the major frame
-is shorter than 5000 (this number is easily changeable) time units, this
-algorithm will create a schedule of chronologically ordered windows, including
-windows pointing to the idle partition.\\
-
-\begin{figure}
-	\centerline{\includegraphics[width=\paperwidth,angle=90,clip,trim=0 1cm 0 0]{figures/demo_windows.pdf}}
-	\caption{Windows as represented in the XML schema, and in the kernel after 
-	the schedule has been build}
-	\label{fig:demo_windows}
-\end{figure}
-Figure \ref{fig:demo_windows} shows what the finished schedule may look like,
-given a certain schedule in the XML schema.
+Anyway, the RTC is a good-to-have feature, since it operates in the 
+Stop and Standby modes
+of the microcontroller, and can generate interrupts to wake the system up.
+Its registers contain all the time components, as well as correction for
+leap years.
 
 
-\subsection{Scheduling}
-The ARINC 653 specification defines two levels of schedulers and the rules by
-which these schedulers decide which processes may execute at any given time.
-There are two different kinds of rescheduling, temporal rescheduling and event
-driven rescheduling. Partitions are exclusively rescheduled because of time,
-whereas processes may be rescheduled because of both time and events.
-As for temporal scheduling, the ARINC 653 specification does not explicitly
-specify a minimum or maximum time resolution for scheduling, though it does
-imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
-
-For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
-also led to the choice of a time resolution of 1 millisecond. Scheduling is
-never disabled; every millisecond the scheduler will be invoked and check which
-process of which partition should run next. Therefore, increasing the resolution
-of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
-would spend a greater amount of time handling scheduling compared to executing
-user code.
-
-Oppositely, decreasing the resolution would limit the places where \OSname\ is
-viable, as certain tasks require a certain minimum resolution. For example,
-assuming the system is continuously moving, a sorting robot has only a certain
-time to identify objects before they pass by its sensors. If time resolution of
-the underlying operating system of such a robot is too low, object may pass the
-robots sensors before the code checking the sensors are rescheduled.\\
-
-Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
-timed waits, this is not supported in \OSname . Given the maximum frequency of
-168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.\\
-
-Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
-function is called directly by the NVIC when the SysTick timer triggers an
-interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current
-context, then invokes the partition scheduler, followed by the process scheduler.
-Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
-restores the context of chosen process and returns control to the NVIC.
-
-\subsubsection{SysTick}
-The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
-Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
-specification. Other timers are implementation specific; the vendor decides
-which timers to add to a chip. Therefore, between two different boards, there
-may be a different number of timers, and timers may have a different resolution.
-This makes it more difficult to port code from one board to another. The SysTick
-timer however, is guaranteed to be 24-bit on any board that implements it. In the
-Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
-and M7; any code written for these can assume portability.\\
-
-The clock source for the SysTick timer is the CPU clock, optionally divided by
-eight. The reset value of the SysTick timer is programmable. This makes it
-possible for software to program how often this timer wraps.
-Unless otherwise specified, this timer operates in polling mode; software has to
-poll for wraps, but it is possible to program the SysTick timer to trigger an
-interrupt upon wrapping.
-
-By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
-and to trigger an interrupt upon wrapping.
-
-\subsubsection{Context Switching}
-There are multiple different states the processor can be in, when a context
-switch from one process to another occurs. The state indicates whether the
-Master Stack Pointer or the Process Stack Pointer was used by the process,
-and whether the FPU was used by the process or not. Because of this, the context
-switch algorithm must start by determining the processor state in order to know
-which registers
-to save and which stack to save them to.\\
-The processor state is saved in the LR register, and it can be one of
-the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).\\
-If the pre-empted process used the FPU, the FPU registers S16 to S31
-should also be saved by software in addition to the general purpose registers.
-Because of time constraint, this was not implemented.\\
-The registers are saved entirely on the stack. Therefore, it is important for
-the software to know which
-stack pointer to use when saving the remaining registers. Therefore the first
-thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
-the \excreturn\ value in the LR register to determine whether to use the
-Master Stack Pointer or the Process Stack Pointer. The software must then, at
-the address denoted by the stack pointer, save the registers that have yet to be
-saved, and update the stack pointer, before saving both the stack pointer and
-the \excreturn\ value to the process structure elsewhere in memory. This is all
-done in assembly to make sure that there is complete control over which
-registers are used, so as to avoid overwriting any registers that have yet to be
-saved. This is absolutely necessary, as otherwise the state of register for a
-process might be corrupted during a context switch. Additionally, any ISR used
-for scheduling must be declared as naked\footnote{A naked function has no
-compiler generated prologue and epilogue. This means that the compiler does not
-save any registers on the stack before using them, and it does not restore them
-before ending a function.}, to avoid the compiler changing registers before the
-context can be saved, and to give complete control over which value is pushed to
-the PC register at the end of the ISR. Listing \ref{list:context_save} show the
-code that saves contexts on the stack.\\
-\begin{minipage}{\textwidth}
-\lstset{
-	language=C,
-	basicstyle=\footnotesize,
-	showspaces=false,
-	showtabs=false,
-	showstringspaces=false,
-	tabsize=4,
-	breaklines=true
-}
-	\begin{lstlisting}[
-		firstnumber=37,
-		label=list:context_save,
-		caption=\textit{src/kernel/context.h}
-		]
-__attribute__((always_inline))
-static inline uint32_t context_save()
-{
-	// Create a new variable to store the context-saved-stack pointer of the previous process.
-    // We explicitly choose the register to avoid GCC picking a register that hasn't been saved yet.
-	register uint32_t stackpointer __asm("r0");
-	// Context switch logic.
-    // We only save R4-R11 on the stack, because the NVIC already saved the other registers before calling this function.
-    __asm volatile (
-        "AND	R1, LR, #0x0D	\n\t"		// Logical AND with 0xD
-        "CMP    R1, #0x0D		\n\t"		// Use CMP to set EQ/NE flag
-        "BEQ    use_psp			\n\t"		// Branch to use_psp if EQ is set
-        "BNE    use_msp		 	\n\n"		// Branch to use_msp  if NE is set
-        "use_psp:				\n\t"
-        "MRS    %0, PSP			\n\t"		// Move Process Stack Pointer to R1 (the stackpointer variable)
-        "STMFD  %0!, {R4-R11}   \n\t"		// Store registers R4 to R11 on the stack. (The FD in STMFB means fully descending [stack])
-        "MSR    PSP, %0         \n\t"		// Opdate the actual PSP stackpointer register with the new value after STMFD.
-        "B      exit			\n\n"		// Skip over the use_msp routine
-        "use_msp:				\n\t"
-        "MRS    %0, MSP			\n\t"		// Move Master Stack Pointer to R1 (the stackpointer variable)
-        "STMFD  %0!, {R4-R11}   \n\t"		// Store registers R4 to R11 on the stack.
-        "MSR    MSP, %0         \n\n"		// Opdate the actual MSP stackpointer register with the new value after STMFD.
-        "exit:                  \n\t"
-        : "=r" (stackpointer)
-        : :
-    );
-    return stackpointer;
-}
-	\end{lstlisting}
-\end{minipage}
-After the context has been saved, control is handed over to the scheduler, which
-can then decide which process should be running next.\\
-Once all the operations the ISR has completed, the context of the process
-selected by the scheduler must be restored. From this point, the code must once
-again be written in assembly to avoid overwriting a register after it has been
-restored. First, the registers saved by software on the stack must be restored,
-then based on the \excreturn\ value the process interrupted with, it can be
-determined to which stack pointer register the new stack pointer must be pushed
-to. Lastly, execution must return to the process by pushing the \excreturn\ value
-to the PC register. The \excreturn\ value pushed to the PC register must be the
-same as that read from the LR register when the process was interrupted.
-Figure \ref{fig:scheduling_sequence_diagram} shows the flow when switching contexts.
-\begin{figure}
-    \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
-    \caption{This figure shows the steps involved in switching context from one
-	process to another}
-    \label{fig:scheduling_sequence_diagram}
-\end{figure}
-\subsubsection{Windows}
-\label{sssec:impl_windows}
-Windows are the abstract concept used by system integrators to schedule
-partitions in \arinc . A window consists of a start time, relative to the major
-frame, and a duration. These windows are specified by the system integrator in
-XML schema (for more, see \ref{sec:design_schema}).\\
-Time is allocated to partitions according to the windows specified in the XML
-schema, but windows do not have to be contiguous; there may be unused time
-between the end of one window and the start of the next. In that case, this time
-is considered to be an implicit idle period.\\
-
-To see how windows from the XML are ordered in the kernel, and how implicit
-idle periods are filled in, see figure \ref{fig:demo_windows}.
-\subsubsection{Partition Scheduler}
-During the initialisation of the system, a static schedule is build based on the
-windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
-
-The partition scheduler is supposed to keep track of the position within a major
-frame, and based on the position, figure out which window that corresponds to,
-and then schedule the partition of that window.
-
-The scheduler keeps track of the position within a major frame with the HAL
-tick. This tick is incremented every millisecond. This is the same tick used by
-delay function (see \ref{ssec:delay}). The position within each major frame is
-derived by the tick count modulo divided by the length of a major frame in
-milliseconds. If the result of this operation is zero, it is assumed that a new
-major frame has begun. Otherwise, if the position within the major frame is on
-or after the active window closes, the scheduler switches to the next window,
-and thereby schedules the next partition. Although the time at which a window closes
-can be derived from the start time plus the duration, the end time of the
-active window is cached in memory to avoid repeated calculation of the end time.
-
-\subsubsection{Process scheduler}
-Processes are scheduled based on priority and state. Of the processes in the
-READY state, the one with the highest priority should be scheduled. If there are
-two or more processes that are in the READY state and that have the highest
-priority, then the one that transitioned from the DORMANT or the WAITING state
-to the READY state first should be scheduled.
-
-To accomplish this goal, the process scheduler first iterates through all the
-processes of a partition and selects the first available process in the READY
-state. However, the processes are not stored in a ready queue, but are instead
-stored only in the order they were created. Therefore, finding the first ready
-processes does not guarantee that it is also the processes with the highest
-priority. The scheduler therefore continues to iterate through the available
-processes to try to find a process better fulfilling the scheduling rules. For
-each iteration, if a process better fulfills the rules, it is selected as the
-base for further iterations. At the end of the loop, the process in the READY
-state with the highest priority will be selected, and if there are other
-processes with the same priority, the selected process will be the one that
-transitioned from DORMANT or WAITING among them first.
-
-If there are no processes in the READY state, none will be selected, and kernel
-will fault, so each partition must have at least one process in the READY state.
-
-\subsection{Ports}
-\label{impl:ports}
-Interpartition communication (see section \ref{ssec:interpart_comm} and \ref{design:interpart_comm})
-is implemented with an initialization function and a function for every APEX call to the given port type.
-
-As described in \ref{design:interpart_comm},
-a generic port struct as referenced in listing \ref{list:port_struct} is used to define a port with all its attributes.
-All methods operate on the data in these structs,
-which also contains all messages received.
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[
-	firstnumber=13,
-	label=list:port_struct,
-	caption=\textit{src/kernel/ports.h}]
-struct queuing_port {
-    QUEUING_PORT_STATUS_TYPE;
-    circBuf_t                 circ_buf;
-    uint8_t                   *buffer;
-};
-
-struct sampling_port {
-    SAMPLING_PORT_STATUS_TYPE;
-    uint8_t                   *buffer;
-};
-
-typedef struct {
-    bool                      is_queuing_port;
-    union {
-        struct queuing_port   q_buf;
-        struct sampling_port  s_buf;
-    };
-    bool                      activated;
-    void                      *channel_link;
-    NAME_TYPE                 portname;
-} port_t;
-\end{lstlisting}
-\end{minipage}
-
-Listing \ref{list:port_struct} shows how every \texttt{port\_t} has the four following common variables:
-
-\begin{itemize}
-	\item The first being a boolean indicating whether the port is a a queuing port or sampling port
-	\item Another boolean named \texttt{activated}, indicates whether or not a given process has created the port.
-		Since all attributes are statically allocated, requesting a port to be created only allows a port to transmit data,
-		hence the attribute \texttt{activated}, is used to check whether or not a port has been created and can be used to send or receive
-	\item A void pointer \texttt{channel\_link} is used to reference the channel which the port belongs to.
-		This pointer is said at when all the ports are initialized.
-	\item \texttt{portname} is the name of the port, as a string.
-\end{itemize}
-
-As for the port attributes specific to the port type,
-they are declared as a union of the two different port attribute types
-\texttt{struct queuing\_port} and\\
-\texttt{struct sampling\_port}.
-Both types contain a byte array to hold buffered messages.
-The buffer of the sampling port is a simple buffer with the size of maximum message size,
-while the buffer of the queuing port is used as a circular buffer,
-hence the use of an object with the type \texttt{circBuf\_t} to hold additional data,
-used when pushing and popping messages.
-\\\\
-All code used to manipulate a circular buffer is contained src/kernel/circular\_buffer.c
-and is not be covered in this report.
-\\\\
-besides arrays to contain the buffers each type of port also has a port status struct
-of type \texttt{QUEUING\_PORT\_STATUS\_TYPE} and \texttt{SAMPLING\_PORT\_STATUS\_TYPE}.
-These types are declared in \texttt{apex\_queuing.h} and \texttt{apex\_sampling.h}\\
-from the folder \texttt{src/third\_party/ARINC/APEX}.
-They contain the specific status attributes for the port type.
-The structs are embedded (listing \ref{list:port_struct}) in as anonymous structs
-meaning that one can access its members directly instead of as a conventional substruct.
-While this is not strictly a native C feature it is enabled in GCC with the \texttt{-fms-extensions} flag
-and is only used to make the code easier to read and edit.
-\\\\
-While the ports.h file is used to declare all information about the ports,
-the functions to work on sampling ports and queuing ports are located in
-src/kernel/sampling\_port.c and src/kernel/queuing\_ports.c respectively.
-\\\\
-For the rest of section \ref{impl:ports}, queuing ports will be used to explain
-how interpartition communication is implemented in these files.
-\\\\
-As mentioned above,
-ports are created by ``activating'' a statically allocated port.
-This is done from a process, by a system call.
-Specifically by calling the function \texttt{CREATE\_QUEUING\_PORT()}.
-When making this call, a kernel function named \texttt{create\_queuing\_port()}
-is called which takes care of the actual setup.
-\\\\
-The same scheme of having a similar named kernel function for every system calls
-is used for everything which has to do with the ports.
-\\\\
-Since the attributes and starting values for the ports is auto-generated at compile-time,
-the setup can be kept simple:
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[
-	firstnumber=51,
-	label=list:qport_create,
-	caption=\textit{src/kernel/queuing\_port.c}]
-(void) QUEUING_DISCIPLINE;
-
-partition_t *this_partition = getActivePartition();
-port_t *ports = this_partition->ports;
-
-for (APEX_INTEGER n = 0; n < this_partition->nb_ports; ++n) {
-    if (!strcmp(ports[n].portname, QUEUING_PORT_NAME) &&
-    ports[n].q_buf.MAX_MESSAGE_SIZE == MAX_MESSAGE_SIZE &&
-    ports[n].q_buf.MAX_NB_MESSAGE == MAX_NB_MESSAGE &&
-    ports[n].q_buf.PORT_DIRECTION == PORT_DIRECTION)
-    {
-        ports[n].activated = true;
-        *QUEUING_PORT_ID = n;
-        *RETURN_CODE = NO_ERROR;
-        return;
-    }
-}
-
-*RETURN_CODE = INVALID_PARAM;
-\end{lstlisting}
-\end{minipage}
-
-Since open653 only features a simplified implementation of the ARINC 653 standard,
-only a minimal functioning featureset is present for the ports.\\
-The input variable \texttt{QUEUING\_DISCIPLINE} for example is in this case not used,
-hence it has been casted to type \texttt{void} as seen in listing \ref{list:qport_create} at line 51.
-\\\\
-The remaining input variables are checked for their validity after the current port in question
-has been located.
-If these are found to be consistent with the autogenerated attributes, the port is activated by setting
-the \texttt{activated} attribute to true (line 62).
-An ID is also set as a return value and an error is cleared before returning.
-If no port is found to match the input attributes passed to the function
-the APEX defined \texttt{INVALID\_PARAM} error code is passed instead (line 69).
-\\\\
-The functions \texttt{write\_sampling\_message} and \texttt{read\_sampling\_message} follows the same pattern:\\
-1.\quad Validate if the input is consistent with the port information.\\
-2.\quad Update port status and/or pop/push message to buffer.\\
-
-Only the functions \texttt{get\_queuing\_port\_id()} and \texttt{get\_queuing\_port\_status()}
-are different in that they just return information about a certain port.
-\\\\
-The code for the sampling port, follows the same pattern and much of the code is in fact the same.
-Messages are passed in a different manner and circular buffers are not used.
-Instead a simple buffer is overwritten with new messages or being read from,
-which makes it simpler to implement than queuing ports, having to use less code for managing the buffer.
-
-
-\subsection{APEX}
-
-\subsection{Error Handling}
-
-\subsection{System Calls}
+\section{System Calls}
+\todo[inline,color=green]{needs to be moved}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function
@@ -1129,7 +603,7 @@ software, system call functions (including the APEX functions) are implemented
 as a library that entirely handles the system call.
 The sequence of steps for making a system call is a follows:\\
 
-\noindent\begin{tabular}{ r l p{10.5cm} }
+\begin{tabular}{ r l p{10.5cm} }
     1. & Userspace & Partition code calls one of the system call wrapper
     functions.\\
     2. & Userspace & The wrapper function moves the number denoting the system
@@ -1162,14 +636,14 @@ are the only general purpose registers that are stacked by the NVIC. The NVIC
 does not clear the registers before entering the \texttt{SVC\_Handler} function,
 and thus all the general purpose registers may contain the same values as when
 the \texttt{SVC} instruction was executed, but their consistency is not
-guaranteed, as other interrupt service routines could have run before the
+garantued, as other interrupt service routines could have run before the
 \texttt{SVC\_Handler} function started execution.\\
-To avoid rescheduling occurring during a system call, the SysTick interrupt is
+To avoid rescheduling occuring during a system call, the SysTick interrupt is
 turned off during the execution of the \texttt{SVC\_Handler} function.\\
 Each system call is identified by the number the caller has moved into the R0
 register before issuing the \texttt{SVC} instruction. The \texttt{SVC}
 instruction does supply a way to embed this number directly as a part of the
-instruction as an immediate value, instead of using a separate register, but
+instruction as an immediate value, instead of using a seperate register, but
 dedicating a register to this was chosen for two reason: One, it is poorly
 documented how software can read the value embedded in the instruction, and two,
 to keep it consistent with how system calls are handled on other architectures
@@ -1198,11 +672,192 @@ identifier.
 		0xC0FFEE10		&	GET\_QUEUING\_PORT\_STATUS	\\
 		\hline
 		0xC0FFEE11		&	PROCESS\_STOP\_SELF 		\\
-		\hline
+		\hline		
 	\end{tabular}
 \caption{A table of the implemented system calls and their identifier.}
 \label{tab:syscalls}
 \end{table}
+
+\section{XML configuration file}
+\todo{Write about the manual writing of the XML config file?}
+
+\section{XML Parser}
+
+The configuration of the OS is not usable in its XML format. open653 is written in C; therefore a dynamic parser written in Python has been created to translate the XML and generate C structs.
+\todo{reference for xmltodict}
+Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
+The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c. 
+
+\subsection{xml\_data.h}
+
+xml\_data.h is \todo{expand on xmldata.h file}.
+
+\subsection{xml\_data.c}
+
+xml\_data.c is mostly dynamic and generated from the elements in the XML. 
+The static elements of its generation are handled by two functions in createCStructs.py and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif. 
+The idle partition is \todo{expand on idle partition and reference to idle partition seciton}.
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure and are looped through, populating formatted strings, and are then written to xml\_data.c.
+
+\section{C Structures}
+
+\section{OS}
+
+\subsection{Init\/main}
+
+\subsubsection{MPU Setup}
+\subsubsection{Partition Setup}
+\subsubsection{Process Setup}
+\subsubsection{Building the schedule}
+\label{sssec:build_schedule}
+
+
+\subsection{Scheduling}
+The ARINC 653 specification defines two levels of schedulers and the rules by
+which these shcedulers decide which processes may execute at any given time.
+There are two different kinds of rescheduling, temporal rescheduling and event
+driven rescheduling. Partitions are exclusively rescheduled because of time, 
+whereas processes may be rescheduled because of both time and events.
+As for temporal scheduling, the ARINC 653 specification does not explicitly 
+specify a minimum or maximum time resolution for scheduling, though it does
+imply a resolution of 1 nanosecond should be available\cite{arinc_time_resolution}.
+
+For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
+also led to the choice of a time resolution of 1 millisecond. Scheduling is
+never disabled; every millisecond the scheduler will be invoked and check which
+process of which partition should run next. Therefore, increasing the resolution
+of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
+would spend a greater amount of time handling scheduling compared to executing
+user code.
+
+Oppositly, decreasing the resolution would limit the places where \OSname\ is
+viable, as certain tasks require a certain minimum resolution. For example,
+assuming the system is continuously moving, a sorting robot has only a certain
+time to identify objects before they pass by its sensors. If time resolution of 
+the underlying operating system of such a robot is too low, object may pass the
+robots sensors before the code checking the sensors are rescheduled.\\
+
+Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
+timed waits, this is not supported in \OSname . Given the maximum frequency of
+168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.
+
+\subsubsection{SysTick}
+The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
+Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
+specification. Other timers are implementation specific; the vendor decides
+which timers to add to a chip. Therefore, between two different boards, there
+may be a different number of timers, and timers may have a different resolution.
+This makes it more difficult to port code from one board to another. The SysTick
+timer however, is garantued to be 24-bit on any board that implements it. In the
+Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
+and M7; any code written for these can assume portability.\\
+
+The clock source for the SysTick timer is the CPU clock, optionally divided by
+eight. The reset value of the SysTick timer is programmable. This makes it
+possible for software to program how often this timer wraps.
+Unless otherwise specified, this timer operates in polling mode; software has to
+poll for wraps, but it is possible to program the SysTick timer to trigger an 
+interrupt upon wrapping.
+
+By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
+and to trigger an interrupt upon wrapping. 
+
+\subsubsection{Context Switching}
+There are multiple different states the processor can be in, when a context 
+switch from one process to another occurs. The state determines whether the
+Master Stack Pointer or the Process Stack Pointer was used by the process,
+and whether the FPU was used by the process or not. Because of this, the context
+switch algorithm must start by determining the processor state in order to know
+which registers
+to save and where to save them to.\\
+The processor state is saved in the Link return register, and it can be one of
+the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).\\
+If the pre-empted process used the FPU, the FPU registers S16 to S31
+should also be saved by software in addition to the general purpose regisers.
+Because of time constraint, this was not implemented.\\
+The registers are saved entirely on the stack. Therefore, it is important for
+the software to know which
+stack pointer to use when saving the remaining registers. So the very first
+thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
+the \excreturn\ value in the LR register to determine wether to use the 
+Master Stack Pointer or the Process Stack Pointer. The software must then, at 
+the address denoted by the stack pointer, save the registers that have yet to be
+saved, and update the stack pointer, before saving both the stack pointer and
+the \excreturn\ value to the process structure elsewhere in memory. This is all
+done in assembly to make sure that there is complete control over which
+registers are used, so as to avoid overwriting any registers that have yet to be
+saved. This is absolutely necessary, as otherwise the state of register for a
+process might be corrupted during a context switch. Additionally, any ISR used
+for scheduling must be declared as naked\footnote{A naked function has no
+compiler generated prologue and epilogue. This means that the compiler does not
+save any registers on the stack before using them, and it does not restore them
+before ending a function.}, to avoid the compiler changing registers before the
+context can be saved, and to give complete control over which value is pushed to
+the PC register at the end of the ISR.\\
+After the context has been saved, control is handed over to the scheduler, which
+can then decide which process should be running next.\\
+Once all the operations the ISR has completed, the context of the process
+selected by the scheduler must be restored. From this point, the code must once
+again be written in assembly to avoid overwriting a register after it has been 
+restored. First, the registers saved by software on the stack must be restored,
+then based on the \excreturn\ value the process interrupted with, it can be 
+determined to which stack pointer register the new stack pointer must be pushed
+to. Lastly, execution must return to the process by pushing the \excreturn\ value
+to the PC register. The \excreturn\ value pushed to the PC register must be the
+same as that read from the LR register when the process was interrupted.
+Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.} shows the flow when switching contexts.
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
+    \caption{This is not just a placeholder.}
+    \label{fig:scheduling_sequence_diagram}
+\end{figure}
+<<<<<<< HEAD
+\todo{Make the text larger}
+\subsubsection{windows}
+=======
+
+\subsubsection{Windows}
+Windows are the abstract concept used by system intregrators to schedule
+paritions in \arinc . A window consists of a start time, relative to the major
+frame, and a duration. These windows are specified by the system integrator in
+XML schema (for more, see \ref{sec:design_schema}).\\
+Time is allocated to partitions according to the windows specified in the XML
+schema, but windows do not have to be contiguous; there may be unused time
+between the end of one window and the start of the next. In that case, this time
+is considered to be an implicit idle period.
+>>>>>>> ca438c72e69ec635df8d988e87b08a015f502b9b
+
+\subsubsection{Partition Scheduler}
+During the initialisation of the system, a static schedule is build based on the
+windows specified in the XML schema. To see more about this, see \ref{sssec:build_schedule}.
+
+The partition scheduler is supposed to keep track of the position within a major
+frame, and based on the position, figure out which window that corrosponds to,
+and then schedule the partition of that window.
+
+The scheduler keeps track of the position within a major frame with the HAL
+tick. This tick is incremented every millisecond. This is the same tick used by
+delay function (see \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulu divided by the length of a major frame in
+milliseconds.
+
+
+\subsubsection{Process scheduler}
+
+
+\subsection{Ports}
+
+\subsubsection{Queuing Ports}
+\subsubsection{Sampling Ports}
+
+
+\subsection{APEX}
+
+\subsubsection{Syscalls}
+
+
+\subsection{Error Handling}
+
 
 \section{Partitions and processes}
 
@@ -1212,37 +867,6 @@ identifier.
 
 \subsection{idle\_sys}
 \label{ssec:idle_part}
-The idle partition, technically named idle\_sys, is an implicitly generated
-partition. This partition is used to fill out potentially empty time between
-different windows (see \ref{ssec:design_scheduling}). This partition should not
-be specified in the XML schema, but will be automatically defined by the XML
-parser. This partition will alway be the partition with index 0. The reason this
-partition is kept visible in the generated xml\_data.c file, is make it more
-transparent to the system integrator what is running during idle periods.\\
-
-The purpose of this partition is to have something to switch to, when nothing
-else is scheduled, while using the minimum amount of resources possible.
-To keep the partition as lightweight as possible, the partition only does a
-\texttt{NOP}-loop. See figure \ref{list:idle_src} to see the source code of the
-idle partition.\\
-\begin {lstlisting}[
-	label=list:idle_src,
-	caption=The entire code of the idle partition (excluding the assembly flags)]
-idle_main:
-	NOP
-	NOP
-	NOP
-	B   idle_main
-\end{lstlisting}
-
-The partition code is written in assembly to make sure it uses the least possible
-resources. While executing, the code uses no memory, although it needs a at
-least 32 bytes to store the hardware stacked registers during a context switch.
-The reason code consists of three \texttt{NOP} instructions before a branch, is
-to fill the pipeline\footnote{The pipeline of the Cortex-M4 consists of 3 stages}
-with \texttt{NOP} operations before each branch. It is assumed, although no
-attempt has been made to prove it, that this will allow the CPU to run slightly
-more efficiently.
 
 \subsection{stdio\_sys}
 

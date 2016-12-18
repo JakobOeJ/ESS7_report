@@ -1220,7 +1220,7 @@ Instead a simple buffer is overwritten with new messages or being read from,
 which makes it simpler to implement than queuing ports, having to use less code for managing the buffer.
 
 
-\subsection{System Calls}
+\subsection{System/APEX Calls}
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function
@@ -1305,8 +1305,6 @@ identifier.
 \caption{A table of the implemented system calls and their identifier.}
 \label{tab:syscalls}
 \end{table}
-
-\subsection{APEX}
 
 \subsection{Error Handling}
 

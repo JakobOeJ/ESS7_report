@@ -747,8 +747,17 @@ Provided that the data in the XML schema is valid, i.e. there is window
 referencing a partition that does not exist, and provided that the major frame
 is shorter than 5000 (this number is easily changable) time units, this
 algorithm will create a schedule of chronologically ordered windows, including
-windows pointing to the idle partition.
-\todo{Put a figure of example windows}
+windows pointing to the idle partition.\\
+
+\begin{figure}
+	\centerline{\includegraphics[width=\paperwidth,angle=90,clip,trim=0 1cm 0 0]{figures/demo_windows.pdf}}
+	\caption{Windows as represented in the XML schema, and in the kernel after 
+	the schedule has been build}
+	\label{fig:demo_windows}
+\end{figure}
+Figure \ref{fig:demo_windows} shows what the finished schedule may look like,
+given a certain schedule in the XML schema.
+
 
 \subsection{Scheduling}
 The ARINC 653 specification defines two levels of schedulers and the rules by
@@ -850,13 +859,13 @@ determined to which stack pointer register the new stack pointer must be pushed
 to. Lastly, execution must return to the process by pushing the \excreturn\ value
 to the PC register. The \excreturn\ value pushed to the PC register must be the
 same as that read from the LR register when the process was interrupted.
-Figure \ref{fig:scheduling_sequence_diagram}\todo{Write caption for this figure.} shows the flow when switching contexts.
+Figure \ref{fig:scheduling_sequence_diagram} shows the flow when switching contexts.
 \begin{figure}
     \includegraphics[width=\textwidth]{figures/scheduling_sequence_diagram.pdf}
-    \caption{This is not just a placeholder.}
+    \caption{This figure shows the steps involved in switching context from one
+	process to another}
     \label{fig:scheduling_sequence_diagram}
 \end{figure}
-\todo{Make the text larger}
 \subsubsection{Windows}
 \label{sssec:impl_windows}
 Windows are the abstract concept used by system integrators to schedule
@@ -866,8 +875,10 @@ XML schema (for more, see \ref{sec:design_schema}).\\
 Time is allocated to partitions according to the windows specified in the XML
 schema, but windows do not have to be contiguous; there may be unused time
 between the end of one window and the start of the next. In that case, this time
-is considered to be an implicit idle period.
+is considered to be an implicit idle period.\\
 
+To see how windows from the XML are ordered in the kernel, and how implicit
+idle periods are filled in, see figure \ref{fig:demo_windows}.
 \subsubsection{Partition Scheduler}
 During the initialisation of the system, a static schedule is build based on the
 windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
@@ -883,7 +894,7 @@ derived by the tick count modulu divided by the length of a major frame in
 milliseconds. If the result of this operation is zero, it is assumed that a new
 major frame has begun. Otherwise, if the position within the major frame is on
 or after the active window closes, the scheduler switches to the next window,
-and thereby schedules the next partition. Although the time at a window closes
+and thereby schedules the next partition. Although the time at which a window closes
 can be derived from the start time plus the duration, the end time of the
 active window is cached in memory to avoid repeated calculation of the end time.
 
@@ -1166,19 +1177,18 @@ transparent to the system integrator what is running during idle periods.\\
 The purpose of this partition is to have something to switch to, when nothing
 else is scheduled, while using the minimum amount of resources possible.
 To keep the partition as lightweight as possible, the partition only does a
-\texttt{NOP}-loop. See figure \ref{fig:idle_src} to see the source code of the
+\texttt{NOP}-loop. See figure \ref{list:idle_src} to see the source code of the
 idle partition.\\
-\begin{figure}
-	\begin{lstlisting}
+\begin {lstlisting}[
+	label=list:idle_src,
+	caption=The entire code of the idle partition (excluding the assembly flags)]
 idle_main:
 	NOP
 	NOP
 	NOP
 	B   idle_main
-	\end{lstlisting}
-	\caption{The entire code, excluding the assembly flags, for the idle partition}
-	\label{fig:idle_src}
-\end{figure}
+\end{lstlisting}
+
 The partition code is written in assembly to make sure it uses the least possible
 resources. While executing, the code uses no memory, although it needs a at
 least 32 bytes to store the hardware stacked registers during a context switch.

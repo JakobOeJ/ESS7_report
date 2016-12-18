@@ -44,7 +44,7 @@ to execute them independently. This is achieved by partitioning the
 system \cite{arinc_page_2}.
 
 \subsection{Overview}
-
+\label{ssec:interpart_comm}
 \arinc{} is said to \textit{bring a new quality in real-time systems
 development} \cite{arinc_scarlett}.
 This is achieved through its API (called APEX), the interface between 
@@ -58,8 +58,8 @@ If an error in a partition occurs, it will only crash itself;
 the remaining partitions will not be affected.
 
 The following is a brief description of what the standard specifies.
-
-\subsection{Modules}
+\\\\
+\textbf{Modules}
 The term module refers to the aviation concept of IMA, thus a module
 can be seen as a piece of hardware, controlling other subsystems.
 A module can contain one or more processors. However, this does not fit 
@@ -71,8 +71,8 @@ as well as memory and time resources.
 Besides this, the processor should be able to isolate a partition from
 the others, if it fails.
 \cite{arinc_page_12}
-
-\subsection{Partitions}
+\\\\
+\textbf{Partitions}
 A partition is a program unit designed to obey space and time limitations
 set by the developer. The way partitions are being run by the processor,
 is in a static, cyclic manner meaning that they do not have any priorities.
@@ -82,8 +82,8 @@ The resources used by the partitions are specified at build time.
 \cite{arinc_page_14}
 The standard differentiates between partitions that run applications and system partitions. The latter are optional, and can be used to contain
 services not provided in the APEX \cite{scarlett}.
-
-\subsection{Processes}
+\\\\
+\textbf{Processes}
 These are the parts of the program running on partitions. One partition
 may contain one or more processes. These may operate concurrently,
 and may operate in a periodic or aperiodic manner. 
@@ -100,8 +100,8 @@ with the highest priority is always executing when the partition is active.
 This entails processes being preempted at any time, by the process with a 
 higher current priority. 
 \cite{arinc_page_20}
-
-\subsection{Time}
+\\\\
+\textbf{Time}
 Time management is very important in real-time systems.
 Time keeping is needed for partition and process scheduling,
 for delays, deadlines and periodicity as well as for communication time-outs.
@@ -111,13 +111,12 @@ their process requirements. This is an absolute duration, not execution time} wh
 The difference between the two brings the need for having extra APEX calls
 to control ad monitor how processes are behaving.
 \cite{arinc_page_25}
-
-\subsection{Memory}
+\\\\
+\textbf{Memory}
 Memory spaces are defined during the system configuration. These cannot
 be changed later on.
-
-\subsection{Interpatition communication}
-\label{ssec:interpart_comm}
+\\\\
+\textbf{Interpatition communication}
 This is an important aspect of \arinc{}. It defines the way processes residing on different partitions
 communicate with each other. This applies to partitions placed 
 on the same module, on separate core modules, as well as communicating with non-\arinc{} units.
@@ -128,7 +127,7 @@ A port can be configured by a partition to either send or receive messages}
 \cite{arinc_page_27}.
 These ports are defined during system configuration and are tied to
 both a certain channel and a certain partition.
-
+\\\\
 %------------------------------------------------------------------
 \iffalse
 The \arinc\ specification defines a way for different partitions to communicate with one another.
@@ -165,34 +164,33 @@ For a process to access a port, an object representation must be created. This h
 The location in memory of port buffers is not specified in the \arinc\ specification.
 \fi
 %------------------------------------------------------------------
-
-\subsection{Intrapartition communication}
+\textbf{Intrapartition communication}
 Allows processes inside a partition to communicate to each other. This way
 the communication is done more efficiently than having to use a 
 global message passing system.
 Can be done by implementing buffers and blackboards, or semaphores and 
 events\cite{arinc_page_36}.
-
-\subsection{Health Monitor}
+\\\\
+\textbf{Health Monitor}
 Has the purpose of monitoring, reporting and isolating hardware or
 software faults and failures. Its responsibilities are divided into
 the following levels: process, partition and module. The Health monitor has 
 error response mechanisms to take action in case typical
 error occur at any of these level
 \cite{arinc_page_40}.
-
-\subsection{System configuration}
-The standards allows portability and reusability of applications. However,
+\\\\
+\textbf{System configuration}
+The standard allows portability and reusability of applications. However,
 these applications have to be first integrated in the system. This is done
 by giving the partitions the access and resources needed,
 in the system configuration phase, in order to
 satisfy the applications\textquotesingle requirements \cite{arinc_page_42}.
 
 \subsection{Decision}
-The idea is to bring such an operating system in to the wider embedded world.
-To do that in a one semester project, the focus will be on understanding the standard,
-working with embedded systems and implementing the parts of the operating system that are
-essential for running simple partitions on a single hardware unit.
+The idea is to bring such an operating system  based on \arinc{}
+in to the wider embedded world.
+The focus will now change to understanding if, and how other project
+approached this idea. 
 
 \section{Other existing standards}
 While \arinc{} defines the architecture of a system for safety-critical

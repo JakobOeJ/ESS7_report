@@ -706,10 +706,17 @@ The APEX calls present on \OSname{} are further explained in
 \section{Partitions and processes}
 
 \subsection{Partitions}
+One of the core concepts of \arinc\ is partitions. The space and time separation
+defined in \arinc\ is managed at partition-level.
 
 \subsection{Processes}
 
 \subsection{Error Handling}
+The error handler is designed in the context of having part of the 
+Health Monitor specified in the standard taking care of the faults and
+failures. However, its specific APEX calls won\textquotesingle t be
+approached, since the goal is only to give the developers the possibility
+to see that something is wrong in the system.
 
 \section{Agile development}
 The software development process flowed naturally due to previous 

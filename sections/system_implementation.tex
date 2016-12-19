@@ -417,6 +417,7 @@ point, and the things it lacks can be found in the
 microcontroller\textquotesingle s datasheet.
 
 \subsection{System clock}
+\label{ssec:system_clock}
 The initial setting for the clock is that it uses the internal oscillator,
 which runs at 16MHz. In order to get the maximum speed supported by the
 CPU, the board needs to be configured to multiply this frequency.
@@ -463,6 +464,12 @@ the CPU and memory through the AHB bus, and scaled down for the peripheral busse
 	\item[\textbf{APB2 domain}]
 		high-speed domain, running at 84 MHz.
 	\end{labeling}
+
+The PLL registers\footnote{Specifically the division/multiplication 
+factor registers} 
+have to be set up in such a way that the frequency it 
+generates is compatible with the prescaling settings of the peripheral
+busses.
 
 \subsection{UART}
 The UART allows the transmission and reception of the information between the STM32 and the outside. The 
@@ -749,6 +756,10 @@ is explained in further detail.
 
 \subsubsection{Main Clock Setup}
 \label{impl:clock_setup}
+The system clock is setup using its specific driver, explained in
+\ref{system_clock}. The driver sets the core to run at 168 MHz, as
+well as prescaling this frequency for the peripheral busses.
+
 \subsubsection{Partition Setup}
 \label{impl:part_setup}
 \subsubsection{Process Setup}

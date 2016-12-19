@@ -618,6 +618,7 @@ The figure shows the intended schema for a fully compliant ARINC 653 implementat
 XML is the chosen configuration file format. XML was chosen as opposed to alternatives due to its easy to read and write nature, ARINC\textquotesingle s XML example providing guidance and previous experience with XML in the project group.
 
 \section{APEX}
+\todo[inline]{needs a reference to the System calls just above, or maybe join them}
 The APEX is basically the API for applications running on \OSname{}.
 It is defined by the standard, and the functions are grouped into 
 seven major categories \cite{arinc_page_45}. Table \ref{tab:apex_calls}
@@ -656,9 +657,34 @@ classified according to the standard.
 \end{table}
 
 These libraries only define the calls, that will be implemented later on
-in the kernel. They rely on \textit{apex\_types.h} for specifying the global and
+in the kernel. \textit{apex\_types.h} defines their arguments:
+global and
 constant variables, as well as the types used by the calls. This was found
 in the standard, in the form of an ANSI C compliant library.
+In input(IN) arguments should be types defined here. The output(OUT) 
+parameters are dependent on the \texttt{RETURN\_CODE} value, as seen
+in listing\ref{lst:apex_types}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+	firstnumber=67,
+	label=lst:apex_types,
+	caption=\textit{apex\_types.h}]
+typedef
+    enum {
+        NO_ERROR       = 0,   /* request valid and operation performed      */
+        NO_ACTION      = 1,   /* status of system unaffected by request     */
+        NOT_AVAILABLE  = 2,   /* resource required by request unavailable   */
+        INVALID_PARAM  = 3,   /* invalid parameter specified in request     */
+        INVALID_CONFIG = 4,   /* parameter incompatible with configuration  */
+        INVALID_MODE   = 5,   /* request incompatible with current mode     */
+        TIMED_OUT      = 6    /* time-out tied up with request has expired  */
+    } RETURN_CODE_TYPE;
+\end{lstlisting}
+\end{minipage}
+\todo[inline]{make the listing look nice}
+The APEX calls present on \OSname{} are further explained in 
+\nameref{ssec:impl_system_calls}.
 
 \section{Partitions and processes}
 
@@ -680,7 +706,6 @@ was pursued by applying the principles of agile software development.
 
 Figure \ref{fig:advanced_system} presents the system in its entirety,
 with all the components organised in the corresponding layers.
-
 
 \begin{figure}[H]
 \centering

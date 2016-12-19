@@ -445,7 +445,7 @@ present on the board or inside the microcontroller:
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{system_clock.pdf}
-\caption{System clock overview \cite{reference_manual_74}}
+\caption{System clock overview \cite{reference_manual_216}}
 \label{fig:system_clock}
 \end{figure}
 
@@ -550,6 +550,7 @@ initial defined size wasn't enough for the different processes allocated by that
 \end{figure}
 
 \subsection{Timing}
+\label{ssec:timing}
 This driver is used for accurately measuring the execution time of different
 functions. It uses the DWT (Data Watchpoint and Trace support)
 internal peripheral registers defined in the ARM-M4 Architecture 
@@ -653,13 +654,14 @@ possibility to keep track of time. It was realised at a later point
 that \arinc{} specifies that time keeping should be done in nanoseconds,
 a range that the RTC is not capable of. This was the reason for continuing 
 researching other ways of timing the system, as seen in:
-\todo{ref to Timing}
+\ref{ssec:timing}.
 
 Anyway, the RTC could be used for timestamps on error logs and such,
 as the standard specifies \cite{arinc_page_26}. The use of the LSE oscillator,
-as well as the design of the RTC (having all time components, including
-subseconds, as well as leap year correction), make this clock a reliable
-secondary time source.
+as well as the design of the RTC 
+\footnote{Which includes all time components, as well as
+subseconds and year correction}, make this a reliable
+secondary clock source.
 
 \section{XML configuration file}
 
@@ -757,7 +759,7 @@ is explained in further detail.
 \subsubsection{Main Clock Setup}
 \label{impl:clock_setup}
 The system clock is setup using its specific driver, explained in
-\ref{system_clock}. The driver sets the core to run at 168 MHz, as
+\ref{ssec:system_clock}. The driver sets the core to run at 168 MHz, as
 well as prescaling this frequency for the peripheral busses.
 
 \subsubsection{Partition Setup}

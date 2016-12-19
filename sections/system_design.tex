@@ -621,8 +621,7 @@ XML is the chosen configuration file format. XML was chosen as opposed to altern
 The APEX is basically the API for applications running on \OSname{}.
 It is defined by the standard, and the functions are grouped into 
 seven major categories \cite{arinc_page_45}. Table \ref{tab:apex_calls}
-contains these the libraries defining these calls in the source code
-(column on the right),
+contains these the libraries defining these calls (column on the right),
 classified according to the standard.
 
 \begin{table}[H]
@@ -655,6 +654,11 @@ classified according to the standard.
 		APEX calls}
 	\label{tab:apex_calls}
 \end{table}
+
+These libraries only define the calls, that will be implemented later on
+in the kernel. They rely on \textit{apex\_types.h} for specifying the global and
+constant variables, as well as the types used by the calls. This was found
+in the standard, in the form of an ANSI C compliant library.
 
 \section{Partitions and processes}
 

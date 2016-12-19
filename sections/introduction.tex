@@ -1,32 +1,36 @@
-\chapter{Introduction}\label{ch:introduction} 
+\chapter{Introduction}\label{ch:introduction}
 
-Embedded devices are becoming more powerful and less expensive by the day. The large majority of
-microprocessors produced end up as components of embedded devices, ranging from mobile phones
-to traffic lights, from digital watches to medical apparatus. These devices are tailored for 
-performing specific tasks, thus requiring the developers' skill and commitment to create reliable
-systems. The diverse applications of these systems divide them into different categories, in regards to
-how dependable they have to be. A wristwatch skipping a second has no severe consequences, while the
-failure of a surgical robot has to be avoided at all costs. These requirements led to the creation 
-of technical standards to be followed when developing such systems. 
+Embedded devices are becoming more powerful and less expensive year by year.
+The majority of microprocessors produced end up as components of embedded devices,
+ranging from mobile phones to traffic lights, from digital watches to medical apparatus.
+These devices are tailored for executing specific tasks,
+thus requiring the developers\textquotesingle\ skill and commitment to create reliable systems.
+The diverse applications of these systems divide them into different categories,
+in regards to how dependable they have to be. A wristwatch skipping a second has no severe consequences,
+while the failure of a surgical robot has to be avoided at all costs.
+Technical standardization addresses these requirements,
+to better reason about the expected reliability of such systems;
+Some standards such as \arinc{} enforce high reliability while others focus on other metrics.
 \\\\
-Some might think that these regulations are unfairly formulated and distributed, and in most
-of the cases they might be right. For example, if we compare the existing standards for the aeronautical industry with the ones in the automotive field, there are quite big discrepancies. The standards 
-in use in the automotive industry are applying certain rules from the avionics regulations, 
-but only to a certain extent
-\cite {can_cars_fly}.
+One might argue that these regulations are loosely formulated and too limited in scope
+For example, if one compares the existing standards for the avionics and automotive fields,
+there are large discrepancies.
+The standards in use in the automotive industry are applying certain rules from the avionics regulations,
+but only to a certain extent \cite {can_cars_fly}.
 These two fields seem to be converging in terms of safety requirements as the automotive industry develops.
 \\
-This gives rise to the idea of applying these avionics safety critical systems to other industries.
-There is potential for reducing weight of products with a single computing device, facilitating more safety procedures 
+This gives rise to the idea of applying these avionics safety critical systems to other fields.
+There is potential for reducing weight of products with a single computing device, facilitating more safety procedures
 or increasing portability of applications across generations of products.
-\\
-This project\textquotesingle s cornerstone is developing an Operating System based on a defined subset of the \arinc{} standard, that facilitates running safety critical applications compliant with the \arinc{} standard. 
-\\
+\\\\
+This project\textquotesingle s cornerstone is developing an Operating System based on a defined subset of the \arinc{} standard,
+that facilitates running safety critical applications compliant with the \arinc{} standard.
+\\\\
 The two main areas of interest are:
 \\
 \begin{itemize}
 \item The standard itself, that specifies an IMA approach to run applications
 \item The physical platform that would contain the system and serve as a research launchpad
 \end{itemize}
-The \nameref{chap:analysis} chapter provides more details about the software specification that needs to be fulfilled,
+The \nameref{chap:analysis} chapter provides more details about the software specification that need to be fulfilled,
 as well as the different available hardware options.

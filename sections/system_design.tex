@@ -53,15 +53,32 @@ instead of directly on top of the hardware, creating an extra layer of
 \label{fig:simple_system}
 \end{figure}
 
-In the rest of the chapter the different layers are described,
-from bottom up, 
-together with their core components. The hardware specifications
-are outlined, as well as explaining how the rest of the system is
-set up.
+
+\subsection{Essential Features}
+\label{design:features}
+The rest of the chapter describes the layers of the system from bottom up.
+The hardware specifications are outlined, together with some essential features
+needed to make \OSname{} functional as testable as required by chapter
+\nameref{chap:Problem_Statement}.
+With the overall problem being the implementation of an \arinc{} OS,
+application execution and control is an end goal.
+To facilitate such the following features must exist:
+\begin{itemize}
+	\item Hardware to implement on top of
+	\item Interfaces to interact with said hardware
+	\item A program to parse system configurations from a schema to the kernel at compile time
+	\item A scheduler for partitions
+	\item A scheduler for processes
+	\item The facilitation of system calls to handle APEX calls.
+\end{itemize}
+
+The design of these facilities described in the rest of this chapter.
+Memory separation is not an essential feature for facilitating running applications,
+but is essential to separating them for security and reliability reasons,
+thus memory protection is also described.
 
 
 \section{Hardware}
-
 As mentioned in the \nameref{section:settleing_platform} section,
 the hardware used for the development of this system is the Mini-M4
 board. It is build around the STM32F415RG microcontroller
@@ -689,6 +706,8 @@ The APEX calls present on \OSname{} are further explained in
 \section{Partitions and processes}
 
 \subsection{Partitions}
+One of the core concepts of \arinc\ is partitions. The space and time separation
+defined in \arinc\ is managed at partition-level.
 
 \subsection{Processes}
 

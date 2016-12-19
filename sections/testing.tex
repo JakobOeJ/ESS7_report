@@ -15,7 +15,7 @@ In order to test the memory partition mapping, for an amount of space given, it'
 \centering
 \includegraphics[width=15cm]{mpu_test.png}
 \captionof{figure}{Terminal displaying the results}
-\label{fig:simple_system}
+\label{fig:testing_mpu}
 \end{figure}
 
 \section{XML validation}
@@ -28,6 +28,13 @@ not compliant with the schema being written.
 
 
 \section{Scheduler}
+The scheduler has been tested to work provided the XML file specifies reasonable
+windows. The scheduler has not been tested with edge cases.\\
+The kernel does not record any runtime metrics, and thus obtain empirical
+evidence that the scheduler is working according to the windows specified in the
+XML schema and according to the designed algorithms, window durations have to be
+scaled up to make it possible with the human eye to determine that the scheduler
+indeed follows the windows defined in the XML schema.
 
 \section{\arinc{} specification - Part 3}
 In order to test a system for compliance with \arinc{}, Aeronautical
@@ -50,5 +57,3 @@ tested. This could be done in the future phases of the \OSname{} OS in order
 to demonstrate the compliance of the APEX behavior. 
 
 \section{Message passing}
-
-\section{The evil partition}

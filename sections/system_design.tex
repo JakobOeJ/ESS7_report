@@ -518,15 +518,15 @@ CPU registers and the stack.
 \label{sec:design_schema}
 An ARINC 653 schema specifies the structure 
 of the configuration and the required elements 
-for the core module to operate.
-The schema is a recipe used to create the file 
-that will contain the configuration.
+for the core module.
+The schema is a recipe used to create a configuration file of some type.
 
 \subsection{Schema design}
 
-The schema defined is not the complete 
-ARINC 653 schema, though it can be extended 
-into the full schema with some more work. 
+The schema defined in figure \ref{fig:open653schema} is not the complete
+ARINC 653 schema, though it can be extended
+into the full schema with some more work.
+%but the subset defined to accommodate the features of open653.
 The scope was limited as outlined in the
 problem statement. \ref{chap:Problem_Statement}) 
 
@@ -537,7 +537,7 @@ problem statement. \ref{chap:Problem_Statement})
 
 The figure represents the schema and the 
 relationship between the elements. 
-An ARINC 653 Module has five elements. 
+An ARINC 653 Module has four elements.
 One or more Partitions, a Connection Table, 
 one or more Partition Memory elements, and 
 a Module Schedule.

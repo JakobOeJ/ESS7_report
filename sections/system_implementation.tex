@@ -599,7 +599,7 @@ int64_t convert_cycles_to_time(uint32_t cycles)
 The returned value is a 64 bit signed integer, as the \arinc{} standard 
 specifies \cite{arinc_time}. the only problem with this, is that while 
 the count is done in the range of nanoseconds, the sampling frequency
-gives a 5,45 nanosecond step. In order to fully comply with the standard,
+gives a 5.45 nanosecond step. In order to fully comply with the standard,
 we would need a timer running at at least 1 GHz\footnote{Produces 1
  nanosecond steps}.
 

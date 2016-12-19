@@ -1387,7 +1387,13 @@ handled by the partition scheduler (see \ref{ssec:design_scheduling} and
 
 Partitions run in unpriviledged mode; to access control registers, and to call
 APEX functions, they need to do a system call (see
-\ref{ssec:design_system_calls} and \ref{ssec:impl_system_calls}).
+\ref{ssec:design_system_calls} and \ref{ssec:impl_system_calls}).\\
+
+Partitions do not directly execute any code, but relies on a default process. As
+partitions have no directly executable code, there is nothing to go to, if no
+processes are ready to execute. Therefore, it is important that each partition
+has at least one process in the READY-state during its windows.
+
 \subsection{Processes}
 
 \subsection{idle\_sys}

@@ -1,32 +1,34 @@
-\chapter{Conclusion}\label{ch:conclusion}
+\chapter{Conclusion}
+\textit{Which features must be developed to make \OSname{} functional and
+testable?}\\
+The features required to make the system functional and testable are listed in \ref{design}
+and the implemented features are listed in \ref{feature_list}.\\
 
-In this chapter the OS developed in this project is reviewed and conclued if the aproach to the problem 
-statement on chapter 3 on page 15 was successful and are the possible uses in the future.\\
+\textit{How can this system be developed without the use of pre-existing
+implementations?}\\
+\OSname{} is developed as a ground up implementation on top of the MINI-M4.
+The HAL library has been used to supplement the development of most drivers and hardware specific functions.\\
 
-\section{Discussion}
-The main concerns presented by the forums communities were the security levels of the implementation of 
-this OS. The two main topics were: how to identify an error and how to track it to the origin and how the 
-system will react to different levels of failure, from small to fatal errors. If the entire system would 
-reboot, only restart the partition or block it.\\
-Other problems suggested were related to the interrupts, when context switching if the next partition 
-would also have acess to all them, and how the control is made to prevent any errors related.\\
-The idea of an OpenSource implementation like this was well accepted due to the lack of examples avaiable. 
-It was given an example of an implementation in the USA, of a similar system and that is still used for
-communication infrastructures.
-The whole text is presented in the \nameref{chap:Forum Responces}.
-\todo{can't make the refrence work, help!}
+\textit{How is this system implemented using C and Python?}\\
+Python is used for parsing the XML into C structures which is used for building the source code.
+C is used to program \OSname{} and its partitions.\\
 
-\section{Perspective}
-
-
+\textit{What are the main obstacles when developing such a system?}\\
+There were no big challenges preventing the development of \OSname{},
+however among the eareas  there were:
+\begin{itemize}
+	\item understanding the need for using special GCC attributes when constructing special functions for context switching
+	\item Establishing a JTAG connection when assembling the hardware
+	\item Deciding on a auto-generated data structure
+\end{itemize}
 
 \section{The actual conclusion}
-The theme of this project is Embedded Software Systems, and the chosen project is the development of and 
-OS. The purpose of the project is to make a functional OS according to ARINC653 standards, that is able to 
-run different processes in independent partitions from each other. This OS should then be implemented in 
+The theme of this project is Embedded Software Systems, and the chosen project is the development of and
+OS. The purpose of the project is to make a functional OS according to ARINC653 standards, that is able to
+run different processes in independent partitions from each other. This OS should then be implemented in
 the chip STM32.\\
 \\
-The main problem statement from chapter 3 on page 15 said the following: Can an OS implementation based on 
+The main problem statement from chapter 3 on page 15 said the following: Can an OS implementation based on
 a subset of the ARINC653 standard be developed on a Mini-M4?\\
 \\
 As described in section ?? on page ?? this project focuses solely on making an
@@ -34,3 +36,18 @@ implementation of a part of the Standard, not covering all the features and secu
 \\
 The problem statement is answered as follows;\\
 \todo[inline, color=green] {could be a different chapter if it fits our needs}
+
+\section{Discussion}
+The main concerns presented by the forums communities were the security levels of the implementation of
+this OS. The two main topics were: how to identify an error and how to track it to the origin and how the
+system will react to different levels of failure, from small to fatal errors. If the entire system would
+reboot, only restart the partition or block it.\\
+Other problems suggested were related to the interrupts, when context switching if the next partition
+would also have acess to all them, and how the control is made to prevent any errors related.\\
+The idea of an OpenSource implementation like this was well accepted due to the lack of examples avaiable.
+It was given an example of an implementation in the USA, of a similar system and that is still used for
+communication infrastructures.
+The whole text is presented in the \nameref{chap:Forum Responces}.
+\todo{can't make the refrence work, help!}
+
+\section{Perspective}

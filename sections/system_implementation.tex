@@ -752,9 +752,10 @@ The last action taken by the main function is enabling the SysTick interrupt and
 entering unprivileged mode start the scheduler.\\
 
 In the following the sections the main clock setup (section \ref{impl:clock_setup},
-the partition setup (section \ref{impl:part_setup}), the process setup (section
-\ref{impl:proc_setup}) and partition schedule setup (section \ref{sssec:build_schedule})
-is explained in further detail.
+the partition and process setup (section \ref{impl:part_proc_setup}), and
+partition schedule setup (section \ref{sssec:build_schedule}) is explained in
+further detail.
+
 
 \subsubsection{Main Clock Setup}
 \label{impl:clock_setup}
@@ -762,12 +763,25 @@ The system clock is setup using its specific driver, explained in
 \ref{ssec:system_clock}. The driver sets the core to run at 168 MHz, as
 well as prescaling this frequency for the peripheral busses.
 
-\subsubsection{Partition Setup}
-\label{impl:part_setup}
-\subsubsection{Process Setup}
-\label{impl:proc_setup}
+
+\subsubsection{Partition and Process Setup}
+\label{impl:part_proc_setup}
+The idle partition (explained in section \ref{sssec:build_schedule}) is set up
+first using its entrypoint \texttt{idle\_main}.\\
+
+The rest of the partitions listed in the auto-generated C file is initialized
+by setting the number of active processes to one, setting up their specified
+entrypoint with a memory address within their memory space and setting the rest
+of the empty process entries to \texttt{DORMANT}.\\
+
+Note that in this implementation every process is given 1KB of ram to use for
+stack. This can course a fault if partitions initializes more processes than
+their defined memory spaces holds.
+
+
 \subsubsection{Building the schedule}
-\label{sssec:build_schedule}
+\label{
+}
 The partition schedule is defined in the XML schema file as windows (see 
 \ref{sssec:impl_windows}). Windows in the XML schema, as well as in xml\_data.c
 file output by the schema parser, are ordered by partition, not chronologically.

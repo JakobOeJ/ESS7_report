@@ -513,14 +513,14 @@ is to have spare space, since it becomes harder to fit it completely in a region
 \centering
 \includegraphics[width=15cm]{partitions/partitions2.png}
 \captionof{figure}{Example of 3 memory region sizes}
-\label{fig:simple_system}
+ 
 \end{figure}
 Lets take, as an example, 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{partitions/partitions1.png}
 \captionof{figure}{Example of 5 partitions sizes}
-\label{fig:simple_system}
+ 
 \end{figure}
 If they were just allocated in the most suited region for each, the memory needed would be of 480bits, 
 leaving 155bits unused.\\
@@ -528,7 +528,7 @@ leaving 155bits unused.\\
 \centering
 \includegraphics[width=15cm]{partitions/partitions3.png}
 \captionof{figure}{Partition memory distribution in different regions}
-\label{fig:simple_system}
+ 
 \end{figure}
 The first allocate are the biggest partitions and if there are empty subregions, the system tries to 
 allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
@@ -536,7 +536,7 @@ allocate smaller partitions in those gaps, like shown in the figure, using only 
 \centering
 \includegraphics[width=15cm]{partitions/partitions4.png}
 \captionof{figure}{Partition memory distribution in the same regions}
-\label{fig:simple_system}
+ 
 \end{figure}
 In case that a certain partition doesn't full fill the subregion, their size gets updated with the full 
 remaining subregion area, 
@@ -546,7 +546,7 @@ initial defined size wasn't enough for the different processes allocated by that
 \centering
 \includegraphics[width=15cm]{partitions/partitions5.png}
 \captionof{figure}{Memory extension of the partitions sizes}
-\label{fig:simple_system}
+ 
 \end{figure}
 
 \subsection{Timing}

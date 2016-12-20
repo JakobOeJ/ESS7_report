@@ -794,7 +794,13 @@ all partitions to find the partition with the same ID. To make matters more
 complicated, the XML schema may contain implicit idle periods (periods with no
 defined windows). To lighten the burden on the scheduler, the work to build a
 schedule by ordering the windows chronologically and inserting explicit idle
-periods are done during initialisation.\\
+periods are done during system initialisation.\\
+
+Provided the same XML schema, the schedule is also always the same; each time
+the system boots, a schedule identical to the one last used will be built.
+In future builds of \OSname , the schedule should ideally be built by the XML
+schema parser, to avoid rebuilding the same schedule during each boot of the
+system.
 
 The algorithm to build the schedule is as follows:\\
 \begin{algorithm}[H]
@@ -1050,14 +1056,14 @@ static inline void context_restoreAndSwitch(uint32_t stackpointer, uint8_t exc_r
 Windows are the abstract concept used by system integrators to schedule
 partitions in \arinc . A window consists of a start time, relative to the major
 frame, and a duration. These windows are specified by the system integrator in
-XML schema (for more, see \ref{sec:design_schema}).\\
+the XML schema (for more, see \ref{sec:design_schema}).\\
 Time is allocated to partitions according to the windows specified in the XML
 schema, but windows do not have to be contiguous; there may be unused time
 between the end of one window and the start of the next. In that case, this time
 is considered to be an implicit idle period.\\
 
-To see how windows from the XML are ordered in the kernel, and how implicit
-idle periods are filled in, see figure \ref{fig:demo_windows}.
+To see an example of how windows from the XML are reordered in the kernel, and
+how implicit idle periods are filled in, see figure \ref{fig:demo_windows}.
 \subsubsection{Partition Scheduler}
 \label{sssec:impl_partition_scheduler}
 During the initialisation of the system, a static schedule is build based on the
@@ -1336,6 +1342,17 @@ identifier.
 \end{table}
 
 \subsection{Error Handling}
+One of the features of the Health Monitor of \arinc\ is to handle faults
+occurring in partitions, and do an action that has been defined in the XML
+schema, e.g. restart the partition. As this is not implemented, there is no
+defined fault handling. To keep the implementation simple, \OSname has no 
+automatic error recovery; all errors detected by the hardware (privilege
+violation, memory access violation, etc.) are handled by halting the system.
+When the hardware throws an exception, \OSname\ handles these by dumping the
+values of the CPU registers at the time the exception was trigger over the UART 
+connection. To make it more visible that the system has halted, all LEDs are 
+turned on. Finally the system halts. The system can be reset by either cycling
+the power or pressing the dedicated reset button on the Mini-M4 board.
 
 \section{Partitions and processes}
 

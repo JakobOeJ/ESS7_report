@@ -513,11 +513,11 @@ initial pointer and the region of each partition for enabling and disabling the 
 \subsection{System calls}
 \label{ssec:design_system_calls}
 To improve security and robustness, many modern operating systems restrict
-application code from accessing certain peripheral hardware (e.g. storage 
+application code from accessing certain peripheral hardware (e.g. storage
 devices, I/O devices) as well as the control registers of the CPU.
 To accomplish this, many modern CPUs utilise two or more execution levels; each
 level adds more restrictions. The kernel runs in the most privileged execution
-level while application code runs in a more restricted execution level. This 
+level while application code runs in a more restricted execution level. This
 prevents application code from having direct access to privileged hardware.
 Application code must then access privileged hardware through the kernel. For
 this, kernels often provide a fixed set of functions that application code may
@@ -528,11 +528,11 @@ a function designator (often just an identification number) and the call argumen
 on the stack and in the general purpose registers before triggering the
 interrupt, application code can signal its' intent to the kernel.
 
-System calls are critical to accomplish ARINC 653\textquotesingle{}s strict 
+System calls are critical to accomplish ARINC 653\textquotesingle{}s strict
 space and time separation. Therefore, \arinc\ explicitly specify that partition
-code must be executed in unprivileged mode only\cite{arinc_page_18}. If 
+code must be executed in unprivileged mode only\cite{arinc_page_18}. If
 partition code is not run in an unprivileged mode, it will
-have the ability to change the CPU time and memory space allocated to it. 
+have the ability to change the CPU time and memory space allocated to it.
 
 \subsection{Error Handling}
 The error handler is designed to give the developers the possibility
@@ -729,7 +729,7 @@ typedef
 
 \section{Partitions and processes}
 \label{design:part_proc}
-Partitions as described in \ref{anal:arinc} are defined at compile-time and
+Partitions as described in section \ref{anal:arinc_overview} are defined at compile-time and
 contain one or more processes, which are initialised during run-time.
 A partition is defined to be one or more structures containing information about
 its execution and resources.

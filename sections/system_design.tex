@@ -341,13 +341,13 @@ and who saves them.\\
 \end{table}
 
 Additionally, the Cortex M4 utilises a banked\footnote{A banked register is a
-logical register implemented across multiple physical registers. The state of 
+logical register implemented across multiple physical registers. The state of
 the hardware determines which physical register the logical register refers to.
 \cite{register_banking}} stack pointer.
-The logical SP register consists of two physical registers: the Master Stack 
+The logical SP register consists of two physical registers: the Master Stack
 Pointer (MSP) and the Process Stack Pointer (PSP).
-The MSP is intended for kernel space execution while the PSP is intended for 
-user space execution, although this not enforce by hardware. 
+The MSP is intended for kernel space execution while the PSP is intended for
+user space execution, although this not enforce by hardware.
 Selecting which stack pointer to use can not be done by software within an ISR.
 Instead, this must be done by the NVIC. This makes it impossible to restore a
 context entirely from software. Software can instruct the NVIC which stack
@@ -364,7 +364,7 @@ When an ISR is used for context switching, the EXC\_RETURN denoting the state of
 previous context may be different from the state of the next context. Therefore,
 the compiler is not be allowed to automatically conclude the ISR by putting
 the value of the LR register in to the PC register.\\
-Additionally, to be able to later restore a context, the kernel records the 
+Additionally, to be able to later restore a context, the kernel records the
 EXC\_RETURN value from the LR register.
 
 \begin{table}[H]
@@ -545,13 +545,14 @@ the unprivileged application level and enter into the privileged kernel. This is
 accomplished by triggering an interrupt that the kernel will catch. By preparing
 a function designator (often just an identification number) and the call arguments
 on the stack and in the general purpose registers before triggering the
-interrupt, application code can signal its' intent to the kernel.
+interrupt, application code can signal its' intent to the kernel.\\
 
 System calls are critical to accomplish ARINC 653\textquotesingle{}s strict
 space and time separation. Therefore, \arinc\ explicitly specify that partition
 code must be executed in unprivileged mode only\cite{arinc_page_18}. If
 partition code is not run in an unprivileged mode, it will
 have the ability to change the CPU time and memory space allocated to it.
+
 
 \subsection{Error Handling}
 The error handler is designed to give the developers the possibility

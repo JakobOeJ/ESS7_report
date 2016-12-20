@@ -452,7 +452,7 @@ present on the board or inside the microcontroller:
 The lower part of figure \ref{fig:system_clock} shows that the frequency
 of the HSE is multiplied by a PLL(Phase-locked loop) system, before it gets
 to the clock selection block. This is the frequency supplied to
-the CPU and memory through the AHB bus, and scaled down for the peripheral busses. These busses are divided into low and high speed domains as:
+the CPU and memory through the AHB bus, and scaled down for the peripheral buses. These buses are divided into low and high speed domains as:
 
 \begin{labeling}{APB1 domain}
 	\item[\textbf{AHB}]
@@ -469,7 +469,7 @@ The PLL registers\footnote{Specifically the division/multiplication
 factor registers} 
 have to be set up in such a way that the frequency it 
 generates is compatible with the prescaling settings of the peripheral
-busses.
+buses.
 
 \subsection{UART}
 The UART allows the transmission and reception of the information between the STM32 and the outside. The 
@@ -495,7 +495,7 @@ The delay function is also used for debugging, giving the developers the
 chance of seeing \textit{when things are happening}. This is because most of the
 program instructions are executed so fast, that the they appear to be
 instant to humans. 
-Delay is defined in the HAL library, and relies on the SysTick API.
+Delay is defined in the HAL library, and relies on the SysTick.
 
 SysTick is a timer\footnote{Fed with the system clock optionally 
 divided by 8} that can 
@@ -503,8 +503,8 @@ be used to generate the main system event clock.
 In fact, that is exactly how the HAL library has it implemented. Its
 default time base is 1 millisecond. This means that every millisecond,
 SysTick generates an interrupt to look after sensor values, scheduling or
-basic timing tasks.
-\todo {reference to systick in the OS section}
+basic timing tasks. To see a more detailed explanation of the SysTick
+timer consult \ref{sssec:systick}.
 
 \subsection{MPU}
 As the regions are power of 2, as shown in the picture, the bigger partition is the more likely it 
@@ -707,7 +707,7 @@ Partitions sub elements, sampling and queuing ports, have combined into a single
 The XML element Connection\_Table has been removed, and StandardPartition has
 been transformed into a port reference list which shares an association with the ports.
 \\\\
-The following structures have been extenden to contain an array of its substructures:
+The following structures have been extended to contain an array of its substructures:
 \begin{itemize}
 	\item part\_mem\_t contains an array memory\_arr which references to the memory information of a given partition.
 	\item partition\_schedule contains an array windows\_arr which references to the timing window in which a partition is executed.
@@ -721,12 +721,12 @@ port\_t is a generic structure to define a port independent on its type as
 detailed in section \ref{impl:ports}.
 
 \section{OS kernel}
-This section gives an overview of the the features in open653 and how they are
+This section gives an overview of the the features in \OSname\ and how they are
 implemented. At the end a feature list is provided to give summery of the features
-and services implemented in open653.
+and services implemented in \OSname .
 
 \subsection{OS Initialization}
-open653 is initialized from the \texttt{main()} function in /src/kernel/main.c.
+\OSname\ is initialized from the \texttt{main()} function in /src/kernel/main.c.
 Its job is to set up the following:
 
 \begin{enumerate}
@@ -761,27 +761,26 @@ further detail.
 \label{impl:clock_setup}
 The system clock is setup using its specific driver, explained in
 \ref{ssec:system_clock}. The driver sets the core to run at 168 MHz, as
-well as prescaling this frequency for the peripheral busses.
+well as prescaling this frequency for the peripheral buses.
 
 
 \subsubsection{Partition and Process Setup}
 \label{impl:part_proc_setup}
-The idle partition (explained in section \ref{sssec:build_schedule}) is set up
+The idle partition (explained in section \ref{sssec:schedule_building}) is set up
 first using its entrypoint \texttt{idle\_main}.\\
 
-The rest of the partitions listed in the auto-generated C file is initialized
+The rest of the partitions listed in the auto-generated C file are initialised
 by setting the number of active processes to one, setting up their specified
 entrypoint with a memory address within their memory space and setting the rest
 of the empty process entries to \texttt{DORMANT}.\\
 
-Note that in this implementation every process is given 1KB of ram to use for
+Note that in this implementation every process is given 1KB of RAM to use for
 stack. This can course a fault if partitions initializes more processes than
 their defined memory spaces holds.
 
 
 \subsubsection{Building the schedule}
-\label{
-}
+\label{sssec:schedule_building}
 The partition schedule is defined in the XML schema file as windows (see 
 \ref{sssec:impl_windows}). Windows in the XML schema, as well as in xml\_data.c
 file output by the schema parser, are ordered by partition, not chronologically.
@@ -894,6 +893,7 @@ Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
 restores the context of chosen process and returns control to the NVIC.
 
 \subsubsection{SysTick}
+\label{sssec:systick}
 The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
 Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
 specification. Other timers are implementation specific; the vendor decides

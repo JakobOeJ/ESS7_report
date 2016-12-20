@@ -88,7 +88,7 @@ the hardware used for the development of this system is the Mini-M4
 board. It is build around the STM32F415RG microcontroller
 \cite{stm32_datasheet}, based on
 an ARM Cortex-M4 core. This is a 32-bit RISC architecture CPU using 
-the ARM intruction set \cite{arm_architecture}. Additional information
+the ARM instruction set \cite{arm_architecture}. Additional information
 was found in the ARM technical reference \cite{arm_technical} 
 
 The chip provides two interfaces for debugging:
@@ -143,7 +143,7 @@ another of 16 KB, which can be useful if one needs to boot from RAM
 \cite{run_from_ram}. Anyway, they are adjacent in address space and can be
 treated as one block.
 The memory has a feature called bit-banding , in order to let the system
-perform atomical operations on bits \cite{bit_banding}.
+perform atomic operations on bits \cite{bit_banding}.
 
 The other 64 KB of CCM data RAM are always ready for access by the CPU,
 but cannot be accessed by the peripherals through direct memory access.
@@ -396,7 +396,7 @@ Multiple different modes exist for the messages and different checks and methods
 Only a subset of these features is designed and implemented,
 to give a basic feature set which allows partitions to communicated on a single MCU.
 
-A simplified design of queuing ports and sampling ports is designed for open653.
+A simplified design of queuing ports and sampling ports is designed for \OSname .
 
 Since ports and their attributes are declared and defined statically,
 very little has to be done to initialize them at startup.
@@ -422,7 +422,7 @@ the sections \ref{sssec:queuing_ports} and \ref{sssec:sampling_ports} respective
 
 \subsubsection{Queuing Ports}
 \label{sssec:queuing_ports}
-The necessary attributes for queuing ports secifically are the following:
+The necessary attributes for queuing ports specifically are the following:
 \begin{itemize}
 	\item Number or messages received in the queue
 	\item Maximum number of messages to be hold by the receive buffer
@@ -431,7 +431,7 @@ The necessary attributes for queuing ports secifically are the following:
 
 The OS has to facilitate some methods to push and pop complete messages to and from a circular buffer,
 which would be defined auto-generated from the XML configuration file.
-Open653 also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
+\OSname\ also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
 
 \begin{itemize}
 	\item CREATE\_QUEUING\_PORT
@@ -443,7 +443,7 @@ Open653 also has to provide functions to handle the following APEX calls defined
 
 \subsubsection{Sampling Ports}
 \label{sssec:sampling_ports}
-The necessary attributes for sampling ports secifically are the following:
+The necessary attributes for sampling ports specifically are the following:
 \begin{itemize}
 	\item A refresh period time
 	\item An indicator for the validity of the last received message
@@ -452,7 +452,7 @@ The necessary attributes for sampling ports secifically are the following:
 
 The OS has to facilitate some methods to transmit and validate sampling messages.
 A simple buffer has to be provided for this by the auto-generated structures.
-Open653 also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
+\OSname\ also has to provide functions to handle the following APEX calls defined in the standard \cite{arinc_interpartition_comm}:
 
 \begin{itemize}
 	\item CREATE\_SAMPLING\_PORT
@@ -475,7 +475,7 @@ The ARINC 653 standard OS, uses a statically allocated memory layout for everyth
 \todo[inline]{reference to standard}
 This means that no memory allocation is permitted at runtime
 outside predefined memory sections.
-This policy ensures a fixed and predictable sandboxing environment, where partitions can not restrict other parts of the system by occupying memory resources.
+This policy ensures a fixed and predictable sandboxed environment, where partitions can not restrict other parts of the system by occupying memory resources.
 It also gives the system developer a way to ensure that the system has enough memory for all processes to function correctly, given that this amount can be predetermined.
 
 % This figure should NOT be placed near a pagebreak.
@@ -505,16 +505,16 @@ Every region have a fixed priority and is numbered from 0-7, where region 7 has 
 Regions can be nested and overlap.
 The behavior when nesting and overlapping is dictated by the priority of the region as shown in figure \ref{fig:stm32_mpu}.
 
-\subsection{memory strategy}
+\subsection{Memory strategy}
 As the memory available is not abundant, there is the need of avoiding wasting memory. For that, the memory needed by the partitions is optimized by a sorting algorithm in order to fit 
-the most partitions possible in a limited region of memory and by expanding the partition size fullfilling 
+the most partitions possible in a limited region of memory and by expanding the partition size fulfilling 
 the empty gaps. It is important to keep the size, initial pointer and the region of each partition for enable and disable the right area of memory when a different partition is active.
 
 \subsection{System calls}
 \label{ssec:design_system_calls}
 To improve security and robustness, many modern operating systems make clear 
 distinctions between the kernel and applications, and they restrict application
-code from accessing certain periphrial hardware (e.g. storage devices, I/O
+code from accessing certain peripheral hardware (e.g. storage devices, I/O
 devices, etc.) as well as control registers of the CPU. 
 To restrict only certain code from certain features requires hardware support.
 To accomplish this, many modern CPUs contain two or more different execution
@@ -522,10 +522,10 @@ levels. Normally, the kernel will run in the most privileged execution level
 while application code runs in a more restricted execution level. This prevents
 application code from changing the state of any resources shared with other
 application. This is critical to accomplish ARINC 653's strict space and time 
-seperation. If partition level code is not run in an unprivileged mode, it will
+separation. If partition level code is not run in an unprivileged mode, it will
 be able to directly change the CPU time and memory space allocated to it. This
 would negatively affect the partition the resources were stolen from. However,
-since partition level code does on occation need access to some shared resources,
+since partition level code does on occasion need access to some shared resources,
 yet is unable to do so directly, it must request the kernel do it. To do this,
 partition level code must preload the general purpose CPU registers, and if
 necessary the stack, with a value to identify what the partition wishes the
@@ -561,7 +561,7 @@ The scope was limited as outlined in the
 problem statement. \ref{chap:Problem_Statement}) 
 
 \begin{figure}[H]	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653schema.pdf}
-	\caption{open653 schema design}
+	\caption{\OSname\ schema design}
 	\label{fig:open653schema}
 \end{figure}
 

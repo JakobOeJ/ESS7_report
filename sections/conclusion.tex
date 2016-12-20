@@ -1,9 +1,7 @@
 \chapter{Conclusion}
-
-\OSname{} works. 
-Partitions and scheduling configurations specified 
-in the schema are followed through to a working 
-product that can be observed physically in the real world. 
+\OSname{} is implemented and capable of parsing and 
+compiling the XML, to setup and run partitions, providing 
+a working product that can be observed physically in the real world.
 The scope defined and implemented demonstrates the 
 execution of space and time partitioned applications.
 \\
@@ -47,33 +45,34 @@ developed on a Mini-M4 for STM32?}
 \section{Discussion}
 
 \section{Perspective}
-The main concerns presented by the forums communities were the security levels of the implementation of
-this OS. The two main topics were: how to identify an error and how to track it to the origin and how the
-system will react to different levels of failure, from small to fatal errors. If the entire system would
-reboot, only restart the partition or block it.\\
-Other problems suggested were related to the interrupts, when context switching if the next partition
-would also have access to all them, and how the control is made to prevent any errors related.\\
-The idea of an OpenSource implementation like this was well accepted due to the lack of examples available.
+For external opinions publications were made in some forums, regarding the different future possibilites of the OPEN653 as OpenSource. As said before, is not easy to find this OS paradigm as OpenSource, making it harder for developers to develop it for other fields, since the whole OS implementation is not avaiable. The forum communities agreeded that is a good and important idea.\\
 It was given an example of an implementation in the USA, of a similar system and that is still used for
-communication infrastructures.
+communication infrastructures.\\
+More examples of areas that this OS could be used for car industries or telecommunications.
+As the safety standards of ARINC 653 are of an higher level, it insures the safety needs for both areas. For cars, as for avionics, it allows saving money in hardware and maintenance. For telecommunications, as it is possible for the partitions to communicate between each other and with the exterior, and the communication protocols are all the same, it opens the door for distributed systems. It would be possible to create a net of devices, for different purposes.\\
 The whole conversation is presented in Appendix \ref{chap:Forum Responses}.
 
 \section{Reflection}
 The implementation of \OSname{} as a whole provided sufficient challenges
 for each of the group members to develop themselves, along with following
 the education\textquotesingle s requirements.
-Based on a multitude of decisions taken in the course of the project,
-the degree of freedom the team had was rather large,
-especially in the early phases.
-
+Based the direction and decisions made during the project,
+the team had a lot of freedom and flexibility during the 
+course of the project; especially during the early phases.
+\\
 Due to this, the software development process flowed naturally. 
-Also, the nature of the project
-allowed the team to cover different areas at the same time, while still
-doing progress, without having a strict plan. Seen as a whole, the project
-was pursued by applying the principles of agile software development.
-
-One thing to be proud of is that the project never came to a complete halt;
-nothing the group set out to do was given up on.
-
-The diversity of the group members has proven to be a challenge due to the different work ethics,
-but also beneficial for covering the many aspects of building an operating system.
+The nature of the project allowed the team to cover different 
+areas at the same time, whilst still progressing without 
+having a strict plan. 
+As a whole, the project was pursued by applying the principles 
+of agile software development.
+\\
+The group is proud that all functionality they set out to 
+implement, was implemented; they did not give up on any 
+functionality, nor did they ever come to a halt with development.
+\\
+The diversity of the group members has proven to be a challenge 
+due to the different work ethics and standards,
+but also beneficial for covering the many aspects of building 
+an operating system and providing different perspectives on 
+approaching problems.

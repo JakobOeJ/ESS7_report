@@ -26,7 +26,7 @@ In the avionic industry, the devices and subsystems used for
 controlling the peripherals have to be reliable and operate using
 fixed time constraints. Integrated Modular Avionics is a term used
 to describe a distributed real-time computer network,
-deployed in the avionics industry \cite{ima_description}.
+deployed in the avionics industry\cite{ima_description}.
 Modularity, keeping track of the time and criticality levels are
 the main characteristics of such a network. IMA also aims to centralise data 
 processing by routing sensor data to only a few compute nodes, rather than
@@ -44,17 +44,16 @@ how space and time should be partitioned.
 \arinc{} is a software specification that allows a system to host
 multiple avionics applications on the same hardware, while being able
 to execute them independently. This is achieved by partitioning the
-system \cite{arinc_page_2}.
+system\cite{arinc_page_2}.
 
 \subsection{Overview}
-\label{ssec:interpart_comm}
 \arinc{} is said to \textit{bring a new quality in real-time systems
-development} \cite{arinc_scarlett}.
+development}\cite{arinc_scarlett}.
 This is achieved through its API (APEX), the interface between
 the OS and the software applications.
-Applications are partitioned separately into these partitions
-with their own memory and scheduled processing time slots.
-These partitions cannot interfere with each other and can
+Applications are residing in partitions,
+which have their own memory and scheduled processing time slots.
+These partitions can not interfere with each other and can
 not take resources from each other.
 If an error in a partition occurs, it will only crash itself;
 the remaining partitions will not be affected.
@@ -62,69 +61,63 @@ the remaining partitions will not be affected.
 The following is a brief description of what the standard specifies.
 \\\\
 \textbf{Modules}
-The term module refers to the aviation concept of IMA, thus a module
+refer to the aviation concept of IMA, where a module
 can be seen as a piece of hardware, controlling other subsystems.
 A module can contain one or more processors. However, this does not fit 
 well with the concept of partitions,
-which have to run on one single processor. \cite{arinc_page_11}
+which have to run on a single processor\cite{arinc_page_11}.
 A processor used for \arinc{} applications should have sufficient processing
 power and access to the required inputs and outputs,
 as well as memory and time resources.
 Besides this, the processor should be able to isolate a partition from
-the others, if it fails.
-\cite{arinc_page_12}
+the others, if it fails\cite{arinc_page_12}.
 \\\\
 \textbf{Partitions}
-A partition is a program unit designed to obey space and time limitations
+are program units designed to obey space and time limitations
 set by the developer. The way partitions are being run by the processor,
 is in a static, cyclic manner meaning that they do not have any priorities.
-One partition should only have writing rights to its own memory space.
-\cite{arinc_page_13}
-The resources used by the partitions are specified at build time.
-\cite{arinc_page_14}
+One partition should only have writing rights to its own memory space\cite{arinc_page_13}.
+The resources used by the partitions are specified at build time\cite{arinc_page_14}.
 The standard differentiates between partitions that run applications and system partitions. The latter are optional, and can be used to contain
-services not provided in the APEX \cite{arinc_scarlett}.
+services not provided in the APEX\cite{arinc_scarlett}.
 \\\\
 \textbf{Processes}
-These are the parts of the program running on partitions. One partition
+are the parts of the program running on partitions. One partition
 may contain one or more processes. These may operate concurrently,
 and may operate in a periodic or aperiodic manner.
 A process\textquotesingle s
 characteristics are: data and stack areas, program counter, stack pointer,
-priority and deadline. This makes them resemble threads in the POSIX\cite{} process model.
+priority and deadline. This makes them resemble threads in the POSIX\cite{posix} process model.
 Certain attributes are statically defined, and cannot
-be changed during operation.
-\cite{arinc_page_19}
+be changed during operation\cite{arinc_page_19}.
 Process management is done with the use of APEX calls.
 Processes can be in different states: dormant, waiting, running, ready.
 Their scheduling is done in such a way that the process in the ready state
 with the highest priority, is always executing when the partition is active.
 This entails processes being preempted at any time, by the process with a
-higher current priority.
-\cite{arinc_page_20}
+higher current priority\cite{arinc_page_20}.
 \\\\
-\textbf{Time}
-Time management is very important in real-time systems.
+\textbf{Time management}
+is very important in real-time systems.
 Time keeping is needed for partition and process scheduling,
 for delays, deadlines as well as for communication time-outs.
 Partitions receive time-slots during system configuration, and
 processes receive time capacity\footnote{Time given to them to satisfy
 their process requirements. This is an absolute duration, not execution time} when they are started.
 The difference between the two brings the need for having extra APEX calls
-to control and monitor how processes are behaving.
-\cite{arinc_page_25}
+to control and monitor how processes are behaving\cite{arinc_page_25}.
 \\\\
-\textbf{Memory}
-Memory spaces are defined during the system configuration. These can not
+\textbf{Memory spaces}
+are defined during the system configuration. These can not
 be changed later on.
 \\\\
 \textbf{Interpartition communication}
-This is an important aspect of \arinc{}. It provides a framework for processes across different partitions
+is an important aspect of \arinc{}. It provides a framework for processes across different partitions
 to communicate with each other. This applies to partitions placed
-on the same module, on separate core modules, as well as communicating with non-\arinc{} module.
+on the same module, on separate core modules, as well as communicating with non-\arinc{} modules.
 This communication is based on message passing. Channels are used as
 logical links between partitions. Partitions can access channels through
-ports, which allow monodirectional access to a channel \cite{arinc_page_27}.
+ports, which allow monodirectional access to a channel\cite{arinc_page_27}.
 These ports are defined during system configuration and are tied to
 both a certain channel and a certain partition.
 \\\\
@@ -165,7 +158,7 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 \fi
 %------------------------------------------------------------------
 \textbf{Intrapartition communication}
-Allows processes inside a partition to communicate to each other. This way
+allows processes inside a partition to communicate to each other. This way
 the communication is done more efficiently than having to use a
 global message passing system.
 This can be done by implementing buffers and blackboards, or semaphores and
@@ -174,17 +167,16 @@ events\cite{arinc_page_36}.
 \textbf{Health Monitor}
 Has the purpose of monitoring, reporting and isolating hardware or
 software faults and failures. Its responsibilities are divided into
-the following levels: process, partition and module. The Health monitor has
+the following levels: process, partition and module. The health monitor has
 error response mechanisms to take action in case typical
-error occurs at any of these levels4
+error occurs at any of these levels
 \cite{arinc_page_40}.
 \\\\
-\textbf{System configuration}
 The standard allows portability and reusability of applications. However,
 these applications first have to be integrated in the system. This is done
 by giving the partitions the access and resources needed,
-in the system configuration phase, in order to
-satisfy the applications\textquotesingle{} requirements \cite{arinc_page_42}.
+in the \textbf{system configuration} phase, in order to
+satisfy the applications\textquotesingle{} requirements\cite{arinc_page_42}.
 
 \subsection{Decision}
 The idea is to bring such an operating system based on \arinc{}

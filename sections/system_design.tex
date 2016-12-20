@@ -567,67 +567,61 @@ An ARINC 653 Module has four elements.
 One or more Partitions, a Connection Table, 
 one or more Partition Memory elements, and 
 a Module Schedule.
+An ARINC 653 Module has four elements.
+One or more Partition Memory elements, 
+a Module Schedule, one or more Partitions and a Connection Table.
 \\\\
-Each partition has five attributes, and zero 
-or more sampling and queuing port elements. 
+A Partition\_Memory has one or more 
+Memory\_Requirements and two attributes which correlate 
+to its associated partition. The Memory\_Requirements 
+specify the configuration of the partitions memory; 
+the config includes the amount of memory it requires,
+the type of data the stored, how the data is accessed 
+and its physical address on the hardware.
+\\\\
+A Module\_Schedule has one or more 
+Partition\_Schedules and one attribute which defines 
+the major frame. The major frame is the smallest 
+amount of time possible to allow every partition to 
+run at least once. 
 \\
-PartitionIdentifier is the unique ID for the partition. 
-PartitionName is the name for the partition. 
-Criticality specifies the importance of the partition.
-SystemPartition is a boolean specifying if the partition 
-is a system partition or standard partition. 
-EntryPoint is the name of related partition function name.
-\\\\
-Sampling or queuing ports each have a unique 
-attribute, and share common attributes defined 
-by PortType.
+Partition\_Schedule has one or 
+more Window\_Schedules and four attributes which correlate 
+to its associated partition and defines some timing details 
+not used in this project. PeriodSeconds and PeriodDurationSeconds 
+specify the max time a partition can use in one cycle for 
+its Window\_Schedules to complete. It is unused currently as 
+there is not appropriate error handling to make use of it and 
+Window\_Schedules attributes are sufficient for scheduling.
 \\
-PortName is the name of the port. 
-MaxMessageSize is
-Direction is 
-MaxNbMessages is
-RefreshRateSeconds is
+Window\_Schedule defines when a partition needs to run and 
+for how long it will run. PartitionPeriodStart is not used, 
+and it purpose is not understood.
 \\\\
-Each Partition\_Memory has two attributes, 
-and one or more Memory\_Requirements.
+Partition has one or more queuing ports and one or more 
+sampling ports; It has five attributes which specify 
+information about the partition. EntryPoint is the name 
+of the partition initialisation function, SystemPartition 
+specifies what type the partition is. Criticality is not 
+currently used, it is meant to define the importance of a 
+partition.
 \\
-PartitionIdentifier is the unique ID for the partition memory.
-PartitionName is the name for the partition memory.
+The ports have four attributes which define information 
+about the port such as size and source or destination.
+Sampling\_Ports are not well supported currently in the 
+project but will function. This is due to not having or
+needing any sampling ports in the current implementation.
 \\\\
-Memory\_Requirements each have four attributes.
-Type is
-SizeBytes is 
-Access is 
-PhysicalAddress is
-\\\\
-Module\_Schedule is made up of one or more Partition\_Schedule elements, which in turn are made up of one or more Window\_Schedule elements. Module\_Schedule has one attribute which defines the major frame rate for scheduling each partition. 
-\\\\
-MajorFrameSeconds is
-\\\\
-Partition\_Schedule has four attributes.
-PartitionIdentifier is the unique ID for the partition schedule.
-PartitionName is the name of the partition schedule. 
-PeriodSeconds is
-PeriodDurationSeconds is
-\\\\
-Window\_Schedule has four attributes
-WindowIdentifier is the unique ID for the window schedule. 
-WindowStartSeconds is 
-WindowDurationSeconds is 
-PartitionPeriodStart is
-\\\\
-A Connection\_Table has no attributes and one or more channels.
-\\\\
-A Channel has two attributes, and one or more source or destination channels which share common attributes defined by Standard\_Partition.
-ChannelIdentifier is the unique ID for the channel. 
-ChannelName is the name of the channel
-\\\\
-Source and destination channels
-PartitionIdentifier is 
-PartitionName is 
-PortName is 
-PhysicalAddress is
-\\\\
+A Connection\_Table has one or more Channels and zero attributes. 
+A Channel has one or more source and destination channels and two
+attributes which identify the channel. The Source and 
+Destination have four attributes which correlate 
+to its associated partition, and define the physical address 
+of the channel. An attribute is missing from the original 
+ARINC 653 schema which is Procedure. Procedure is meant to 
+be used by ports to interact with drivers.
+
+
 \subsection{Full ARINC 653 schema}
 
 \begin{figure}[H]
@@ -689,26 +683,35 @@ constant variables, as well as the types used by the calls. This was found
 in the standard, in the form of an ANSI C compliant library.
 In input(IN) arguments should be types defined here. The output(OUT) 
 parameters are dependent on the \texttt{RETURN\_CODE} value, as seen
-in listing\ref{lst:apex_types}.
+in listing \ref{lst:apex_types}.
 
-\begin{minipage}{\linewidth}
+\begin{figure}
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	tabsize=4,
+	breaklines=true
+}
 \begin{lstlisting}[
 	firstnumber=67,
 	label=lst:apex_types,
 	caption=\textit{apex\_types.h}]
 typedef
     enum {
-        NO_ERROR       = 0,   /* request valid and operation performed      */
-        NO_ACTION      = 1,   /* status of system unaffected by request     */
-        NOT_AVAILABLE  = 2,   /* resource required by request unavailable   */
-        INVALID_PARAM  = 3,   /* invalid parameter specified in request     */
-        INVALID_CONFIG = 4,   /* parameter incompatible with configuration  */
-        INVALID_MODE   = 5,   /* request incompatible with current mode     */
-        TIMED_OUT      = 6    /* time-out tied up with request has expired  */
+        NO_ERROR       = 0, /* request valid and operation performed    */
+        NO_ACTION      = 1, /* status of system unaffected by request   */
+        NOT_AVAILABLE  = 2, /* resource required by request unavailable */
+        INVALID_PARAM  = 3, /* invalid parameter specified in request   */
+        INVALID_CONFIG = 4, /* parameter incompatible with configuration*/
+        INVALID_MODE   = 5, /* request incompatible with current mode   */
+        TIMED_OUT      = 6  /* time-out tied up with request has expired*/
     } RETURN_CODE_TYPE;
 \end{lstlisting}
-\end{minipage}
-\todo[inline]{make the listing look nice}
+\end{figure}
+
 The APEX calls present on \OSname{} are further explained in 
 \nameref{ssec:impl_system_calls}.
 
@@ -720,6 +723,7 @@ defined in \arinc\ is managed at partition-level.
 
 \subsection{Processes}
 
+\iffalse
 \section{Agile development}
 The software development process flowed naturally due to previous 
 experience, curiosity and personal interests. The nature of the project
@@ -727,7 +731,7 @@ allowed the team to cover different areas at the same time, while still
 doing progress, without having a strict plan. Seen as a whole, the project
 was pursued by applying the principles of agile software development.
 \todo[inline,color=green]{Maybe move this section somewhere else.}
-
+\fi
 \section{Discussion}
 
 Figure \ref{fig:advanced_system} presents the system in its entirety,

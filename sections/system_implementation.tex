@@ -4,16 +4,16 @@
 
 \chapter{System Implementation}
 This chapter deals with how the system\textquotesingle s functionalities
-are implemented. Diagrams will be included when necessary, as well as code
-snippets for the interesting parts of the program. In the end, all these
-will be reviewed and compared with the actual requirements of the standard.
+are implemented. Diagrams are included when necessary, as well as code
+snippets for the interesting parts of the program.
+
 
 \section{Hardware}
 The Mini-M4 board is a development board, which means that beside the
 microcontroller, it also contains two crystal oscillators, two LEDs, a reset
 button and the peripherals for regulating the power it gets from
-a micro-USB connector.
-Some of the GPIOs are break through using external pins.
+the micro-USB connector.
+Some of the GPIO connections can be accessed using external pins.
 These pins are soldered to the board, and this is setup on a breadboard
 for practicality, as seen in \ref{fig:photo1}.
 
@@ -40,16 +40,15 @@ to the UART pins of the board.
 The final setup can be seen in the next figures.
 
 \begin{figure}[H]
-\centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_lines}
+  \includegraphics[width=3cm]{hardware/board_with_jtag_lines}
   \caption{The JTAG lines}
   \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.4\linewidth]{hardware/board_with_jtag_and_serial}
+  \includegraphics[width=3cm]{hardware/board_with_jtag_and_serial}
   \caption{Both the JTAG and serial interfaces}
   \label{fig:sub2}
 \end{subfigure}
@@ -59,8 +58,8 @@ The final setup can be seen in the next figures.
 
 After this, the board is ready to be used in the development process.
 The only drawback of this setup, is that it requires three USB ports:
-one for power for the board, another one for the JTAG interface, and last
-the serial communication. For detailed photos of the process, consult
+one for powering the board, another one for the JTAG interface, and a last
+for the serial communication. For detailed photos of the process, consult
 Appendix \ref{app:hardware_setup}.
 
 \subsection{JTAG Interface}
@@ -95,10 +94,10 @@ JTAG specific:
 \end{labeling}
 
 The tags on the lower part of the figure represent the pins of the
-microcontroller, where $P$ stand for port, $A$ or $B$ for the port
-identity ($PORTA$ or $PORTB$) and the number is the individual GPIO needed.
+microcontroller, where $P$ stands for port, $A$ or $B$ for the port
+identity ($PORTA$ or $PORTB$) and the number being the individual GPIO needed.
 
-A driver \footnote{STSW-LINK009 v1.02}
+A driver\footnote{STSW-LINK009 v1.02}
 is needed to be installed on Windows machines, in order to
 recognize and program using ST-LINK/v2.
 
@@ -106,7 +105,7 @@ recognize and program using ST-LINK/v2.
 The following sections describes different aspects the software used and
 the source code located in the project root directory (ESS7\_project) denoted as `/'.
 Below the root folder,
-all the source code and compiled binaries are roughly structured as listed
+all the source code and compiled binaries are structured as listed
 in figure \ref{fig:source_structure}:
 
 \begin{figure}[H]
@@ -133,38 +132,39 @@ in figure \ref{fig:source_structure}:
 			.4 ....
 	.2 ....
 	}
-	\caption{A rough depiction of the source file structure.}
+	\caption{A rough depiction of the source file structure}
 	\label{fig:source_structure}
 \end{figure}
 
 
 \section{Toolchain}
 To write, compile and load code to the embedded platform,
-a regular computer is used with ones editor of choice,
-a C compiler and a programmer unit to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
-The toolchain is adopted from AAURacing\cite{aauracing} which uses a similar chip and develop on Linux\/OSX.
-For this project the toolchain has been generalized to also work in windows 10 (later edition?).
-In the rest of the section the toolchain and source code(one or two words?) structure is explained.
+a regular computer is used with the editor of choice.
+A C compiler and a programmer unit is used to transmit the code by the JTAG interface (\ref{ssec:JTAG_Interface}).
+The toolchain is adopted from AAURacing\cite{aauracing} which uses a similar chip and develop on Linux/OSX.
+For this project the toolchain is generalized to also work on Windows 10.
+In the rest of the section the toolchain and source code structure are explained.
+
 
 \subsection{CMAKE}
 \label{ssec:cmake}
-CMake is used to setup construct the makefiles for the project.
-It's of little benefit comparing to write the makefiles from scratch,
-but has been adopted in (this OS), since it came with the toolchain.
+CMake is used to setup the makefiles for the project.
+It is of little benefit comparing to writing the makefiles from scratch,
+but has been adopted in \OSname, since it came with the toolchain.
 
 \begin{displayquote}
-CMake is an open-source, cross-platform family of tools designed to build,
+``CMake is an open-source, cross-platform family of tools designed to build,
 test and package software.
 CMake is used to control the software compilation process
 using simple platform and compiler independent configuration files,
 and generate native makefiles and workspaces
-that can be used in the compiler environment of your choice\cite{cmake}.
+that can be used in the compiler environment of your choice\cite{cmake}''.
 \end{displayquote}
 
-Like Make, CMake is run from a file containing a set instructions on a project.
-The instructions can be seperated in a nested structure of files to contain complexity (can you say that?).
+Like Make, CMake is run from a file containing a set of instructions on a project.
+The instructions are separated in a nested structure of files to limit complexity.
 A project can have multiple CMake files,
-they all have to be named CMakeLists.txt and hence are placed in seperate folders.
+they all have to be named \textit{CMakeLists.txt} and hence are placed in separate folders.
 The main CMake file is placed in the root-folder of the project and contains the main compiler information.
 Specific information about compile targets and their files
 are placed in sub files in folders as depicted in figure \ref{fig:cmake_files}.
@@ -183,34 +183,36 @@ are placed in sub files in folders as depicted in figure \ref{fig:cmake_files}.
 \end{figure}
 
 As denoted by the first line of the CMakeLists.txt file in `/', no less than version 2.8.8 of CMake is required.
-The rest of the file set up:
+The rest of the file contains:
 
 \begin{itemize}
 	\item the compiler to use
 	\item a list of compiler flags (section \ref{sssec:compiler_flags})
 	\item commonly used include paths
-	\item two required defines (section \ref{ssec:gcc})
+	\item two required defines (section \ref{sssec:compiler_flags})
 	\item a command to flash the target device using OpenOCD (section \ref{ssec:openocd})
 \end{itemize}
 
-Using CMake followed by Make results in a tree of makefiles and objects,
-which can be contained by running CMake and Make from within a build folder.
-A complete tutorial on how to get started using the build system can be found in Appendix \ref{app:tutorial}.
+Using CMake results in a tree of makefiles,
+which can be compiled by running Make from within a build folder.
+A complete tutorial on how to get started using the build system can be found in Appendix \ref{app:tutorial}.\\
 
-Make is a UNIX tool\cite{gnu_make} often used to order many calls to GCC in C language projects.
+Make is a UNIX tool\cite{gnu_make} often used to make many calls to GCC in the C language projects.
 Objects are compiled in separate calls to GCC and
 Make provides features to set up a dependency tree of calls when many objects are linked together in a target.
+
 
 \subsection{GCC}
 \label{ssec:gcc}
 The GNU Compiler Collection or GCC is used for compiling and linking the C files into a target called `OS'.
-Compiling to the ARM architecture a cross compiled version of GCC is necessary,
-in this case the arm-none-eabi-gcc compiler which is available in all never Ubuntu versions\cite{arm_gcc}.
+In order to compile for the ARM architecture a cross compiled version of GCC is necessary,
+in this case the \textit{arm-none-eabi-gcc} compiler which is available in all newer Ubuntu versions\cite{arm_gcc}.
+
 
 \subsubsection{Compiler Flags}
 \label{sssec:compiler_flags}
 The compiler relies on a list of flags to compile the code to the programmers liking.
-The sub section will cover the necessary or otherwise important flags for compiling the (OS).
+This sub section will cover the necessary or otherwise important flags for compiling \OSname{}.
 The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as referred to in section \ref{ssec:cmake}.
 
 \begin{table}[H]
@@ -277,22 +279,24 @@ The entries table \ref{tab:gcc_flags} can be found in the main CMakeLists.txt as
 		Determine the language standard to be ISO C99. \\
 		\hline
 		-fms-extensions &
-		Accept some non-standard constructs, useful in some static structures (section ref). \\
+		Accept some non-standard constructs, useful in some static structures (section \ref{impl:ports}). \\
 		\hline
 	\end{tabular}
 	\caption{Showing the important GCC flags used to compile the OS.}
 	\label{tab:gcc_flags}
 \end{table}
 
-There are two important flags, which haven't been mentioned in table \ref{tab:gcc_flags}.
-the \texttt{-DHSE\_VALUE=16000000} and \texttt{-DSTM32F415xx} aren't compiler options but definitions passed to GCC to use at compile-time.
+There are two important flags, which have not been mentioned in table \ref{tab:gcc_flags}.
+the \texttt{-DHSE\_VALUE=16000000} and \texttt{-DSTM32F415xx} are not compiler options
+but definitions passed to GCC to use at compile time.\\
 
 \texttt{-DHSE\_VALUE=16000000} defines the value of the external oscillator in hertz.
 Specifically it defines \texttt{HSE\_VALUE} to be 16 million hertz as is specified in \cite{hse_value}.
-The input of the external oscillator is used as the source for the main clock (some ref to clock setup?).
+The input of the external oscillator is used as the source for the main clock (section \ref{ssec:system_clock}).\\
 
 \texttt{-DSTM32F415xx} simply adds \texttt{STM32F415xx} as a definition at compile-time.
-It's used by the HAL library to determine which processor to set up for.
+It is used by the HAL library to determine which processor to set up for.
+
 
 \subsubsection{Linker Script}
 \label{ssec:linker_script}
@@ -302,12 +306,12 @@ The file \texttt{result.map} (table \ref{tab:gcc_flags}) can be used post compil
 as a way to debug the linker-script.\\
 
 The linker-file STM32F415RG\_FLASH.ld is part of the toolchain and is simple to edit to fit any member of the STM32F4 family.
-In this project the only necessary change is the definition of flash to be 1MB of size.
-Beyond that, the changes depends on the partition requirements on the system.\\
+In this project the only necessary change is to specify that the flash is 1 MB.
+Beyond that, the changes depend on the partition requirements of the system.\\
 
 Listing \ref{linker_mem_overview} shows how the memory layout is defined in the linker script.
-While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} defines mappings of memory in hardware (see section \ref{sec:memory_map}),
-\texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} defines the location and sizes of the system memory.
+While \texttt{FLASH}, \texttt{RAM} and \texttt{CCMRAM} define mappings of memory in hardware (see section \ref{sec:memory_map}),
+\texttt{OS}, \texttt{DUMMY1}, \texttt{DUMMY2} and \texttt{STDIO\_SYS} define the location and sizes of the system memory.
 In listing \ref{linker_mem_overview}, \texttt{ORIGIN} denotes the starting address of a section of memory
 and \texttt{LENGTH} denotes the size of the section.\\
 
@@ -330,14 +334,14 @@ MEMORY
 \end{lstlisting}
 \end{minipage}
 
-By default all symbols and associated memory goes into the \texttt{OS},
+By default all symbols and associated memory goes into the \texttt{OS}.
 Only when a partition is specifically defined to a location in the linker-script,
-can it be separated from the OS.
+can it be separated from the \texttt{OS}.
 Listing \ref{linker_example} shows how to allocate a specific partition.
 The linker-script uses the fact that every partition is compiled as a library,
 and the library name is added in the listed format under its corresponding label
 (in this example: \texttt{STDIO\_SYS}).
-This scheme insures the code is separated from the kernel in flash.
+This scheme assures the code is separated from the kernel in flash.
 It does not, however, separate the statically allocated variables and structures in RAM.\\
 
 \begin{minipage}{\linewidth}
@@ -355,80 +359,79 @@ It does not, however, separate the statically allocated variables and structures
 \end{minipage}
 
 Similar to listing \ref{linker_example},
-the other partitions compiled libraries are confined to a space in flash,
+the compiled libraries of the compiled partitions are confined to a space in flash,
 as defined by their labels in \ref{linker_mem_overview}.
+
 
 \subsection{OpenOCD}
 \label{ssec:openocd}
-Open On-Chip Debugger or OpenOCD \cite{openocd} is used together with the (hardware goes here) to program the chip and create a channel for GDB to debug the system on-chip.
-The CMakeLists.txt file in project root defines a function running the following commands using OpenOCD:
+Open On-Chip Debugger or OpenOCD\cite{openocd} is used together with
+the ST-LINK/v2 to program the chip and create a channel for GDB to debug the system at run-time.
+The CMakeLists.txt file in `/' defines a function running the following commands using OpenOCD:
 
 \begin{itemize}
 	\item \texttt{init} - Initialize connection
 	\item \texttt{reset halt} - Reset and halt the system
-	\item \texttt{flash write\_image erase \$\{elf\_file\}} - Write binary image to chip
+	\item \texttt{flash write\_image erase \$\{elf\_file\}} - Write compiled output binary image to chip
 	\item \texttt{reset run} - Reset chip and start normal execution
 \end{itemize}
 
-Above, \texttt{\$\{elf\_file\}} is the compiled output binary.
-
 After execution of this command, OpenOCD will remain open and connected to the
-chip and it will accept incoming connections on port 3333 for
-GDB debugging as a GDB server (see more in \ref{ssec:gdb}.
+chip and will accept incoming connections on port 3333 for
+GDB debugging as a GDB server (see more in \ref{ssec:gdb}).
+
 
 \subsection{GDB}
 \label{ssec:gdb}
-\todo{Write GDB version}
-The GNU Project debugger\cite{gdb}, GDB, is an open source software debugger
+The GNU Project debugger\cite{gdb}, GDB (\textit{arm-none-eabi-gdb}), is an open source software debugger
 built to compliment the GNU Project compilers, GCC (see \ref{ssec:gcc}). It
-allows programmers to more intelligently debug their applications.
-GDB can\\
+allows programmers to debug their applications.
+GDB can:
 \begin{itemize}
 	\item attach to a remote program, even running on a different piece of
-	hardware.
+	hardware
 	\item pause execution of a program at specified lines of code with
-	breakpoints.
-	\item show the content of memory, either by direct a addressing or by
-	variable name.
-	\item if the hardware supports it, show the value of each CPU register.
+	breakpoints
+	\item show the content of memory, either by direct addressing or by
+	variable name
+	\item if the hardware supports it, show the value of each CPU register
 	\item execute code line by line, letting the programmer see how each line
 	affects the state of the program, and in case of crashing code, which line
-	of code crashes the program.
+	of code crashes the program
 \end{itemize}
 This feature set, makes GDB especially useful for tracking down complex bugs and
-bugs in otherwise inaccessible systems, e.g. systems with no screen to directly
-print to. GDB also allows programmers to investigate buggy code while it is
+bugs in otherwise inaccessible systems, (e.g. systems with no screen to directly
+print to). GDB also allows programmers to investigate buggy code while it is
 running, as opposed to after-the-fact debugging of logging, printing, etc.
 Many advanced text editors and integrated development environments feature
 direct seamless GDB integration. Outside of such programs, GDB can be run in
-command line.
+a terminal.
 
 To debug the code running on the chip, an active OpenOCD connection to the chip
 is required. When OpenOCD is connected, it will act as a GDB server. GDB can
 be connected to OpenOCD with the command \texttt{target remote localhost:3333}.
 
-\section{Drivers}
 
+\section{Drivers}
 Setting up the drivers took place in the early phases of the project. Their
-functionality rely a lot on the HAL library. Even though the process is
-quite straightforward, there is some learning involved in how to use the
-HAL library. The library\textquotesingle s documentation is a good starting
+functionality rely a lot on the HAL library. The library\textquotesingle s documentation is a good starting
 point, and the things it lacks can be found in the
 microcontroller\textquotesingle s datasheet.
 
+
 \subsection{System clock}
 \label{ssec:system_clock}
-The initial setting for the clock is that it uses the internal oscillator,
+The initial setting for the clock is set to use the internal oscillator,
 which runs at 16MHz. In order to get the maximum speed supported by the
 CPU, the board needs to be configured to multiply this frequency.
 However, instead of using the internal oscillator, which can be imprecise,
 the Mini-M4
 board has an external oscillator\footnote{Featuring less wander (slow
  variations due to temperature and aging) and jitter(fast variations)}
-that can be used as the main clock
-source. This is represented in figure \ref{fig:system_clock} with the HSE
+that is used as the main clock source.
+This is represented in figure \ref{fig:system_clock} with the HSE
 tag. These tags refer to the location and the speed of the oscillators
-present on the board or inside the microcontroller:
+present on the board or inside the MCU:
 
 \begin{labeling}{HSE}
 	\item[\textbf{HSE}]
@@ -450,19 +453,20 @@ present on the board or inside the microcontroller:
 \end{figure}
 
 The lower part of figure \ref{fig:system_clock} shows that the frequency
-of the HSE is multiplied by a PLL(Phase-locked loop) system, before it gets
+of the HSE is multiplied by a PLL (Phase-locked loop) system, before it gets
 to the clock selection block. This is the frequency supplied to
-the CPU and memory through the AHB bus, and scaled down for the peripheral buses. These buses are divided into low and high speed domains as:
+the CPU and memory through the AHB bus, and scaled down for the peripheral buses.
+These buses are divided into low and high speed domains as:
 
 \begin{labeling}{APB1 domain}
 	\item[\textbf{AHB}]
 		Advanced High-speed bus. This runs at 168 MHz, and connects
-		mainly the CPU, memory and the GPIOs.
+		mainly the CPU, memory and the GPIOs
 	\item[\textbf{APB1 domain}]
 		low-speed domain, running at 42 MHz. This includes among other
-		peripherals the UART.
+		peripherals the UART
 	\item[\textbf{APB2 domain}]
-		high-speed domain, running at 84 MHz.
+		high-speed domain, running at 84 MHz
 	\end{labeling}
 
 The PLL registers\footnote{Specifically the division/multiplication
@@ -471,93 +475,54 @@ have to be set up in such a way that the frequency it
 generates is compatible with the prescaling settings of the peripheral
 buses.
 
+
 \subsection{UART}
-The UART allows the transmission and reception of the information between the STM32 and the outside. The
-communication is made by one character at a time. The transmission is activated by the interrupts and it
-can happen both ways simultaneously, or one way at a time. An UART has a fractional baud rate generator
-system, yet it is limited by the GPIO frequency, which has 4 levels of frequency, input and output
-registers, transmit/receive control, read/write control logic, and transmit/receiver buffers. It is also
-possible to communicate with the UART using a screen, as an important output for debugging. The
-function used allows the transmission or reception of one character of a time, of the message sent by the
-\texttt{printf} function. The UART used was the UART4 of the STM32 connecting the wires to the PIN's 10 and 11.
+The UART allows the transmission and reception of information between the MINI-M4 and a terminal.
+Information is transceived one character at a time.
+An UART has a fractional baud rate generator system and the speed is limited by the GPIO frequency.
+UART4 is used with pin 10 and 11.
+
 
 \subsection{LEDs}
 The LEDs are used mainly for debugging. There are three LEDs on the
 Mini-M4 board, two of them being programmable. Since they are connected
-to two pins of a GPIO ports, these pins needs to be initialised first.
-Afterwards,
-by using the functions defined in the HAL library, these pins can be
+to two pins of a pins, these need to be initialised first.
+Afterwards, using the functions defined in the HAL library, these pins can be
 turned high, low or toggled, thus changing the state of the LEDs.
+
 
 \subsection{Delay}
 \label{ssec:delay}
 The delay function is also used for debugging, giving the developers the
 chance of seeing \textit{when things are happening}. This is because most of the
 program instructions are executed so fast, that the they appear to be
-instant to humans.
+instant.
 Delay is defined in the HAL library, and relies on the SysTick.
 
 SysTick is a timer\footnote{Fed with the system clock optionally
 divided by 8} that can
 be used to generate the main system event clock.
-In fact, that is exactly how the HAL library has it implemented. Its
-default time base is 1 millisecond. This means that every millisecond,
-SysTick generates an interrupt to look after sensor values, scheduling or
-basic timing tasks. To see a more detailed explanation of the SysTick
+That is exactly how the HAL library has it implemented it.
+Its default time base is one millisecond. This means that every millisecond,
+SysTick generates an interrupt (to look after sensor values, scheduling or
+basic timing tasks). To see a more detailed explanation of the SysTick
 timer consult \ref{sssec:systick}.
 
+
 \subsection{MPU}
-As the regions are power of 2, as shown in the picture, the bigger partition is the more likely it
-is to have spare space, since it becomes harder to fit it completely in a region.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions2.png}
-\captionof{figure}{Example of 3 memory region sizes}
+The MPU functionality of the MCU was tested but not implemented,
+beyond the extend of getting the driver working.
 
-\end{figure}
-Lets take, as an example, 5 partitions with the sizes of 20, 65, 120, 80 and 40bits.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions1.png}
-\captionof{figure}{Example of 5 partitions sizes}
-
-\end{figure}
-If they were just allocated in the most suited region for each, the memory needed would be of 480bits,
-leaving 155bits unused.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions3.png}
-\captionof{figure}{Partition memory distribution in different regions}
-
-\end{figure}
-The first allocate are the biggest partitions and if there are empty subregions, the system tries to
-allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions4.png}
-\captionof{figure}{Partition memory distribution in the same regions}
-
-\end{figure}
-In case that a certain partition doesn't full fill the subregion, their size gets updated with the full
-remaining subregion area,
-instead of leaving those parts always empty. That can also help to avoid some errors, for example if the
-initial defined size wasn't enough for the different processes allocated by that partition.\\
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions5.png}
-\captionof{figure}{Memory extension of the partitions sizes}
-
-\end{figure}
 
 \subsection{Timing}
 \label{ssec:timing}
-This driver is used for accurately measuring the execution time of different
+This driver is used to accurately measure the execution time of different
 functions. It uses the DWT (Data Watchpoint and Trace support)
 internal peripheral registers defined in the ARM-M4 Architecture
-manual \cite{arm_architecture}.
-Since the HAL library does not define them, there is need to access them
-by their addresses. Their address range can be seen in the upper part of
-figure \ref{fig:memory_model}, while the register used by this driver are
+manual\cite{arm_architecture}.
+Since the HAL library does not define them, they are accessed by their addresses.
+These addresses are found in the range shown in the upper part of
+figure \ref{fig:memory_model}, while the registers used by this driver are
 shown in listing \ref{list:time_get}.
 
 \begin{minipage}{\linewidth}
@@ -576,10 +541,10 @@ the number of core cycles. \textit{DWT\_CONTROL}\footnote{Referred to
 as DWT\_CTRL in the ARM documentation} is the control register for the
 Data Watchpoint and Trace support. By setting its least significant bit,
 the cycle counter mentioned above is enabled. The last register,
-\textit{SCB\_DEMCR} has to do with Debug Exception and Monitor Control Register,
-and is used to manage exception behaviour under debug.
+\textit{SCB\_DEMCR} (Debug Exception and Monitor Control Register),
+and is used to manage exception behavior during debugging.\\
 
-At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} would be
+At a core frequency of 168 MHz, \textit{DWT\_CYCCNT} is
 incremented every 5.45 nanoseconds. In order to convert the number
 of cycles into time, the function in listing \ref{list:time_convert}
 was used.
@@ -597,24 +562,23 @@ int64_t convert_cycles_to_time(uint32_t cycles)
 \end{minipage}
 
 The returned value is a 64 bit signed integer, as the \arinc{} standard
-specifies \cite{arinc_time}. the only problem with this, is that while
-the count is done in the range of nanoseconds, the sampling frequency
-gives a 5.45 nanosecond step. In order to fully comply with the standard,
-we would need a timer running at at least 1 GHz\footnote{Produces 1
- nanosecond steps}.
+specifies \cite{arinc_time}. The count is incremented in the range of nanoseconds,
+but the sampling frequency limits the step to 5.45 nanoseconds.
+In order to fully comply with the standard (one nanosecond steps),
+A counter would be necessary with a 1 GHz clock source.
+
 
 \subsection{Watchdog timer}
 % \ http://electronics.stackexchange.com/questions/123080/independent-watchdog-iwdg-or-window-watchdog-wwdg
-The microcontroller has two watchdog timers ready to reset the program, in case of an error.
-The first one, the independent watchdog timer is based on an oscillator
+The MCU has two watchdog timers ready to reset the program, in case of an error.
+The first one, the independent watchdog timer is based on its dedicated oscillator
 \footnote{LSI running at 32 kHz, seen in the upper part of
- \ref{fig:system_clock}}
-that can only be used by it.
-\todo{focuses on hardware fails} This way,
-the the watchdog could catch a fault in the program, even if the other
+ \ref{fig:system_clock}}.
+This way, the the watchdog could catch a fault in the program, even if the other
 oscillators fail. Its basic functionality is represented in figure
 \ref{fig:watchdog}. After the program starts running, a function is called
-that initialises and starts the watchdog timer. Here, a period of time is defined, in which the program has to refresh (reload) the watchdog timer.
+that initialises and starts the watchdog timer. Here, a period of time is defined,
+in which the program has to refresh (reload) the watchdog timer.
 If this fails to happen, either by mistake, the developer forgetting to
 call the refresh function, or by a software/hardware fault, the watchdog
 timer restarts the program (depicted with the red arrow).
@@ -626,81 +590,95 @@ timer restarts the program (depicted with the red arrow).
 \label{fig:watchdog}
 \end{figure}
 
-
 The second watchdog timer, is called a window watchdog.
-\todo{focuses on software fails} In contrast
+In contrast
 to the independent watchdog, one can provide a time interval in which
 the timer has to be reset. Resetting the timer outside this interval
 (as well as not resetting it in the mentioned time window) would restart
 the program. It uses the system clock, which means that if this fails,
-the watchdog won\textquotesingle t be able to reset the system. this
+the watchdog won\textquotesingle t be able to reset the system. This
 watchdog has not been implemented, but its functionality is relevant
-to \OSname{}.
-
-In regards to what the standard specifies, that the processor should be able
+to \OSname{}, in regards to what the standard specifies. The processor should be able
 to isolate a partition that fails \cite{arinc_page_12}. This could be done by
 using the window watchdog timer to define the time intervals for partitions
 to run. The feature called Early Wakeup Interrupt can be used to do some
-safety operations, just before the reset is done by the watchdog.
-\cite{reference_manual_716}.
+safety operations, just before the reset is done by the watchdog\cite{reference_manual_716}.
 In short, if the window watchdog is not reset in the window interval it
 receives (correspondent to each partition), then the EWI will isolate the
-partition and the microcontroller will be reset to continue its operation
+partition and the MCU will be reset to continue its operation
 with the remaining partitions.
 
+
 \subsection{RTC}
-The real-time clock was implemented as a way to give the system the
+The real-time clock is implemented as a way to give the system the
 possibility to keep track of time. It was realised at a later point
 that \arinc{} specifies that time keeping should be done in nanoseconds,
-a range that the RTC is not capable of. This was the reason for continuing
-researching other ways of timing the system, as seen in:
-\ref{ssec:timing}.
+a range that the RTC is not capable of. This is the reason for continuing
+researching other ways of timing the system, as seen in section
+\ref{ssec:timing}.\\
 
-Anyway, the RTC could be used for timestamps on error logs and such,
+The RTC could be used for timestamps on error logs and such,
 as the standard specifies \cite{arinc_page_26}. The use of the LSE oscillator,
-as well as the design of the RTC
-\footnote{Which includes all time components, as well as
-subseconds and year correction}, make this a reliable
+as well as the design of the RTC\footnote{Which includes all time components, as well as
+subseconds and year correction}, makes this a reliable
 secondary clock source.
 
-\section{XML configuration file}
 
-Writing the XML configuration file was an evolutionary process throughout the implementation phase. To begin with, the example XML provided by the ARINC 653 standard was used. As functionality within the system became available, the example XML values were modified for the desired purposes. All content in the XML was written by hand, there is no tool support to modify the content.
+\section{XML configuration file}
+Writing the XML configuration file was an evolutionary process throughout the implementation phase.
+To begin with, the example XML provided by the ARINC 653 standard was used.
+As functionality within the system became available,
+the example XML values were modified for the desired purposes.
+All content in the XML was inputted manually, there is no tool support to modify the content.
+
 
 \section{XML Parser}
+The configuration of the OS is not usable in its XML format.
+\OSname\ is written in C; therefore a dynamic parser written in Python called
+\textit{createCStructs.py} has been created to translate the XML and generate C structs.
+Using an external library \textit{xmltodict.py}\cite{xml2dict},
+the XML is converted into a JSON structure which makes navigating and accessing
+sub nodes easy.
+The generation of the of the structs are handled as two separate files; \textit{xml\_data.h} and \textit{xml\_data.c}.
 
-The configuration of the OS is not usable in its XML format. \OSname\ is written in C; therefore a dynamic parser written in Python called createCStructs.py has been created to translate the XML and generate C structs.
-\todo{reference for xmltodict}
-Using an external library xmltodict.py, the XML is converted into a JSON structure which makes navigating and accessing sub nodes very easy as it becomes a nested dictionary structure containing lists.
-The generation of the of the structs are handled as two separate files; xml\_data.h and xml\_data.c.
 
 \subsection{xml\_data.h}
-
-xml\_data.h contains the static declarations for the structs written to the xml\_data.c, and the symbols for the xml\_data.c functions and variables.
+\textit{xml\_data.h} contains the static declarations for the structs written to
+the \textit{xml\_data.c}, and the symbols for the \textit{xml\_data.c} functions and variables.
 \\
-The declarations for the structs are included into xml\_data.h from a file called type.h. The symbols for the functions and variables are written to the file whilst parsing the XML.
+The declarations for the structs are included into \textit{xml\_data.h} from a file called types.h.
+The symbols for the functions and variables are written to the file whilst parsing the XML.
+
 
 \subsection{xml\_data.c}
-
-xml\_data.c is mostly dynamic and generated from the elements in the XML.
-The static elements of its generation are handled by two functions and the self.idle\_partition set in the init. The static functions are called write\_file\_c\_header and write\_file\_c\_footer. These functions write the static code needed at the beginning and end of the xml\_data.c file to function such as the includes and the endif.
-The idle partition is not included in the XML. It is hard-coded into the partition loop as it is always required to exist. For more info about the idle partition refer to (chapter \ref{ssec:idle_part})
+\textit{xml\_data.c} is mostly dynamic and generated from the elements in the XML.
+The static elements of its generation are handled by two functions and the self.idle\_partition set in the init.
+The static functions are called write\_file\_c\_header and write\_file\_c\_footer.
+These functions write the static code needed at the beginning and the end of the
+\textit{xml\_data.c} file to function, e.g. the includes and the #endif.
+The idle partition is not included in the XML.
+It is hard-coded into the partition loop as it is always required to exist.
+For more information about the idle partition refer to section \ref{ssec:idle_part}.
 \\\\
-There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table) which are acquired from the JSON structure. They and are looped through, populating formatted strings, and are then written to xml\_data.c.
+There are four dynamic elements (partitions, partition\_memory, module\_schedule and connection\_table)
+which are acquired from the JSON structure.
+They are looped through, populating formatted strings,
+and are then written to \textit{xml\_data.c}.
+
 
 \section{C Structures}
-
-The data structure undergoes change during the translation from XML described in
-section \ref{sec:design_schema} to C structs to support ease of use. The
-structure of the data and relationships of the elements are presented in the
-figure below.
+The data structure undergoes change during the translation from the XML described in
+section \ref{design:schema_design} to C structs to support ease of use.
+The structure of the data and relationships of the elements are presented in the
+figure \ref{fig:cstructs}.
 
 \begin{figure}[H]	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/cstructs.pdf}
 	\caption{C structs design and relationships}
 	\label{fig:cstructs}
 \end{figure}
 
-The global structure of ARINC\_653\_Module has been removed, its sub elements now exist without a dependency.
+The global structure of ARINC\_653\_Module has been removed,
+its sub elements now exist without a dependency.
 Module\_schedule as also been removed, leaving its attribute majorFrameSeconds as an independent variable definition.
 partition\_memory (part\_mem\_t) and partition\_schedule have maintained their one to many structures with their sub elements.
 Partitions sub elements, sampling and queuing ports, have combined into a single structure called ports.
@@ -719,6 +697,7 @@ each with an associated variable to indicate the number of elements in the array
 
 port\_t is a generic structure to define a port independent on its type as
 detailed in section \ref{impl:ports}.
+
 
 \section{OS kernel}
 This section gives an overview of the the features in \OSname\ and how they are

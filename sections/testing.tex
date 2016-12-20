@@ -1,6 +1,52 @@
 \chapter{Testing}
 
 \section{MPU}
+The regions are a power of two, as shown in the figure \ref{fig:ce1}. The bigger a partition is, the more likely it is
+to have unallocated space, since it becomes harder to effectively utilize.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{partitions/partitions2.png}
+\captionof{figure}{Example of 3 memory region sizes}
+\label{fig:ce1}
+\end{figure}
+
+As an example, five partitions with a size of 20, 65, 120, 80 and 40 bytes are shown in figure \ref{fig:ce2}.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{partitions/partitions1.png}
+\captionof{figure}{Example of 5 partitions sizes}
+\label{fig:ce2}
+\end{figure}
+
+If they were just allocated in the most suited region for each, the memory needed would be of 480 bytes,
+leaving 155 bytes unused.\\
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{partitions/partitions3.png}
+\captionof{figure}{Partition memory distribution in different regions}
+\label{fig:ce3}
+\end{figure}
+The first allocate are the biggest partitions and if there are empty subregions, the system tries to
+allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{partitions/partitions4.png}
+\captionof{figure}{Partition memory distribution in the same regions}
+\label{fig:ce4}
+\end{figure}
+In case that a certain partition doesn't full fill the subregion, their size gets updated with the full
+remaining subregion area,
+instead of leaving those parts always empty. That can also help to avoid some errors, for example if the
+initial defined size wasn't enough for the different processes allocated by that partition.\\
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{partitions/partitions5.png}
+\captionof{figure}{Memory extension of the partitions sizes}
+\label{fig:ce5}
+\end{figure}
+
 In order to test the memory partition mapping, for an amount of space given, it's used a non-specific initial
  pointer representing the begining of the memory free space, specific sizes for each partition and it's
   writen in each memory position the number of the partition that is ocupied with. At the end, the

@@ -69,6 +69,7 @@ To facilitate such the following features must exist:
 	\item A program to parse system configurations from a schema to the kernel at compile time
 	\item A scheduler for partitions
 	\item A scheduler for processes
+	\item Partition communication
 	\item The facilitation of system calls to handle APEX calls.
 \end{itemize}
 
@@ -76,6 +77,9 @@ The design of these facilities described in the rest of this chapter.
 Memory separation is not an essential feature for facilitating running applications,
 but is essential to separating them for security and reliability reasons,
 thus memory protection is also described.
+
+The features ``Health Monitor'' and ``Intrapartition Communication'' has been
+excluded from this project to contain to limit the scope to a manageable amount... FIX ME!
 
 
 \section{Hardware}

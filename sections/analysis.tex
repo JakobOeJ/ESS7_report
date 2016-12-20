@@ -1,45 +1,47 @@
 %! tex root = ../master.tex
 
 \chapter{Analysis}\label{chap:analysis}
-This chapter includes information about 
+This chapter includes information about
 the standard, the hardware going to be used as well as the programming
 language.
 The \arinc{} requirements are analysed, while looking at existing projects
 and other relevant standards in the field of avionics. Based on this,
-decisions can be made regarding the following stages of \OSname\ \textquotesingle s 
+decisions can be made regarding the following stages of \OSname\ \textquotesingle s
 development, and narrowing the project\textquotesingle s
 scope.
 
 \section{Real-time systems}
 A real-time system is handling data as it comes in.
-Besides the usual computations needed to be done,
-the time until a result is generated is also important.
-This means that the applications are scheduled in a manner 
-that would allow them to respond quickly and predictable.
-Real-time systems are developed in order to answer 
+Besides the usual computations needed to be done on data,
+the worst case execution time of the computation is also important.
+%Besides the usual computations needed to be done,
+%the time until a result is generated is also important.
+This means that the applications are scheduled in a manner
+that would allow them to respond predictably.
+Real-time systems are developed in order to answer
 requirements of different fields of work
-where time is critical: military, automotive or aeronautics.
+where time is critical: military, automotive or avionics.
 
 \section{Integrated Modular Avionics}
-In the aeronautic industry, the devices and subsystems used for
+In the avionic industry, the devices and subsystems used for
 controlling the peripherals have to be reliable and operate using
 fixed time constraints. Integrated Modular Avionics is a term used
-to describe a distributed real-time computer network deployed for
-use in the avionics industry \cite{ima_description}.
+to describe a distributed real-time c4omputer network,
+deployed in the avionics industry \cite{ima_description}.
 Modularity, keeping track of the time and criticality levels are
 the main characteristics of such a network.
-This implies that the applications running would share the 
+This implies that the applications running would share the
 system\textquotesingle s resources following a set of well defined rules.
 
 The main  benefits of using the IMA concept are: aircraft weight reduction
-and lower maintenance costs\cite{arinc_scarlett}. 
-There are certain guidelines of how such a system
-should be designed and implemented, as well as standards that specify 
+and lower maintenance costs\cite{arinc_scarlett}.
+There are certain guidelines how such a system
+should be designed and implemented, as well as standards that specify
 how space and time should be partitioned.
 
 \section{ARINC 653}
-\arinc{} is a software specification that allows a system to host 
-multiple avionics applications on the same hardware while being able
+\arinc{} is a software specification that allows a system to host
+multiple avionics applications on the same hardware, while being able
 to execute them independently. This is achieved by partitioning the
 system \cite{arinc_page_2}.
 
@@ -47,12 +49,11 @@ system \cite{arinc_page_2}.
 \label{ssec:interpart_comm}
 \arinc{} is said to \textit{bring a new quality in real-time systems
 development} \cite{arinc_scarlett}.
-This is achieved through its API (called APEX), the interface between 
+This is achieved through its API (APEX), the interface between
 the OS and the software applications.
-The APEX manages partitions, memory allocation and error handling.
-Applications are partitioned separately into these partitions 
+Applications are partitioned separately into these partitions
 with their own memory and scheduled processing time slots.
-These partitions cannot interfere with each other and can 
+These partitions cannot interfere with each other and can
 not take resources from each other.
 If an error in a partition occurs, it will only crash itself;
 the remaining partitions will not be affected.
@@ -76,7 +77,7 @@ the others, if it fails.
 A partition is a program unit designed to obey space and time limitations
 set by the developer. The way partitions are being run by the processor,
 is in a static, cyclic manner meaning that they do not have any priorities.
-One partition should only have writing rights to its own memory space. 
+One partition should only have writing rights to its own memory space.
 \cite{arinc_page_13}
 The resources used by the partitions are specified at build time.
 \cite{arinc_page_14}
@@ -86,45 +87,43 @@ services not provided in the APEX \cite{arinc_scarlett}.
 \textbf{Processes}
 These are the parts of the program running on partitions. One partition
 may contain one or more processes. These may operate concurrently,
-and may operate in a periodic or aperiodic manner. 
-A process\textquotesingle s 
+and may operate in a periodic or aperiodic manner.
+A process\textquotesingle s
 characteristics are: data and stack areas, program counter, stack pointer,
-priority and deadline. These attributes can either be fixed 
-or variable. The fixed attributes are statically defined, and cannot
+priority and deadline. This makes them resemble threads in the POSIX\cite{} process model.
+Certain attributes are statically defined, and cannot
 be changed during operation.
 \cite{arinc_page_19}
 Process management is done with the use of APEX calls.
 Processes can be in different states: dormant, waiting, running, ready.
 Their scheduling is done in such a way that the process in the ready state
-with the highest priority is always executing when the partition is active. 
-This entails processes being preempted at any time, by the process with a 
-higher current priority. 
+with the highest priority, is always executing when the partition is active.
+This entails processes being preempted at any time, by the process with a
+higher current priority.
 \cite{arinc_page_20}
 \\\\
 \textbf{Time}
 Time management is very important in real-time systems.
 Time keeping is needed for partition and process scheduling,
-for delays, deadlines and periodicity as well as for communication time-outs.
-Partitions receive time-slots during system configuration and
-Processes receive time capacity\footnote{Time given to them to satisfy
+for delays, deadlines as well as for communication time-outs.
+Partitions receive time-slots during system configuration, and
+processes receive time capacity\footnote{Time given to them to satisfy
 their process requirements. This is an absolute duration, not execution time} when they are started.
 The difference between the two brings the need for having extra APEX calls
-to control ad monitor how processes are behaving.
+to control and monitor how processes are behaving.
 \cite{arinc_page_25}
 \\\\
 \textbf{Memory}
-Memory spaces are defined during the system configuration. These cannot
+Memory spaces are defined during the system configuration. These can not
 be changed later on.
 \\\\
-\textbf{Interpatition communication}
-This is an important aspect of \arinc{}. It defines the way processes residing on different partitions
-communicate with each other. This applies to partitions placed 
-on the same module, on separate core modules, as well as communicating with non-\arinc{} units.
+\textbf{Interpartition communication}
+This is an important aspect of \arinc{}. It provides a framework for processes across different partitions
+to communicate with each other. This applies to partitions placed
+on the same module, on separate core modules, as well as communicating with non-\arinc{} module.
 This communication is based on message passing. Channels are used as
-logical links between partitions. Partitions can access these through 
-ports, which allow monodirectional access to a channel\footnote{
-A port can be configured by a partition to either send or receive messages}
-\cite{arinc_page_27}.
+logical links between partitions. Partitions can access channels through
+ports, which allow monodirectional access to a channel \cite{arinc_page_27}.
 These ports are defined during system configuration and are tied to
 both a certain channel and a certain partition.
 \\\\
@@ -166,67 +165,67 @@ The location in memory of port buffers is not specified in the \arinc\ specifica
 %------------------------------------------------------------------
 \textbf{Intrapartition communication}
 Allows processes inside a partition to communicate to each other. This way
-the communication is done more efficiently than having to use a 
+the communication is done more efficiently than having to use a
 global message passing system.
-Can be done by implementing buffers and blackboards, or semaphores and 
+This can be done by implementing buffers and blackboards, or semaphores and
 events\cite{arinc_page_36}.
 \\\\
 \textbf{Health Monitor}
 Has the purpose of monitoring, reporting and isolating hardware or
 software faults and failures. Its responsibilities are divided into
-the following levels: process, partition and module. The Health monitor has 
+the following levels: process, partition and module. The Health monitor has
 error response mechanisms to take action in case typical
-error occur at any of these level
+error occurs at any of these levels4
 \cite{arinc_page_40}.
 \\\\
 \textbf{System configuration}
 The standard allows portability and reusability of applications. However,
-these applications have to be first integrated in the system. This is done
+these applications first have to be integrated in the system. This is done
 by giving the partitions the access and resources needed,
 in the system configuration phase, in order to
-satisfy the applications\textquotesingle requirements \cite{arinc_page_42}.
+satisfy the applications\textquotesingle{} requirements \cite{arinc_page_42}.
 
 \subsection{Decision}
 The idea is to bring such an operating system based on \arinc{}
 in to the wider embedded world.
 The focus will now change to understanding if, and how other projects
-have approached this idea. 
+have approached this idea.
 
-\section{Other existing standards}
+\section{Other existing standards and ARINC implementations}
 While \arinc{} defines the architecture of a system for safety-critical
-avionics applications, there are other ways to categorize how such a system
-would perform. Usually this could be measured by looking at the number 
-of failures occurring in time. There is a standard that specifies exactly this.
+avionics applications, there are other ways to categorize the reliability of such a system.
+Usually this is measured by looking at the number
+of failures occurring in time frame.
+The following standard attempts to grade a systems reliability.
 
 \subsection{DO-178B}
-DO-178B\cite{do178b_wiki} is a set of guidelines to be used for 
-software assurance in safety-critical software in avionics systems.
+DO-178B\cite{do178b_wiki} is a set of guidelines to be used for
+software assurance in safety-critical avionics systems.
 Use of the standard can determine the reliability of the software in an airborne environment.
-There is a \textit{safety assessment process} and \textit{hazard analysis} to determine the result of failure conditions on the system.
-The final result of the standard applied to the software system will give the system a \textit{software level} of A to E compliance,
+There is a \textit{safety assessment process} and \textit{hazard analysis} to determine the result of failures in the system.
+Applications are graded with a \textit{software level} of A to E,
 where A is the best level to be achieved and E is the worst.
 A level A compliance means the system has been verified and validated against catastrophic failures,
 whereas an E compliance has been verified against trivial failures.
 Its successor, DO-178C\cite{do178c_wiki} was released in January 2012.
 
-\subsection{Certification of \arinc{}}
-One might wonder what \arinc{} has to do with DO-178B. 
-The concept of having partitions 
-to host avionics applications is from the beginning seen as a step 
+\subsubsection{Certification of \arinc{}}
+The concept of having partitions
+to host avionics applications, is already seen as a step
 forward in terms of safety.
 Applying the DO-178B standard on an ARINC implementation would certify
-that this is ready to be deployed in the avionics field (Level A).
+that this is ready to be deployed in the avionics field with a grade.
 In fact this is what similar projects are doing.
 
 \subsection{Alternative \arinc{} platforms}
 There are a number of \arinc{} implementations available, which is not
 surprising, having understood the benefits of IMA.
-These are divided into and open source OSs and COTS\footnote{Commercial of the Shelf} OSs.
-An existing platform could be used as a starting point for 
+These are divided open source OSs and COTS\footnote{Commercial of the Shelf} OSs.
+An existing platform could be used as a starting point for
 the implementation of \OSname{}.
 
 \textbf{ARLX}\cite{arlx}
-is the only open-source platform available. It is a prototype hypervisor
+is an open-source platform available. It is a prototype hypervisor
 for ARINC 653 that uses Linux to partition the system.
 It has been developed in accordance with DO-178C.
 \todo{explain this better}
@@ -238,46 +237,46 @@ LynxOS-178 (DO-178B certified)\cite{linxos}
 support \arinc{}.
 
 As an example, \textbf{VxWorks 653}
-is marketed as \textit{The Industry's Leading Operating System for Embedded devices}.
+is marketed as \textit{The Industry's Leading Operating System for Embedded devices}\cite{vxworks}.
 It contains an \arinc{} compliant platform and is compliant with DO-178C to level A.
 
-As mentioned, there is no surprise that the existing  
-\arinc{} implementations are all DO-178 certified. While it is 
+As mentioned, there is no surprise that the existing
+\arinc{} implementations are all DO-178 certified. While it is
 important for them to work properly, the compliance to \arinc{} and the
 certification of a high level in DO-178 shows that they are safe to use
-in critical applications. Apart from this, it makes the developer\textquotesingle s
-life easier as well as the life of the administrative department.
+in critical applications. %Apart from this, it makes the developer\textquotesingle s
+%life easier as well as the life of the administrative department.
 
-\subsubsection{The developer's point of view}
-It is easy for a developer to create and maintain a framework that has
-strict time and space partitioning.
-When new applications need to be added to the system, all the developer 
-needs to know is the level the applications have been DO-178 certified to.
-This way he could then provide the proper resources for the application
-to meet its goal.
-\iffalse
-("Assuming each application is certified for DO-178B/C at a given level (A through E), safety integrity of the overall avionics systems can be achieved since data integrity can be guaranteed and a sufficient time budget can be allocated to each application so that it can run in due time. ")
-\fi
-\subsubsection{The administrative point of view}
-It is easier to get an \arinc{} framework DO-178 certified, and build on top
-of that. The partitions would make it easier to divide the application
-code into multiple sections, that could be certified independently.
-Updating an application would be a matter of rewriting the code and 
-getting just this part recertified, instead of the whole system.
-\iffalse
-("The ability to achieve incremental certification is a direct benefit of the ARINC 653 partitioning mechanisms since certification can be achieved first for each application and then for the overall systems. Moreover, changing an application does not require recertification of the other applications.")
-\fi
+%\subsubsection{The developer's point of view}
+%It is easy for a developer to create and maintain a framework that has
+%strict time and space partitioning.
+%When new applications need to be added to the system, all the developer
+%needs to know is the level the applications have been DO-178 certified to.
+%This way he could then provide the proper resources for the application
+%to meet its goal.
+%\iffalse
+%("Assuming each application is certified for DO-178B/C at a given level (A through E), safety integrity of the overall avionics systems can be achieved since data integrity can be guaranteed and a sufficient time budget can be allocated to each application so that it can run in due time. ")
+%\fi
+%\subsubsection{The administrative point of view}
+%It is easier to get an \arinc{} framework DO-178 certified, and build on top
+%of that. The partitions would make it easier to divide the application
+%code into multiple sections, that could be certified independently.
+%Updating an application would be a matter of rewriting the code and
+%getting just this part recertified, instead of the whole system.
+%\iffalse
+%("The ability to achieve incremental certification is a direct benefit of the ARINC 653 partitioning mechanisms since certification can be achieved first for each application and then for the overall systems. Moreover, changing an application does not require recertification of the other applications.")
+%\fi
 
 \subsection{Decision}
-The research on the existing \arinc{} platforms concluded with at 
-least four results. The commercial OSs are excluded from the start since
+The research on the existing \arinc{} platforms concluded with at
+least four options. The commercial OSs are excluded from the start since
 they are not in the project\textquotesingle s scope. The only remaining
 variant, the ARLX has to be excluded as well, since it is a hypervisor,
-and does not fit the scope of the Masters programme. 
-There has been gained in-depth knowledge about certification and other standards, but for the rest of this document, only the \arinc{} 
+and does not fit the scope of the Masters programme.
+There has been gained in-depth knowledge about certification and other standards, but for the rest of this document, only the \arinc{}
 specification and design consideration will be used.
-The fact that the group does not work on top of an existing implementation 
-increases the degree of freedom for choosing a hardware platform to fit 
+The fact that the group does not work on top of an existing implementation
+increases the degree of freedom for choosing a hardware platform to fit
 the scope of the project and of the education programme.
 
 %------------------------------------------------------------------
@@ -339,14 +338,13 @@ the degree of freedom for choosing the hardware is increased.
 %------------------------------------------------------------------
 
 \section{Hardware}
-Having the \arinc{} specification basic prerequisites in mind, the 
-different options for hardware have been investigated in this section.
+Having the \arinc{} specification basic prerequisites in mind, the
+different options for hardware are investigated in this section.
 
 \subsection{The rise of embedded devices}
-\todo{The first paragraph reads a bit too hasty. Should be written a bit longer}
-In the world of embedded computing the computing platforms varies a lot more,
+In the world of embedded computing, the computing platforms vary a lot,
 compared to the world of workstations and desktop computers.
-Traditionally, embedded computers are used for small specialized static tasks and
+Traditionally, embedded computers are used for small specialised static tasks and
 not required to run an operating system with multiple processes.
 For this reason many embedded systems are arranged as a SoC,
 with limited amounts of ram, flash and a low CPU clock,
@@ -372,9 +370,9 @@ yet with the flexibility and multitasking capabilities of a modern operating sys
 puts some lower limits on the capabilities of the hardware.
 
 \subsection{The lower bound on systems}
-Overall these requirements must to be met by the hardware:
+Overall these requirements must be met by the hardware:
 \begin{itemize}
-	\item Be fast enough to run multiple applications and the operating system below
+	\item Be fast enough to run multiple applications and the operating system
 	\item Have sufficient main memory to support the stacks for all running applications and the operating system
 	\item Must come with either an MMU or MPU to provide protected regions in memory for separate contexts
 \end{itemize}
@@ -382,30 +380,26 @@ Overall these requirements must to be met by the hardware:
 The first two requirements depend almost entirely on the tasks being solved.
 The more applications being run and the more resource demanding they are,
 the more CPU time and memory they are going to utilize.
-The requirement to provide a MMU or MPU to safely segregate blocks of memory between applications and the operating system,
+The requirement to provide an MMU or MPU to safely segregate blocks of memory between applications and the operating system,
 puts a lower bound on the type of hardware required.
 \\\\
-\todo{Give a more detailed explanation on the difference between an MPU and MMU}
-More capable systems may provide a MPU for basic memory protection
-The smallest embedded systems typically do not provide any memory protection,
-only being required to run single purpose applications where all drivers and interfacing
-are compiled and executed as a single binary image.
-Ever more powerful systems may come with a MMU,
-providing a uniform picture of the memory-space from the viewpoint of every application.
+More capable systems may provide an MPU for basic memory protection.
+The smallest embedded systems typically do not provide any memory protection.
+Only being required to run single purpose applications where all drivers and interfaces
+are compiled and executed as a single binary, hence they can expect no foreign element disrupting their execution.
+More powerful systems may come with a MMU,
+providing a memory sandbox of each application.
 
 \subsection{Some of the options out there}
 The best way to decide on a hardware platform to work on is to explore some of the options out there.
-Being a single-semester project with varying degree of experience,
-implementing an operating system from scratch;
-the hardware should not be in the complex end of what is available.
+Implementing an operating system from scratch,
+the hardware should not be in the complex to work with.
 \\\\
 In appendix \ref{app:embedded_devices} is a brief list of hardware platforms listed in no particular order.
-Every unit has been selected on the premise of possessing either an MMU or MPU for the space partitioning feature in the OS.
-Also the candidates varies to some degree in capability and complexity,
-but more than anything; it was just what we could find with a few Google searches.
-\todo{Specify the search terms we used to find them.}
+Every unit has been selected on the premise of possessing either an MMU or MPU for the space partitioning feature in the OS,
+also the candidates vary to some degree in capability and complexity.
 \\\\
-Four proposed hardware candidates are listed:
+These are the evaluated hardware platforms:\\
 
 \textbf{Creator Ci40} is a platform meant for IoT development.
 It comes with easily available ports and connections for embedded development
@@ -429,14 +423,14 @@ It has a pin layout similar to the MINI-M4 for STM32,
 a USB connection for power and programming and comes with an MPU,
 but only runs at 80 MHz \cite{MINI-M4_tiva_specs}.
 
-\textbf{Raspberry Pi 3,} probably the most well known platform,
-based on a 1.2GHz 64-bit quad-core ARMv8 CPU,
-making it available for both embedded use and common desktop computing tasks \cite{raspberry_specs}.
+\textbf{Raspberry Pi 3} is
+based on a 1.2GHz 64-bit quad-core ARMv8 CPU which
+makes it available for both embedded use and common desktop computing tasks \cite{raspberry_specs}.
 The Raspberry Pi lacks any comprehensive documentation on its register layout,
 and being a higher end device compared to MINI-M4 and Creator Ci40,
 it's presumably more complex to work with.
 
-\subsection{Settleing on a platform}\label{section:settleing_platform}
+\subsection{Settling on a platform}\label{section:settleing_platform}
 Obviously a list longer than the one seen above can be compiled.
 Although the hardware used is not the primary concern to the project
 and as such the goal is to show examples of known platforms,
@@ -446,35 +440,31 @@ that all hit within the range of what can be considered embedded devices.
 The two MINI-M4 devices represent a lower, but capable end of the performance spectrum,
 while the Raspberry Pi and the Creator Ci40 are more capable.
 All four devices have the necessary features to run a simple low power OS,
-but building the OS give practical concerns to the complexity and ease of setup.
+but building the OS gives rise practical concerns to the complexity and ease of setup.
 \\\\
 Focusing on core OS features, only a few basic peripherals
-like timers, MPU/MMU, UART and basic IO are necessary for the project,
-also the ARINC 653 does not provide a solution to scaling the operating system
+like timers, MPU/MMU, UART and basic IO are necessary for the project.
+The ARINC 653 does not provide a solution to scaling the operating system
 or containers across multiple cores,
-hence more capable hardware is likely see a low peripheral use.
-\todo {rephrase this}
+hence more capable hardware is likely to see a low utilisation.
 Since the project is focused on the implementation of an OS
-and less so the containers running on it.
-A low CPU utilization might be seen on more performant systems.
+and less so the partitions running on it.
 \\\\
-The MINI-M4 modules are more attractive choices from the utilization standpoint.
+The MINI-M4 modules are more attractive choices from the utilisation standpoint.
 A comprehensive datasheet is available for both of them,
-making it easier to program them from the scratch.
+making it easier to program them from scratch.
 Some experience with the STM32 is present within the project group
-on how to setup and Linux based tool-chain. The manufacturer of the STM32
+on how to setup a Linux based tool-chain. The manufacturer of the STM32
 provides sample code implementations as well as hardware abstraction
-layer libraries, things that would give a head start on the project.
+layer libraries, which would give a head start on the project.
 
 \subsection{Decision}
 This leads to the decision of using Mini-M4 for STM32 as the hardware
-for \OSname{}. For the rest of the document this would be referred as 
-"the board", while the STM32F415RG unit as "the microcontroller" or
-"the chip".
+for \OSname{}.
 
 \subsection{Communication with the board}
-In order to get started with the development of the OS, there is need for
-a way to communicate with the board. Due to previous experience with
+In order to get started with the development of the OS, there is a need for
+communication with the board. Due to previous experience with
 this type of hardware, the following components have been ordered:
 
 \begin{itemize}[noitemsep]
@@ -485,49 +475,45 @@ this type of hardware, the following components have been ordered:
 \end{itemize}
 
 \subsection{Helper libraries}
-When starting writing software, one needs to decide how to make this
-process easy and transparent. This is very dependent of the 
-project\textquotesingle s requirements such as time frame, performance, 
-security and reusability. One possibility would be to work on the 
-"bare metal", and 
-use the chip\textquotesingle s Reference guide, and maybe part of the 
+When starting to write software, one needs to decide how to make this
+process easy and transparent. This is very dependent of the
+project\textquotesingle s requirements such as time frame, performance,
+security and reusability. One possibility would be to work on the
+"bare metal", and
+use the chip\textquotesingle s Reference guide, and maybe part of the
 ARM Architecture reference manual.
 
 Another way could be to use some libraries that define the I/O and work
-on a slightly higher level. ARM provides libraries for their architecture
+on a4 higher level. ARM provides libraries for their architecture
 as well as the vendors providing libraries and examples on how to use their
-hardware. 
+hardware.
 
 \subsection{The legacy from the race car project}
 This project has some roots in another project that has been going on
-for some years at Aalborg University \cite{aauracing}. 
+for some years at Aalborg University \cite{aauracing}.
 The choice of hardware was
-slightly influenced by this, as well as the tools and libraries used 
-throughout the project. The big advantage of this, is that by having the 
+slightly influenced by this, as well as the tools and libraries used
+throughout the project. The big advantage of this, is that by having the
 experience and knowledge the project could get a head start.
 \todo{Maybe Jakob has something to add}
 
 \section{Programming language choice}
 The languages Ada, C and C++ are taken in consideration as an embedded language.
 \\\\
-Ada was created during the 70's by the Defense Department of the USA.
+Ada was created during the 70\textquotesingle{}s by the Defense Department of the USA.
 It was created to reduce the number of
 languages used between departments.
-It is a high level language,
-and with high critical control,
-making it safe to be used in airplane software.
+It is a high level language with real-time capabilities.
 \\\\
 C is a simple low level language especially popular in embedded systems.
-like Ada it was created in the 70's and
-overall among the most popular languages used today.
+Like Ada it was created in the 70\textquotesingle{}s and
+among the most popular languages used today.
 C is easy to use in projects favoring memory and instruction control,
-as is the case with ARINC 653,
-where resources are allocated statically
-so dynamic memory allocation can be avoided.
-\todo{do we have a reference on some of this?}
+as is favored with ARINC 653,
+where resources are allocated statically.
 \\\\
 C++ is a multi paradigm language described by some as ``C with classes''.
-Created in the 90's, it is more an object oriented language than
+Created in the 90\textquotesingle{}s, it is more an object oriented language than
 the imperative C.
 \todo{Maybe Anders can fill in a little about what C++ can do
 and why that is good/bad?}

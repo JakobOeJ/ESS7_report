@@ -18,28 +18,28 @@ In order to test the memory partition mapping, for an amount of space given, it'
 \label{fig:testing_mpu}
 \end{figure}
 
-\section{XML validation}
 
+\section{XML validation}
 Currently there is no validation of the XML file.
 The XML is currently prone to human error when manually
-adding to the file, also does it does not prevent elements
+adding to the file, also it does not prevent elements
 not compliant with the schema being written.
-\\
 
 
 \section{Scheduler}
 The scheduler has been tested to work provided the XML file specifies reasonable
 windows. The scheduler has not been tested with edge cases.\\
-The kernel does not record any runtime metrics, and thus obtain empirical
-evidence that the scheduler is working according to the windows specified in the
-XML schema and according to the designed algorithms, window durations have to be
+The kernel does not record any runtime metrics. Empirical
+evidence shows that the scheduler is working according to the windows specified in the
+XML schema and according to the designed algorithms. Window durations is
 scaled up to make it possible with the human eye to determine that the scheduler
-indeed follows the windows defined in the XML schema.
+indeed follows the windows.
+
 
 \section{\arinc{} specification - Part 3}
-In order to test a system for compliance with \arinc{}, Aeronautical
-Radio Inc., the authors of the standard provide a conformity test
-specification. This comes as a separate document, as a part of the
+In order to test a system for compliance with \arinc{},
+the authors of the standard provide a conformity test
+specification. This is a separate document, as a part of the
 \arinc{} specification:
 \begin{itemize}
 	\item\textbf{Part 0} Introduction to ARINC 653
@@ -51,21 +51,21 @@ specification. This comes as a separate document, as a part of the
 	\item\textbf{Part 5} Core Software Recommended Capabilities
 \end{itemize}
 
-Basically, software developers should use this to test the compliance with
-Part 1 of the standard. The extended services (Part 2), are not being
-tested. This could be done in the future phases of the \OSname{} OS in order
-to demonstrate the compliance of the APEX behavior.
+Software developers should use this to test the compliance with
+Part 1 of the standard. This could be done in the future phases of the \OSname{} OS in order
+to demonstrate full compliance of the APEX behavior.
+
 
 \section{Interpartition Communication}
 Interpartition Communication is tested for queuing ports, not sampling ports.
 The test is done with the three partitions \texttt{red\_toggler},
 \texttt{yellow\_toggler} and \texttt{stdio\_sys}. \texttt{red\_toggler} and
 \texttt{yellow\_toggler} broadcast their respective partition name as a string
-to the \texttt{stio\_channel}. The \texttt{stdio\_sys} reads any message in its
-time-frame and transmit the strings by UART to a connected terminal. Both
-transmitting partitions are set to transmit their string every 2 seconds. A
+to the \texttt{stio\_channel}. The \texttt{stdio\_sys} reads any message within its
+time-frame and transmits the strings by UART to a connected terminal. Both
+transmitting partitions are set to transmit their string every two seconds. A
 sample of a recorded output is depicted in figure \ref{fig:message_test},
-Showing that the communication scheme works as intended.
+showing that the communication scheme works as intended.
 
 \begin{figure}[H]
 	\centering
@@ -82,5 +82,5 @@ scheduled to execute twice within the major time-frame of 20 seconds, but that
 \texttt{yellow\_toggler} is given twice the time of \texttt{red\_toggler} at
 every interval and hence gets to print more often.\\
 
-Even though modules is implemented in the codebase for sampling ports, it is yet
-to be fully integrated into \OSname{} and therefore isn't tested.
+Even though the sampling port module is implemented in the codebase, it is yet
+to be fully integrated into \OSname{} and therefore is not tested.

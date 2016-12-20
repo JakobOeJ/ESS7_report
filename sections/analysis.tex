@@ -41,6 +41,7 @@ should be designed and implemented, as well as standards that specify
 how space and time should be partitioned.
 
 \section{ARINC 653}
+\label{anal:arinc}
 \arinc{} is a software specification that allows a system to host
 multiple avionics applications on the same hardware, while being able
 to execute them independently. This is achieved by partitioning the
@@ -87,8 +88,7 @@ may contain one or more processes. These may operate concurrently,
 and may operate in a periodic or aperiodic manner.
 A process\textquotesingle s
 characteristics are: data and stack areas, program counter, stack pointer,
-priority and deadline. This makes them resemble threads in the POSIX
-\cite{posix} process model.
+priority and deadline. This makes them resemble threads in the POSIX\cite{posix} process model.
 Certain attributes are statically defined, and cannot
 be changed during operation\cite{arinc_page_19}.
 Process management is done with the use of APEX calls.
@@ -474,8 +474,8 @@ process easy and transparent. This is very dependent of the
 project\textquotesingle s requirements such as time frame, performance,
 security and reusability. One possibility would be to work on the
 "bare metal", and
-use the chip\textquotesingle s Reference guide, and maybe part of the
-ARM Architecture reference manual.
+use the chip\textquotesingle s reference guide\cite{reference_manual}, and maybe
+part of the ARM architecture reference manual\cite{arm_architecture}.
 
 Another way could be to use some libraries that define the I/O and work
 on a4 higher level. ARM provides libraries for their architecture
@@ -507,10 +507,11 @@ as is favored with ARINC 653,
 where resources are allocated statically.
 \\\\
 C++ is a multi paradigm language described by some as ``C with classes''.
-Created in the 90\textquotesingle{}s, it is more an object oriented language than
-the imperative C.
-\todo{Maybe Anders can fill in a little about what C++ can do
-and why that is good/bad?}
+Created in the late 70\textquotesingle{}s and first standardised in the 98, it
+is a language with both high-level object oriented features as well as low-level
+memory management. It is mostly compatible with C. C++ contain many extra
+features compared to C, such as classes. These can both benefit and complicate
+code.
 \\\\
 For the passing of the schema, a higher level language can be used
 since it is running on the computer used in development,
@@ -521,13 +522,16 @@ embedded system.
 \\\\
 Python is an easy high level language to use.
 There is very little boiler plate code involved,
-it is not typecast, nor does it need to compile
+it is not typeset, nor does it need to compile
 before it is executed.
 It has many libraries to interact with structured
 data types such as XML and JSON,
 which makes it a well suited option for developing the schema parser.
 
 \subsection{Decision}
-Python is chosen as the language to parse the schema and
+Python is chosen as the language to parse the schema because of its simplicity
+and because it is cross-platform.
 C is chosen for embedded development because of its simplicity and
-the level of experience within the group, with the language.
+the level of experience within the group, with the language.\\
+The choice of these languages also mean that the resulting code can be compiled
+from all three major PC operating systems.

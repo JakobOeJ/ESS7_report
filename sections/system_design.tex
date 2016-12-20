@@ -608,11 +608,11 @@ partition.
 \\
 The ports have four attributes which define information 
 about the port such as size and source or destination.
-Sampling_Ports are not well supported currently in the 
+Sampling\_Ports are not well supported currently in the 
 project but will function. This is due to not having or
 needing any sampling ports in the current implementation.
 \\\\
-A Connection_Table has one or more Channels and zero attributes. 
+A Connection\_Table has one or more Channels and zero attributes. 
 A Channel has one or more source and destination channels and two
 attributes which identify the channel. The Source and 
 Destination have four attributes which correlate 
@@ -715,14 +715,29 @@ typedef
 The APEX calls present on \OSname{} are further explained in 
 \nameref{ssec:impl_system_calls}.
 
+
 \section{Partitions and processes}
+\label{design:part_proc}
+Partitions as described in \ref{anal:arinc} are defined at compile-time and
+contains one or more processes which are initialised during run-time.
+A partition is defined to be one or more structures containing information about
+its execution and resources.
+As described in the \nameref{sec:design_schema} section, there are multiple
+groups of information about every partition, which makes sense to separate for
+different parts of the system (eg. only the scheduler needs to know about a
+partitions execution window information).\\
 
-\subsection{Partitions}
-One of the core concepts of \arinc\ is partitions. The space and time separation
-defined in \arinc\ is managed at partition-level.
+While information about the overall partition is defined statically, its
+processes are defined and created at runtime and as such every partition needs
+some memory allocated to store this information. A starting process is created
+by default using the partitions entry-point(ref here?), which is then allowed to
+spawn any additional processes.\\
 
-\subsection{Processes}
+Processes just like partitions are collections of information. Processes holds
+information about its own state and how they are to be scheduled.
 
+
+\iffalse
 \section{Agile development}
 The software development process flowed naturally due to previous 
 experience, curiosity and personal interests. The nature of the project
@@ -730,7 +745,7 @@ allowed the team to cover different areas at the same time, while still
 doing progress, without having a strict plan. Seen as a whole, the project
 was pursued by applying the principles of agile software development.
 \todo[inline,color=green]{Maybe move this section somewhere else.}
-
+\fi
 \section{Discussion}
 
 Figure \ref{fig:advanced_system} presents the system in its entirety,

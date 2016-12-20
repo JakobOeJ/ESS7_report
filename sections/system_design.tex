@@ -689,26 +689,35 @@ constant variables, as well as the types used by the calls. This was found
 in the standard, in the form of an ANSI C compliant library.
 In input(IN) arguments should be types defined here. The output(OUT) 
 parameters are dependent on the \texttt{RETURN\_CODE} value, as seen
-in listing\ref{lst:apex_types}.
+in listing \ref{lst:apex_types}.
 
-\begin{minipage}{\linewidth}
+\begin{figure}
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	tabsize=4,
+	breaklines=true
+}
 \begin{lstlisting}[
 	firstnumber=67,
 	label=lst:apex_types,
 	caption=\textit{apex\_types.h}]
 typedef
     enum {
-        NO_ERROR       = 0,   /* request valid and operation performed      */
-        NO_ACTION      = 1,   /* status of system unaffected by request     */
-        NOT_AVAILABLE  = 2,   /* resource required by request unavailable   */
-        INVALID_PARAM  = 3,   /* invalid parameter specified in request     */
-        INVALID_CONFIG = 4,   /* parameter incompatible with configuration  */
-        INVALID_MODE   = 5,   /* request incompatible with current mode     */
-        TIMED_OUT      = 6    /* time-out tied up with request has expired  */
+        NO_ERROR       = 0, /* request valid and operation performed    */
+        NO_ACTION      = 1, /* status of system unaffected by request   */
+        NOT_AVAILABLE  = 2, /* resource required by request unavailable */
+        INVALID_PARAM  = 3, /* invalid parameter specified in request   */
+        INVALID_CONFIG = 4, /* parameter incompatible with configuration*/
+        INVALID_MODE   = 5, /* request incompatible with current mode   */
+        TIMED_OUT      = 6  /* time-out tied up with request has expired*/
     } RETURN_CODE_TYPE;
 \end{lstlisting}
-\end{minipage}
-\todo[inline]{make the listing look nice}
+\end{figure}
+
 The APEX calls present on \OSname{} are further explained in 
 \nameref{ssec:impl_system_calls}.
 

@@ -296,14 +296,14 @@ The scope of this project is to only implement an operating system for a Cortex 
 to work on the architecture used by this chip.\\
 
 Context Switching on the Cortex M4 is partially handled by the Nested Vectored Interrupt Controller (NVIC).
-When an exception (this includes interrupts) occurs, the NVIC will change context to an exception handler.
-Upon changing context from regular code to the exception handler, the NVIC will save the registers R0-R3, R12, LR, PC and PSR
+When an exception (this includes interrupts) occurs, the NVIC changes context to an Interrupt Service Routine (ISR).
+Upon changing context from application code to the ISR, the NVIC saves the registers R0-R3, R12, LR, PC and PSR
 on the stack. These are only some of the registers.
-When the exception handling routine exits, and control is handed back to the NVIC,
+When the ISR exits, and control is handed back to the NVIC,
 the NVIC will restore these registers again.\\
 
-If the operating system wishes to switch context, it must save the remaining registers, R4-R11, and the stack pointer to memory,
-pick a new context to restore, reload the registers R4-R11 and the stack pointer of the new context from memory,
+If the operating system wishes to switch context, it must save the remaining registers, R4-R11 and stack pointer, to memory;
+pick a new context to restore; reload the registers R4-R11 and the stack pointer of the new context from memory,
 and hand back control to the NVIC. The NVIC will then reload the remaining
 registers from the stack of the new context. Table \ref{tab:registers} shows the registers
 and who saves them.\\
@@ -346,13 +346,26 @@ the hardware determines which physical register the logical register refers to.
 \cite{register_banking}} stack pointer.
 The logical SP register consists of two physical registers: the Master Stack 
 Pointer (MSP) and the Process Stack Pointer (PSP).
-The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
-Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
-Since the path to the new context goes through the NVIC, the NVIC is also partially responsible setting the state of the processor.
-This is done by loading an EXC\_RETURN value into the Program Counter. See table \ref{tab:exc-return} for the different EXC\_RETURN values.
-To make context switching transparent to the applications running, it is important that the state the processor returns to, is the
-same it came from earlier. Therefore, upon entry into the interrupt routine, the NVIC loads the appropriate EXC\_RETURN into the Link.
-This value must be saved by software to assure it can return to the right state.
+The MSP is intended for kernel space execution while the PSP is intended for 
+user space execution, although this not enforce by hardware. 
+Selecting which stack pointer to use can not be done by software within an ISR.
+Instead, this must be done by the NVIC. This makes it impossible to restore a
+context entirely from software. Software can instruct the NVIC which stack
+pointer should be used by the new context. Software can do this by putting a
+specific value into the PC register. This value is the EXC\_RETURN value. Table
+\ref{tab:exc-return} shows the different EXC\_RETURN values and their meaning.
+An ISR is always concluded by putting an EXC\_RETURN value in to the PC register.
+Before entering an ISR, the NVIC puts the EXC\_RETURN value that denotes the
+state of the CPU before the interrupt was triggered, in to the LR register.
+When an ISR is not used to perform a context switch, it concludes by putting
+the EXC\_RETURN from the LR register in to the PC register. As this is custom
+for all function calls, this can be done by the compiler.
+When an ISR is used for context switching, the EXC\_RETURN denoting the state of
+previous context may be different from the state of the next context. Therefore,
+the compiler is not be allowed to automatically conclude the ISR by putting
+the value of the LR register in to the PC register.\\
+Additionally, to be able to later restore a context, the kernel records the 
+EXC\_RETURN value from the LR register.
 
 \begin{table}[H]
 	\centering

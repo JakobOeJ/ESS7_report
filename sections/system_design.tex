@@ -531,6 +531,15 @@ and the stack, the kernel determines what the partition level code requested,
 executes the necessary functions and returns the result in the general purpose 
 CPU registers and the stack.
 
+\subsection{Error Handling}
+The error handler is designed in the context of the 
+Health Monitor function specified in the standard. 
+However, its functionality and specific APEX calls won\textquotesingle t be
+approached, since the goal is only to give the developers the possibility
+to see that something is wrong in the system. The idea is to capture only
+some of the faults or failures and throw an exception that the error
+handler would then catch.
+
 \section{Schema}
 \label{sec:design_schema}
 An ARINC 653 schema specifies the structure 
@@ -674,26 +683,35 @@ constant variables, as well as the types used by the calls. This was found
 in the standard, in the form of an ANSI C compliant library.
 In input(IN) arguments should be types defined here. The output(OUT) 
 parameters are dependent on the \texttt{RETURN\_CODE} value, as seen
-in listing\ref{lst:apex_types}.
+in listing \ref{lst:apex_types}.
 
-\begin{minipage}{\linewidth}
+\begin{figure}
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	tabsize=4,
+	breaklines=true
+}
 \begin{lstlisting}[
 	firstnumber=67,
 	label=lst:apex_types,
 	caption=\textit{apex\_types.h}]
 typedef
     enum {
-        NO_ERROR       = 0,   /* request valid and operation performed      */
-        NO_ACTION      = 1,   /* status of system unaffected by request     */
-        NOT_AVAILABLE  = 2,   /* resource required by request unavailable   */
-        INVALID_PARAM  = 3,   /* invalid parameter specified in request     */
-        INVALID_CONFIG = 4,   /* parameter incompatible with configuration  */
-        INVALID_MODE   = 5,   /* request incompatible with current mode     */
-        TIMED_OUT      = 6    /* time-out tied up with request has expired  */
+        NO_ERROR       = 0, /* request valid and operation performed    */
+        NO_ACTION      = 1, /* status of system unaffected by request   */
+        NOT_AVAILABLE  = 2, /* resource required by request unavailable */
+        INVALID_PARAM  = 3, /* invalid parameter specified in request   */
+        INVALID_CONFIG = 4, /* parameter incompatible with configuration*/
+        INVALID_MODE   = 5, /* request incompatible with current mode   */
+        TIMED_OUT      = 6  /* time-out tied up with request has expired*/
     } RETURN_CODE_TYPE;
 \end{lstlisting}
-\end{minipage}
-\todo[inline]{make the listing look nice}
+\end{figure}
+
 The APEX calls present on \OSname{} are further explained in 
 \nameref{ssec:impl_system_calls}.
 
@@ -704,13 +722,6 @@ One of the core concepts of \arinc\ is partitions. The space and time separation
 defined in \arinc\ is managed at partition-level.
 
 \subsection{Processes}
-
-\subsection{Error Handling}
-The error handler is designed in the context of having part of the 
-Health Monitor specified in the standard taking care of the faults and
-failures. However, its specific APEX calls won\textquotesingle t be
-approached, since the goal is only to give the developers the possibility
-to see that something is wrong in the system.
 
 \section{Agile development}
 The software development process flowed naturally due to previous 

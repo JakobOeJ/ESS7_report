@@ -481,14 +481,6 @@ It also gives the system developer a way to ensure that the system has enough me
 % This figure should NOT be placed near a pagebreak.
 % Otherwise it fucks everything up!
 % If thats not okay, use normal figure instead.
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
-	\centering
-	\includegraphics[width=0.3\textwidth]{mpu_overlapping_regions.pdf}
-	\caption{Example of nested and overlapping regions from \cite{stm32_mpu}.}
-	\label{fig:stm32_mpu}
-	\vspace{-40pt}
-\end{wrapfigure}
 
 Memory regions are declared in the XML file, included at compile time, for a list of different system features, like individual partitions and communication buffers.
 All of this information is important for different reasons when setting up the system.
@@ -500,6 +492,15 @@ The memory protection unit (MPU) can be used to prohibit partitions from corrupt
 The MPU can protect up to eight memory regions and is unified, meaning that it doesn't distinguish between code sections and data sections.
 Regions can have sub-regions but because the minimum (sub-)region size is the size of a cache line length (32 bytes), sub-regions is only available for regions of at least 256 bytes of size.
 Partitions above this threshold can have eight sub-regions.\\
+
+\begin{wrapfigure}{R}{0.3\textwidth}
+	\vspace{-20pt}
+	\centering
+	\includegraphics[width=0.3\textwidth]{mpu_overlapping_regions.pdf}
+	\caption{Example of nested and overlapping regions from \cite{stm32_mpu}.}
+	\label{fig:stm32_mpu}
+	\vspace{-40pt}
+\end{wrapfigure}
 
 Every region have a fixed priority and is numbered from 0-7, where region 7 has the highest priority.
 Regions can be nested and overlap.

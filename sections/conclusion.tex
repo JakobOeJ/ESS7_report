@@ -18,7 +18,7 @@ The questions presented in the \nameref{chap:Problem_Statement} can be addressed
 \textit{Which features must be developed to make \OSname{} functional and
 testable?}\\
 The features required to make the system functional and testable are listed in \nameref{design:features} section \ref{design:features}
-and the implemented features are listed in \ref{feature_list}.\\
+and the implemented features are listed in section \ref{impl:feature_list}.\\
 
 \textit{How can this system be developed without the use of pre-existing
 implementations?}\\
@@ -26,7 +26,7 @@ implementations?}\\
 The HAL library has been used to supplement the development of most drivers and hardware specific functions.\\
 
 \textit{How is this system implemented using C and Python?}\\
-Python is used for parsing the XML into C structures which is used for building the source code.
+Python is used for parsing the XML into C structures which are used for building the source code.
 C is used to program \OSname{} and its partitions.\\
 
 \textit{What are the main obstacles when developing such a system?}\\
@@ -37,42 +37,73 @@ The biggest challenges faced in the project were:
 	\item Deciding on an auto-generated data structure
 \end{itemize}
 
-As so, the Conclusion answers the main question of this project:\\
+As so, the Conclusion answers the main question of the project:\\
 \textit{Can an OS implementation based on a subset of the \arinc{} standard be
 developed on a Mini-M4 for STM32?}
 \clearpage
 
-\section{Discussion}
 
-\section{Perspective}
-For external opinions publications were made in some forums, regarding the different future possibilites of the OPEN653 as OpenSource. As said before, is not easy to find this OS paradigm as OpenSource, making it harder for developers to develop it for other fields, since the whole OS implementation is not avaiable. The forum communities agreeded that is a good and important idea.\\
-It was given an example of an implementation in the USA, of a similar system and that is still used for
-communication infrastructures.\\
-More examples of areas that this OS could be used for car industries or telecommunications.
-As the safety standards of ARINC 653 are of an higher level, it insures the safety needs for both areas. For cars, as for avionics, it allows saving money in hardware and maintenance. For telecommunications, as it is possible for the partitions to communicate between each other and with the exterior, and the communication protocols are all the same, it opens the door for distributed systems. It would be possible to create a net of devices, for different purposes.\\
-The whole conversation is presented in Appendix \ref{chap:Forum Responses}.
+\section{Discussion}
+A the project progressed certain problems stand out from the rest,
+as highlighted in the conclusion.
+The group recommends following this advice,
+when conducting a similar project:
+
+\begin{itemize}
+	\item
+	\item Use the provided instructions on how to setup the hardware (section \ref{app:hardware_setup})
+	\item It is very important to address the schema early on,
+		as it will shape the whole project.
+		Furthermore special care should be taken to fully understand the \arinc{} standard.
+\end{itemize}
+
+If the project were to be continued, in depth focus should be put on individual
+modules, to refactor and rebuild.
+By doing this full compliance with \arinc{} could be achieved.
+A logical next step for such an implementation,
+would be to apply a complete suite of compliance tests.
+
+
+%\section{Perspective}
+%External opinions were gathered from forums,
+%regarding the future possibilities of \OSname{} as an open source system.
+%It is not easy to find an open source \arinc{} compliant OS.
+%This is undesirable for developers in other fields,
+%since the code is not readably available for free.\\
+%
+%The forum communities agreed that it is a good and important idea.\
+%It was given an example of an implementation in the USA, of a similar system and that is still used for
+%communication infrastructures.\\
+%
+%More examples of areas that this OS could be used for car industries or telecommunications.
+%As the safety standards of ARINC 653 are of an higher level,
+%it insures the safety needs for both areas.
+%For cars, as for avionics, it allows saving money in hardware and maintenance.
+%For telecommunications,
+%as it is possible for the partitions to communicate between each other and with the exterior,
+%and the communication protocols are all the same, it opens the door for distributed systems.
+%It would be possible to create a net of devices, for different purposes.\\
+%The whole conversation is presented in Appendix \ref{chap:Forum Responses}.
+
 
 \section{Reflection}
-The implementation of \OSname{} as a whole provided sufficient challenges
-for each of the group members to develop themselves, along with following
+The implementation of \OSname{} as a whole, provided sufficient challenges
+for each of the groups members to develop themselves and follow
 the education\textquotesingle s requirements.
-Based the direction and decisions made during the project,
-the team had a lot of freedom and flexibility during the
-course of the project; especially during the early phases.
-\\
-Due to this, the software development process flowed naturally.
+\\\\
+The software development process flowed naturally.
 The nature of the project allowed the team to cover different
-areas at the same time, whilst still progressing without
-having a strict plan.
-As a whole, the project was pursued by applying the principles
-of agile software development.
-\\
-The group is proud that all functionality they set out to
-implement, was implemented; they did not give up on any
-functionality, nor did they ever come to a halt with development.
-\\
-The diversity of the group members has proven to be a challenge
-due to the different work ethics and standards,
-but also beneficial for covering the many aspects of building
-an operating system and providing different perspectives on
-approaching problems.
+areas at the same time, whilst progressing without a strict plan.
+The project was pursued by applying the principles of agile software development.
+Being the first time the group has implemented an OS from scratch,
+a different approach would be taken given a similar problem in the future.
+%\\\\
+%The group is proud that all functionality they set out to
+%implement, was implemented; they did not give up on any
+%functionality, nor did they ever come to a halt with development.
+%\\\\
+%The diversity of the group members has proven to be a challenge
+%due to the different work ethics and standards,
+%but also beneficial for covering the many aspects of building
+%an operating system and providing different perspectives on
+%approaching problems.

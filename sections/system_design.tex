@@ -530,7 +530,7 @@ this, kernels often provide a fixed set of functions that application code may
 call. Calls to these functions are called system calls. System calls must escape
 the unprivileged application level and enter into the privileged kernel. This is
 accomplished by triggering an interrupt that the kernel will catch. By preparing
-a function designator (often just an identication number) and the call arguments
+a function designator (often just an identification number) and the call arguments
 on the stack and in the general purpose registers before triggering the
 interrupt, application code can signal its' intent to the kernel.
 

@@ -16,49 +16,49 @@ The idea is to have independent partitions than can run OS, applications or othe
 and restricted amounts of memory, completely independent of each others in the same platform. If one
 crashes it won\textquotesingle t affect the other partitions. This was first created 10 years ago for airplanes, we are
 trying to adapt this to other industries. We developed the OS and the memory and time partitions already,
-now we are looking for different points of view about the subject, what is worth it or not to explore 
+now we are looking for different points of view about the subject, what is worth it or not to explore
 about the different possibilities in the future using this."\\
 \\
 gillhern321:\\
 
-"Jose, could you explain the major difference between ARINC653 and a fault tolerant OS distributed across 
-multiple blades on a blade server configuration? The fault tolerant, fault redundant servers actually have 
-two OS\textquotesingle s running at the same time with multi-processing being done across 10-20 blades. So when one OS 
-fails the failover defaults to the secondary processor and within 32ms the processing continues same stack 
-same interrupts. We were doing this 23 years ago at Bell Labs with the 5ESS and AMPS/PCS switching 
-platforms, they are still in use today across all of north america they are still the core of our 
+"Jose, could you explain the major difference between ARINC653 and a fault tolerant OS distributed across
+multiple blades on a blade server configuration? The fault tolerant, fault redundant servers actually have
+two OS\textquotesingle s running at the same time with multi-processing being done across 10-20 blades. So when one OS
+fails the failover defaults to the secondary processor and within 32ms the processing continues same stack
+same interrupts. We were doing this 23 years ago at Bell Labs with the 5ESS and AMPS/PCS switching
+platforms, they are still in use today across all of north america they are still the core of our
 communications infrastructure.\\
 \\
 
-Your question is, is it worth it. When you look at the processing power today versus then,  and I think 
-this is something more then worth it to all of us doing coding or developing hardware. And the potential 
-impact to distributed processing in our home is a powerful thing to have available.  OPENSOURCE     OHHHH 
+Your question is, is it worth it. When you look at the processing power today versus then,  and I think
+this is something more then worth it to all of us doing coding or developing hardware. And the potential
+impact to distributed processing in our home is a powerful thing to have available.  OPENSOURCE     OHHHH
 YAAAAAA. LOL"\\
 \\
 Reply:\\
 
-"Hey! Not sure if is that. We only have one main OS, that runs different partitions, which can contain 
-independent processes, multi threads or single threads that have fixed amount of memory and processor 
-available. If one crashes doesn\textquotesingle t affect the others, it can shut it down or restart (up to the 
-programmer), but all the rest keeps running normally. When the context switching happens the whole 
+"Hey! Not sure if is that. We only have one main OS, that runs different partitions, which can contain
+independent processes, multi threads or single threads that have fixed amount of memory and processor
+available. If one crashes doesn\textquotesingle t affect the others, it can shut it down or restart (up to the
+programmer), but all the rest keeps running normally. When the context switching happens the whole
 environment is "saved" and return to the same stage when the processor is given to that partition again."
 \\
 Tim Wescott:\\
 
-"Having worked in industry designing software as well as doing systems architecture, I\textquotesingle m very cynical 
+"Having worked in industry designing software as well as doing systems architecture, I\textquotesingle m very cynical
 about anyone having an up-front commitment to software safety.\\
 \\
-Having said that, I could see such a thing being an asset in any sort of system where I wanted to 
-partition a design by criticality levels, but keep it all on the same processor.  I\textquotesingle ve always done that by 
-putting the critical stuff on separate processors, possibly on the end of a long wire from the box with 
-the bells and whistles -- but that was in a system that naturally called for that partition anyway.  If 
-you were just bound and determined to put everything on to one processor, and you had a mix of jobs 
-between things that would cost 1M Dollars if the software failed and things that you wanted to let sales 
+Having said that, I could see such a thing being an asset in any sort of system where I wanted to
+partition a design by criticality levels, but keep it all on the same processor.  I\textquotesingle ve always done that by
+putting the critical stuff on separate processors, possibly on the end of a long wire from the box with
+the bells and whistles -- but that was in a system that naturally called for that partition anyway.  If
+you were just bound and determined to put everything on to one processor, and you had a mix of jobs
+between things that would cost 1M Dollars if the software failed and things that you wanted to let sales
 engineers play with, then I could see value in that."\\
 \\
 Tim Wescott:\\
 
-"Doesn\textquotesingle t this demand a processor with an MMU, and either put restrictions on who gets to write ISRs, or 
+"Doesn\textquotesingle t this demand a processor with an MMU, and either put restrictions on who gets to write ISRs, or
 put demands on the processor for letting ISRs be interruptable when a new time slot comes up?"\\
 \\
 Reply:\\
@@ -66,32 +66,32 @@ Reply:\\
 "We are using a MPU with 8 well defined areas for each partition.\\
 \\
 
-Yes, everytime the processor changes the context, the interrupts will change to the partition in case. It 
+Yes, everytime the processor changes the context, the interrupts will change to the partition in case. It
 has to due with the priorities.\\
 The whole context switch completely when we go to a new partition or back to the kernel."\\
 \\
 Tim Wescott:\\
 
-"So, if I have an interrupt that\textquotesingle s attached to some piece of hardware that only matters to my most 
+"So, if I have an interrupt that\textquotesingle s attached to some piece of hardware that only matters to my most
 critical task, then the most dumb-ass task might service the interrupt?\\
 That doesn\textquotesingle t seem right.\\
 \\
 
-I would think that you\textquotesingle d either want a separate interrupt-handling context (operating at the highest level 
-of safety), or that you\textquotesingle d want to disable any interrupts that aren\textquotesingle t "owned" by the current context.  I 
+I would think that you\textquotesingle d either want a separate interrupt-handling context (operating at the highest level
+of safety), or that you\textquotesingle d want to disable any interrupts that aren\textquotesingle t "owned" by the current context.  I
 see problems with both of these -- what does the ARINC standard say you should do?"\\
 \\
 Tim Wescott:\\
 "Another thought:\\
 \\
 
-Anyone who wants to use this is going to be interested in safety.  They may well want the software quality 
-to be traceable back to some standard, like DO-178, or whatever that IEC standard is for medical software.  
-Developing software to meet these standards is far more work than just whipping out any old thing -- the 
-estimate that I was given, a long long time ago (with head-nodding from everyone who had been there) is 
-that each time you go up a level of criticality under DO-178, the software development gets 7 times more 
-costly.  Level E is "software quality doesn\textquotesingle t matter"; level A is "smoking hole in the ground, with bodies 
-and TV reporters".  Designing software and certifying it for level A costs about 2500 times as much as 
+Anyone who wants to use this is going to be interested in safety.  They may well want the software quality
+to be traceable back to some standard, like DO-178, or whatever that IEC standard is for medical software.
+Developing software to meet these standards is far more work than just whipping out any old thing -- the
+estimate that I was given, a long long time ago (with head-nodding from everyone who had been there) is
+that each time you go up a level of criticality under DO-178, the software development gets 7 times more
+costly.  Level E is "software quality doesn\textquotesingle t matter"; level A is "smoking hole in the ground, with bodies
+and TV reporters".  Designing software and certifying it for level A costs about 2500 times as much as
 doing so for level E.\\
 \\
 

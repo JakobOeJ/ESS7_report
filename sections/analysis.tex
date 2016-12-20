@@ -28,10 +28,10 @@ fixed time constraints. Integrated Modular Avionics is a term used
 to describe a distributed real-time computer network,
 deployed in the avionics industry\cite{ima_description}.
 Modularity, keeping track of the time and criticality levels are
-the main characteristics of such a network. IMA also aims to centralise data 
+the main characteristics of such a network. IMA also aims to centralise data
 processing by routing sensor data to only a few compute nodes, rather than
-processing data at the sensor. This implies that the applications running would 
-share the system\textquotesingle s resources following a set of well defined 
+processing data at the sensor. This implies that the applications running would
+share the system\textquotesingle s resources following a set of well defined
 rules.
 
 The main benefits of using the IMA concept are: aircraft weight reduction\cite{boeing_weight_reduction}
@@ -64,7 +64,7 @@ The following is a brief description of what the standard specifies.
 \textbf{Modules}
 refer to the aviation concept of IMA, where a module
 can be seen as a piece of hardware, controlling other subsystems.
-A module can contain one or more processors. However, this does not fit 
+A module can contain one or more processors. However, this does not fit
 well with the concept of partitions,
 which have to run on a single processor\cite{arinc_page_11}.
 A processor used for \arinc{} applications should have sufficient processing
@@ -128,8 +128,8 @@ The \arinc\ specification defines a way for different partitions to communicate 
 This communication is based on message passing. To transfer messages between partitions the \arinc\ standard
 defines the concepts of channels and ports.
 
-\paragraph{Channels} are logical links spanning partitions. If necessary, 
-a channel might logically span different modules. 
+\paragraph{Channels} are logical links spanning partitions. If necessary,
+a channel might logically span different modules.
 \todo{Has modules been defined yet?}
 The way for partitions to access a channel, is via ports.
 Channels are defined by the system integrator at configuration time.
@@ -139,7 +139,7 @@ Channels should be transparent to the application programmer.
 a port can either be configured send or receive messages by a partition.
 When a message is written to a port, it will remain in a buffer, until the operating system transmits the message to the destination.\\
 
-Two types of ports exist, sampling ports and queuing ports. 
+Two types of ports exist, sampling ports and queuing ports.
 \subparagraph{Sampling ports} employ no form of message queuing; if a partition tries to write more than one message to a sampling port
 before they are transmitted through the channel to the destination port, the prior message will be overwritten. Similarly, once a message arrives at the destination port,
 it will override any prior messages, regardless of whether it had been read or not. These ports may be used in situations where only the most recent message is important.
@@ -153,7 +153,7 @@ will be moved up in the FIFO queue.\\
 
 Messages sent through queuing channels should always be sent in a FIFO manner.
 Ports are defined at solely configuration time and are tied to both a certain channel and a certain partition.
-It is therefore impossible for application code to define new ports at runtime. 
+It is therefore impossible for application code to define new ports at runtime.
 For a process to access a port, an object representation must be created. This happens through an APEX system call.
 The location in memory of port buffers is not specified in the \arinc\ specification.
 \fi
@@ -219,7 +219,7 @@ An existing platform could be used as a starting point for
 the implementation of \OSname{}.
 
 \textbf{ARLX}\cite{arlx}
-is an open-source platform available. It is a bare-metal hypervisor 
+is an open-source platform available. It is a bare-metal hypervisor
 for ARINC 653 based on the Xen hypervisor, with a Linux partition as the main
 virtual machine (in Xen terminoligy, domain 0).
 It has been developed in accordance with DO-178C.
@@ -478,7 +478,7 @@ use the chip\textquotesingle s reference guide\cite{reference_manual}, and maybe
 part of the ARM architecture reference manual\cite{arm_architecture}.
 
 Another way could be to use some libraries that define the I/O and work
-on a4 higher level. ARM provides libraries for their architecture
+on a higher level. ARM provides libraries for their architecture
 as well as the vendors providing libraries and examples on how to use their
 hardware.
 
@@ -489,7 +489,8 @@ The choice of hardware was
 slightly influenced by this, as well as the tools and libraries used
 throughout the project. The big advantage of this, is that by having the
 experience and knowledge the project could get a head start.
-\todo{Maybe Jakob has something to add}
+Before any hardware was ordered specifically for this project,
+the AAU Racing team lend the group a platform to work on.
 
 \section{Programming language choice}
 The languages Ada, C and C++ are taken in consideration as an embedded language.
@@ -507,10 +508,10 @@ as is favored with ARINC 653,
 where resources are allocated statically.
 \\\\
 C++ is a multi paradigm language described by some as ``C with classes''.
-Created in the late 70\textquotesingle{}s and first standardised in the 98, it
+Created in the late 70\textquotesingle{}s and first standardised in 98. It
 is a language with both high-level object oriented features as well as low-level
-memory management. It is mostly compatible with C. C++ contain many extra
-features compared to C, such as classes. These can both benefit and complicate
+memory management. It is mostly compatible with C. C++ contains many extra
+features compared to C, such as classes. These features can both benefit and complicate
 code.
 \\\\
 For the passing of the schema, a higher level language can be used
@@ -533,5 +534,5 @@ Python is chosen as the language to parse the schema because of its simplicity
 and because it is cross-platform.
 C is chosen for embedded development because of its simplicity and
 the level of experience within the group, with the language.\\
-The choice of these languages also mean that the resulting code can be compiled
+The choice of these languages have the added benefit that the resulting code can be compiled
 from all three major PC operating systems.

@@ -23,26 +23,26 @@ instead of directly on top of the hardware, creating an extra layer of
 		applications can in turn interact with other systems. The
 		partitions are achieving this while separated from one another.
 	\item [\textbf{APEX}]
-		defines the methods by which the partitions talk to other 
+		defines the methods by which the partitions talk to other
 		modules and
 		interact with other partitions or the OS, running
 		on the same core module or connected to other ARINC systems.
 	\item [\textbf{OS kernel}]
-		provides the infrastructure for partitions to operate. This 
-		includes their scheduling, message passing and processes 
+		provides the infrastructure for partitions to operate. This
+		includes their scheduling, message passing and processes
 		the APEX calls.
 	\item [\textbf{XML}]
 		contains the data necessary for the system initialisation.
 	\item [\textbf{Drivers}]
-		define the way the hardware should run.	
+		define the way the hardware should run.
 		They serve the OS with methods to create an environment in which
 		partitions can be run and scheduled without influencing one
 		another.
 	\item [\textbf{HAL and CMSIS}]
 		are libraries that provide hardware abstraction layers for
-		setting up the hardware. 
+		setting up the hardware.
 	\item [\textbf{Hardware}]
-		the physical platform on which the OS is run. This 
+		the physical platform on which the OS is run. This
 		includes the CPU and its peripherals.
 \end{labeling}
 
@@ -87,9 +87,9 @@ As mentioned in the \nameref{section:settleing_platform} section,
 the hardware used for the development of this system is the Mini-M4
 board. It is build around the STM32F415RG microcontroller
 \cite{stm32_datasheet}, based on
-an ARM Cortex-M4 core. This is a 32-bit RISC architecture CPU using 
+an ARM Cortex-M4 core. This is a 32-bit RISC architecture CPU using
 the ARM instruction set \cite{arm_architecture}. Additional information
-was found in the ARM technical reference \cite{arm_technical} 
+was found in the ARM technical reference \cite{arm_technical}
 
 The chip provides two interfaces for debugging:
 %page 1683 reference manual
@@ -101,12 +101,12 @@ There was no thought process involved in choosing one of the two.
 The JTAG interface is enabled by default, and worked right from the
 early phases of the project. In some situations, SW would have been
 preferred to JTAG, due to physical space constraints. JTAG uses 5
-wires, while SW only 2. Also, the IDE of choice can have some limitations 
+wires, while SW only 2. Also, the IDE of choice can have some limitations
 on the debugging platform.
 \todo{Can I reference to something like this : <http://ieeexplore.ieee.org/document/5412866/>}
 
-JTAG is actually an association\footnote{Joint Test Action Group} 
-that develops standards about how 
+JTAG is actually an association\footnote{Joint Test Action Group}
+that develops standards about how
 physical circuit boards should be tested. However, for the rest of
 the document, JTAG will be referred to as the main communication interface
 to the Mini-M4 board. This will mainly be used for flashing the program
@@ -115,7 +115,7 @@ interface, the STLINK-V2 in-circuit debugger/programmer \cite{st_link}
 is used, through USB.
 
 Another way of communicating with the chip is the serial communication.
-For this purpose the UART will be used. This is a common peripheral for 
+For this purpose the UART will be used. This is a common peripheral for
 embedded devices, but it needs to be set up before it can be used. This
 involves initialising the UART, configuring the data format and the
 transmission speed and sending the actual data. In order to see this data
@@ -130,15 +130,15 @@ breadboard to accommodate electrical connections.
 
 \section{Memory Map}
 \label{sec:memory_map}
-The STM32F415RG microcontroller has 1 MB of flash memory. The flash 
+The STM32F415RG microcontroller has 1 MB of flash memory. The flash
 is non-volatile memory, used for storing programs and
 data.
 
-There are 192 KB of RAM, divided into 128 KB of SRAM and 64 KB of 
+There are 192 KB of RAM, divided into 128 KB of SRAM and 64 KB of
 CCM data RAM.
-The SRAM is volatile memory, where the $static$ tag means 
+The SRAM is volatile memory, where the $static$ tag means
 that it does not need to be refreshed in order to
-keep its state. This is divided furthermore into a section of 112 KB, and 
+keep its state. This is divided furthermore into a section of 112 KB, and
 another of 16 KB, which can be useful if one needs to boot from RAM
 \cite{run_from_ram}. Anyway, they are adjacent in address space and can be
 treated as one block.
@@ -150,11 +150,11 @@ but cannot be accessed by the peripherals through direct memory access.
 Beside the 192 KB of SRAM, there are 4 KB of SRAM used for backup purposes.
 These won't be used, since they are not the scope of the project.
 
-Figure \ref{fig:memory_model} presents a simplified model of the 
+Figure \ref{fig:memory_model} presents a simplified model of the
 memory map implemented in the STM32F415RG microcontroller
 \cite{stm32_datasheet_74}. The blocks
 \todo{can't get the page referenced PAGE 74}
-on the left column are legacy of the ARM Architecture. This provides 
+on the left column are legacy of the ARM Architecture. This provides
 4 GB of addressable memory in all.
 These regions are correlated to the microcontroller\textquotesingle s
 actual memory, as it can be seen in the column on the right. Each block
@@ -169,14 +169,14 @@ in this column contain their start and end addresses, on their side.
 
 
 The input/output are mapped as well in the memory. This can be seen in
-the upper two blocks of the memory map, where there are the 
+the upper two blocks of the memory map, where there are the
 microcontroller\textquotesingle s peripherals, as well as the Cortex-M4
 specifics.
 
 \section{HAL and CMSIS}
-These two libraries are truly the workhorse when dealing with the 
+These two libraries are truly the workhorse when dealing with the
 board\textquotesingle s peripherals. By using them, the development
-process usually has a quick start, removing the steepness of the 
+process usually has a quick start, removing the steepness of the
 learning curve.	\\
 HAL stands for Hardware Abstraction Layer and is provided by the chip manufacturer - STMicroelectronics. The source files are available at
 their website, along with its documentation \cite{HAL_library}.
@@ -195,18 +195,18 @@ This can be further understood by looking at the way CMSIS handles
 the exceptions occurring in the chip, while the HAL library configures
 these interrupts.
 
- 
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{HAL_CMSIS.pdf}
-\captionof{figure}{The structure of the libraries (inspired by: 
+\captionof{figure}{The structure of the libraries (inspired by:
 \cite{cmsis_picture})}
 \label{fig:CMSIS_HAL}
 \end{figure}
 
 \section{Drivers}
 
-The drivers controlling the hardware would have to be implemented at an 
+The drivers controlling the hardware would have to be implemented at an
 early stage of the project, in order to have access to the low level
 subsystems.
 The following list contains the drivers that would provide the OS a basic
@@ -227,20 +227,20 @@ interface to access the hardware.
 	\item [\textbf{LEDs}] mainly used for debugging. They are
 	connected to two of the GPIO pins
 	\item [\textbf{Delay}] is a simple function, based on calling another
-	function from the HAL library. It delays the execution 
+	function from the HAL library. It delays the execution
 	of the program by a factor of milliseconds. Mainly used for debugging
 	\item [\textbf{MPU}] provides the system a way to manage its
-	memory. This is required by the ARINC 653 standard. 
-	Operating systems built on more advanced processors generally use 
+	memory. This is required by the ARINC 653 standard.
+	Operating systems built on more advanced processors generally use
 	an MMU
-	\item [\textbf{Timing}] has the purpose of keeping track of 
-	relative time. As the standard specifies, it should be counting 
+	\item [\textbf{Timing}] has the purpose of keeping track of
+	relative time. As the standard specifies, it should be counting
 	nanoseconds
 	\item [\textbf{Watchdog timer}] necessary to ensure recovery
 	in case of a hardware fault or program error. If this happens, the
 	program would be restarted from a safe state
-	\item [\textbf{RTC}] has the purpose of keeping track of 
-	time accurately. Usually it uses  a 32,768kHz oscillator as a 
+	\item [\textbf{RTC}] has the purpose of keeping track of
+	time accurately. Usually it uses  a 32,768kHz oscillator as a
 	clock source, which is the standard in the field
 \end{labeling}
 
@@ -262,7 +262,7 @@ the kernel\textquotesingle s features and functionalities.
 \subsection{Scheduler}
 \label{ssec:design_scheduling}
 Schedulers are used to allow a system to run more processes than there are
-available CPU core. 
+available CPU core.
 A scheduler decides which process should be executed by the processor available
 at any given time, according to predefined rules. Based on these rules, two more
 more processes may run concurrently, sharing CPU time. The ARINC 653
@@ -279,7 +279,7 @@ switch to the partition of the next window. The switch will happen regardless of
 what the partition is doing at that time; a partition cannot overrun its
 allotted time and thereby cause other partitions to overrun their deadlines.\\
 
-The process level scheduler is a pre-emptive priority scheduler. All processes 
+The process level scheduler is a pre-emptive priority scheduler. All processes
 will at all time have a priority. Processes can only be scheduled when the
 partition they belong to is scheduled by the partition level scheduler. The
 process scheduler selects the process with the highest priority that is also
@@ -289,7 +289,7 @@ that first became ready is scheduled.\cite{arinc_pro_scheduling}\\
 The ARMv7M architecture has two special interrupts that are especially useful
 for scheduling: SysTick interrupt and PendSV interrupt. The SysTick interrupt is
 triggered in a regular interval, and can be used for time based scheduling. The
-PendSV interrupt is triggered by software itself and it can be used to trigger 
+PendSV interrupt is triggered by software itself and it can be used to trigger
 scheduling from other interrupt service routines, e.g. when a process blocks to
 wait for something.
 
@@ -507,22 +507,22 @@ Regions can be nested and overlap.
 The behavior when nesting and overlapping is dictated by the priority of the region as shown in figure \ref{fig:stm32_mpu}.
 
 \subsection{Memory strategy}
-As the memory available is not abundant, there is the need of avoiding wasting memory. For that, the memory needed by the partitions is optimized by a sorting algorithm in order to fit 
-the most partitions possible in a limited region of memory and by expanding the partition size fulfilling 
+As the memory available is not abundant, there is the need of avoiding wasting memory. For that, the memory needed by the partitions is optimized by a sorting algorithm in order to fit
+the most partitions possible in a limited region of memory and by expanding the partition size fulfilling
 the empty gaps. It is important to keep the size, initial pointer and the region of each partition for enable and disable the right area of memory when a different partition is active.
 
 \subsection{System calls}
 \label{ssec:design_system_calls}
-To improve security and robustness, many modern operating systems make clear 
+To improve security and robustness, many modern operating systems make clear
 distinctions between the kernel and applications, and they restrict application
 code from accessing certain peripheral hardware (e.g. storage devices, I/O
-devices, etc.) as well as control registers of the CPU. 
+devices, etc.) as well as control registers of the CPU.
 To restrict only certain code from certain features requires hardware support.
 To accomplish this, many modern CPUs contain two or more different execution
 levels. Normally, the kernel will run in the most privileged execution level
 while application code runs in a more restricted execution level. This prevents
 application code from changing the state of any resources shared with other
-application. This is critical to accomplish ARINC 653's strict space and time 
+application. This is critical to accomplish ARINC 653's strict space and time
 separation. If partition level code is not run in an unprivileged mode, it will
 be able to directly change the CPU time and memory space allocated to it. This
 would negatively affect the partition the resources were stolen from. However,
@@ -533,12 +533,12 @@ necessary the stack, with a value to identify what the partition wishes the
 kernel do, as well as call arguments, then generate an interrupt which will be
 caught by the kernel. Based on the content of the general purpose CPU registers
 and the stack, the kernel determines what the partition level code requested,
-executes the necessary functions and returns the result in the general purpose 
+executes the necessary functions and returns the result in the general purpose
 CPU registers and the stack.
 
 \subsection{Error Handling}
-The error handler is designed in the context of the 
-Health Monitor function specified in the standard. 
+The error handler is designed in the context of the
+Health Monitor function specified in the standard.
 However, its functionality and specific APEX calls won\textquotesingle t be
 approached, since the goal is only to give the developers the possibility
 to see that something is wrong in the system. The idea is to capture only
@@ -547,8 +547,8 @@ handler would then catch.
 
 \section{Schema}
 \label{sec:design_schema}
-An ARINC 653 schema specifies the structure 
-of the configuration and the required elements 
+An ARINC 653 schema specifies the structure
+of the configuration and the required elements
 for the core module.
 The schema is a recipe used to create a configuration file of some type.
 
@@ -559,71 +559,71 @@ ARINC 653 schema, though it can be extended
 into the full schema with some more work.
 %but the subset defined to accommodate the features of open653.
 The scope was limited as outlined in the
-problem statement. \ref{chap:Problem_Statement}) 
+problem statement. \ref{chap:Problem_Statement})
 
 \begin{figure}[H]	\includegraphics[clip=true,trim=0cm 20cm 0cm 0cm,width=\linewidth,keepaspectratio]{figures/open653schema.pdf}
 	\caption{\OSname\ schema design}
 	\label{fig:open653schema}
 \end{figure}
 
-The figure represents the schema and the 
-relationship between the elements. 
+The figure represents the schema and the
+relationship between the elements.
 An ARINC 653 Module has four elements.
-One or more Partitions, a Connection Table, 
-one or more Partition Memory elements, and 
+One or more Partitions, a Connection Table,
+one or more Partition Memory elements, and
 a Module Schedule.
 An ARINC 653 Module has four elements.
-One or more Partition Memory elements, 
+One or more Partition Memory elements,
 a Module Schedule, one or more Partitions and a Connection Table.
 \\\\
-A Partition\_Memory has one or more 
-Memory\_Requirements and two attributes which correlate 
-to its associated partition. The Memory\_Requirements 
-specify the configuration of the partitions memory; 
+A Partition\_Memory has one or more
+Memory\_Requirements and two attributes which correlate
+to its associated partition. The Memory\_Requirements
+specify the configuration of the partitions memory;
 the config includes the amount of memory it requires,
-the type of data the stored, how the data is accessed 
+the type of data the stored, how the data is accessed
 and its physical address on the hardware.
 \\\\
-A Module\_Schedule has one or more 
-Partition\_Schedules and one attribute which defines 
-the major frame. The major frame is the smallest 
-amount of time possible to allow every partition to 
-run at least once. 
+A Module\_Schedule has one or more
+Partition\_Schedules and one attribute which defines
+the major frame. The major frame is the smallest
+amount of time possible to allow every partition to
+run at least once.
 \\
-Partition\_Schedule has one or 
-more Window\_Schedules and four attributes which correlate 
-to its associated partition and defines some timing details 
-not used in this project. PeriodSeconds and PeriodDurationSeconds 
-specify the max time a partition can use in one cycle for 
-its Window\_Schedules to complete. It is unused currently as 
-there is not appropriate error handling to make use of it and 
+Partition\_Schedule has one or
+more Window\_Schedules and four attributes which correlate
+to its associated partition and defines some timing details
+not used in this project. PeriodSeconds and PeriodDurationSeconds
+specify the max time a partition can use in one cycle for
+its Window\_Schedules to complete. It is unused currently as
+there is not appropriate error handling to make use of it and
 Window\_Schedules attributes are sufficient for scheduling.
 \\
-Window\_Schedule defines when a partition needs to run and 
-for how long it will run. PartitionPeriodStart is not used, 
+Window\_Schedule defines when a partition needs to run and
+for how long it will run. PartitionPeriodStart is not used,
 and it purpose is not understood.
 \\\\
-Partition has one or more queuing ports and one or more 
-sampling ports; It has five attributes which specify 
-information about the partition. EntryPoint is the name 
-of the partition initialisation function, SystemPartition 
-specifies what type the partition is. Criticality is not 
-currently used, it is meant to define the importance of a 
+Partition has one or more queuing ports and one or more
+sampling ports; It has five attributes which specify
+information about the partition. EntryPoint is the name
+of the partition initialisation function, SystemPartition
+specifies what type the partition is. Criticality is not
+currently used, it is meant to define the importance of a
 partition.
 \\
-The ports have four attributes which define information 
+The ports have four attributes which define information
 about the port such as size and source or destination.
-Sampling\_Ports are not well supported currently in the 
+Sampling\_Ports are not well supported currently in the
 project but will function. This is due to not having or
 needing any sampling ports in the current implementation.
 \\\\
-A Connection\_Table has one or more Channels and zero attributes. 
+A Connection\_Table has one or more Channels and zero attributes.
 A Channel has one or more source and destination channels and two
-attributes which identify the channel. The Source and 
-Destination have four attributes which correlate 
-to its associated partition, and define the physical address 
-of the channel. An attribute is missing from the original 
-ARINC 653 schema which is Procedure. Procedure is meant to 
+attributes which identify the channel. The Source and
+Destination have four attributes which correlate
+to its associated partition, and define the physical address
+of the channel. An attribute is missing from the original
+ARINC 653 schema which is Procedure. Procedure is meant to
 be used by ports to interact with drivers.
 
 
@@ -636,7 +636,7 @@ be used by ports to interact with drivers.
 \end{figure}
 
 \todo{add ARINC standard reference, grey out unused attributes on diagram}
-The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented in this project. 
+The figure shows the intended schema for a fully compliant ARINC 653 implementation as found in the ARINC standard.  The greyed out areas, are the aspects of the open653 schema not yet implemented in this project.
 
 \subsection{Schema translation}
 
@@ -645,7 +645,7 @@ XML is the chosen configuration file format. XML was chosen as opposed to altern
 \section{APEX}
 \todo[inline]{needs a reference to the System calls just above, or maybe join them}
 The APEX is basically the API for applications running on \OSname{}.
-It is defined by the standard, and the functions are grouped into 
+It is defined by the standard, and the functions are grouped into
 seven major categories \cite{arinc_page_45}. Table \ref{tab:apex_calls}
 contains these the libraries defining these calls (column on the right),
 classified according to the standard.
@@ -686,7 +686,7 @@ in the kernel. \textit{apex\_types.h} defines their arguments:
 global and
 constant variables, as well as the types used by the calls. This was found
 in the standard, in the form of an ANSI C compliant library.
-In input(IN) arguments should be types defined here. The output(OUT) 
+In input(IN) arguments should be types defined here. The output(OUT)
 parameters are dependent on the \texttt{RETURN\_CODE} value, as seen
 in listing \ref{lst:apex_types}.
 
@@ -717,7 +717,7 @@ typedef
 \end{lstlisting}
 \end{figure}
 
-The APEX calls present on \OSname{} are further explained in 
+The APEX calls present on \OSname{} are further explained in
 \nameref{ssec:impl_system_calls}.
 
 
@@ -744,7 +744,7 @@ information about its own state and how they are to be scheduled.
 
 \iffalse
 \section{Agile development}
-The software development process flowed naturally due to previous 
+The software development process flowed naturally due to previous
 experience, curiosity and personal interests. The nature of the project
 allowed the team to cover different areas at the same time, while still
 doing progress, without having a strict plan. Seen as a whole, the project

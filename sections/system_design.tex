@@ -103,7 +103,7 @@ preferred to JTAG, due to physical space constraints. JTAG uses 5
 wires, while SW only uses 2. Also, the IDE of choice can have some limitations
 on the debugging platform.
 
-JTAG is actually an association\footnote{Joint Test Action Group}
+JTAG is actually an association\footnote{Joint Test Action Group\cite{jtag}}
 that develops standards about how
 physical circuit boards should be tested. However, for the rest of
 the document, JTAG will be referred to as the main communication interface
@@ -182,11 +182,8 @@ As seen in figure \ref{fig:CMSIS_HAL}, CMSIS
 defines the data structures and address mapping for some of the ARM peripherals.
 Besides this, it can be used to configure the microcontroller
 oscillators, as well as providing support for the instrumentation trace during debug sessions \cite{cmsis_reference}.
-The HAL library can then use these definitions for implementing its utilities.
-One could easily say that HAL is build on top of CMSIS.
-This can be further understood by looking at the way CMSIS handles
-the exceptions occurring in the chip, while the HAL library configures
-these interrupts.
+HAL is build on top of CMSIS, which defines exceptions specific to the chip.
+HAL uses these definitions to configure interrupts (e.g. SysTick timer).
 
 \begin{figure}[H]
 \centering
@@ -205,10 +202,8 @@ The following list contains the drivers that would provide the OS a basic
 interface to access the hardware.
 
 \begin{labeling}{Watchdog timer}
-	\item [\textbf{System Clock}] provides the frequency at which the
-	peripherals are synchronised. This can later on be scaled up or down
-	to generate the CPU\textquotesingle s and peripherals\textquotesingle
-	\ \ clock.
+	\item [\textbf{System Clock}] is used as the CPU frequency,
+	and is scaled down to provide a clock source for peripherals.\\
 	The system clock relies on an oscillator.
 	There is a multitude of choices, ranging from internal or external
 	oscillators, to high or low speed crystals. In some cases, certain
@@ -255,8 +250,7 @@ the kernel\textquotesingle s features and functionalities.
 
 \subsection{Scheduler}
 \label{ssec:design_scheduling}
-Schedulers are used to allow a system to run more processes than there are
-available CPU cores.
+Schedulers are used to allow a system to run multiple processes concurrently on a single CPU core.
 A scheduler decides which process to execute by an available processor,
 according to predefined rules. Based on these rules, two or
 more processes may run concurrently, sharing CPU time. The ARINC 653
@@ -268,8 +262,8 @@ length intervals, major frames. Each partition is given one or more windows
 (i.e. time slices) in the major frame. Each window has a start time
 relative to the time of the major frame and a duration. Windows are set up by
 the system integrator in the XML file\cite{arinc_part_scheduling}.
-When a partition has run for the duration it is specified, the scheduler will
-switch to the partition containing the next window. The switch will happen regardless of
+When a partition has run for the duration specified, the scheduler
+switches to the partition containing the next window. The switch will happen regardless of
 what the partition is doing at that time; a partition can not overrun its
 allotted time and thereby cause other partitions to overrun their deadlines.\\
 
@@ -525,11 +519,11 @@ initial pointer and the region of each partition for enabling and disabling the 
 \subsection{System calls}
 \label{ssec:design_system_calls}
 To improve security and robustness, many modern operating systems restrict
-application code from accessing certain peripheral hardware (e.g. storage 
+application code from accessing certain peripheral hardware (e.g. storage
 devices, I/O devices) as well as the control registers of the CPU.
 To accomplish this, many modern CPUs utilise two or more execution levels; each
 level adds more restrictions. The kernel runs in the most privileged execution
-level while application code runs in a more restricted execution level. This 
+level while application code runs in a more restricted execution level. This
 prevents application code from having direct access to privileged hardware.
 Application code must then access privileged hardware through the kernel. For
 this, kernels often provide a fixed set of functions that application code may
@@ -540,11 +534,11 @@ a function designator (often just an identification number) and the call argumen
 on the stack and in the general purpose registers before triggering the
 interrupt, application code can signal its' intent to the kernel.
 
-System calls are critical to accomplish ARINC 653\textquotesingle{}s strict 
+System calls are critical to accomplish ARINC 653\textquotesingle{}s strict
 space and time separation. Therefore, \arinc\ explicitly specify that partition
-code must be executed in unprivileged mode only\cite{arinc_page_18}. If 
+code must be executed in unprivileged mode only\cite{arinc_page_18}. If
 partition code is not run in an unprivileged mode, it will
-have the ability to change the CPU time and memory space allocated to it. 
+have the ability to change the CPU time and memory space allocated to it.
 
 \subsection{Error Handling}
 The error handler is designed to give the developers the possibility
@@ -741,7 +735,7 @@ typedef
 
 \section{Partitions and processes}
 \label{design:part_proc}
-Partitions as described in \ref{anal:arinc} are defined at compile-time and
+Partitions as described in section \ref{anal:arinc_overview} are defined at compile-time and
 contain one or more processes, which are initialised during run-time.
 A partition is defined to be one or more structures containing information about
 its execution and resources.

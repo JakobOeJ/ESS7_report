@@ -494,14 +494,13 @@ Regions can have sub-regions, but because the minimum regions/sub-regions size i
 sub-regions are only available for regions of at least 256 bytes of size.
 Partitions above this threshold can have eight sub-regions.
 
-\begin{wrapfigure}{R}{0.3\textwidth}
-	\vspace{-20pt}
-	\centering
-	\includegraphics[width=0.3\textwidth]{mpu_overlapping_regions.pdf}
-	\caption{Example of nested and overlapping regions from \cite{stm32_mpu}.}
-	\label{fig:stm32_mpu}
-	\vspace{-40pt}
-\end{wrapfigure}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{mpu_overlapping_regions.pdf}
+		\caption{Example of nested and overlapping regions from \cite{stm32_mpu}.}
+		\label{fig:stm32_mpu}
+	\end{center}
+\end{figure}
 
 Every region has a fixed priority and is numbered from 0-7, where region 7 has the highest priority.
 Regions can be nested and overlapping.

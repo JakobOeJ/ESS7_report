@@ -45,20 +45,6 @@ developed on a Mini-M4 for STM32?}
 \clearpage
 
 \section{Discussion}
-\iffalse
-The main concerns presented by the forums communities were the security levels of the implementation of
-this OS. The two main topics were: how to identify an error and how to track it to the origin and how the
-system will react to different levels of failure, from small to fatal errors. If the entire system would
-reboot, only restart the partition or block it.\\
-Other problems suggested were related to the interrupts, when context switching if the next partition
-would also have access to all them, and how the control is made to prevent any errors related.\\
-The idea of an OpenSource implementation like this was well accepted due to the lack of examples avaiable.
-It was given an example of an implementation in the USA, of a similar system and that is still used for
-communication infrastructures.
-The whole text is presented in the \nameref{chap:Forum Responces}.
-\todo{can't make the refrence work, help!}
-\fi
-
 The implementation of \OSname{} as a whole was an interesting challenge
 to say the least. Based on the group\textquotesingle s decisions taken in the beginning 
 of the project, the path it followed proved to provide challenging, but
@@ -75,3 +61,13 @@ but also beneficial for covering the many aspects of building an operating syste
 
 
 \section{Perspective}
+The main concerns presented by the forums communities were the security levels of the implementation of
+this OS. The two main topics were: how to identify an error and how to track it to the origin and how the
+system will react to different levels of failure, from small to fatal errors. If the entire system would
+reboot, only restart the partition or block it.\\
+Other problems suggested were related to the interrupts, when context switching if the next partition
+would also have access to all them, and how the control is made to prevent any errors related.\\
+The idea of an OpenSource implementation like this was well accepted due to the lack of examples available.
+It was given an example of an implementation in the USA, of a similar system and that is still used for
+communication infrastructures.
+The whole conversation is presented in Appendix \ref{chap:Forum Responses}.

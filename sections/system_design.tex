@@ -512,28 +512,27 @@ initial pointer and the region of each partition for enabling and disabling the 
 
 \subsection{System calls}
 \label{ssec:design_system_calls}
-To improve security and robustness, many modern operating systems make clear
-distinctions between the kernel and applications, and they restrict application
-code from accessing certain peripheral hardware (e.g. storage devices, I/O
-devices) as well as control registers of the CPU.
-To restrict only certain code from certain features require hardware support.
-To accomplish this, many modern CPUs contain two or more different execution
-levels. Normally, the kernel will run in the most privileged execution level
-while application code runs in a more restricted execution level. This prevents
-application code from changing the state of any resources shared with other
-applications. This is critical to accomplish ARINC 653\textquotesingle{}s strict space and time
-separation. If partition level code is not run in an unprivileged mode, it will
-be able to change the CPU time and memory space allocated to it. However,
-since partition level code does on occasion need access to some shared resources,
-yet is unable to do so directly, it must request the kernel do it. To do this,
-partition level code must preload the general purpose CPU registers, and if
-necessary the stack, with a value to identify what the partition wishes the
-kernel to do, as well as call arguments, then generate an interrupt which will be
-caught by the kernel. Based on the content of the general purpose CPU registers
-and the stack, the kernel determines what the partition level code requested,
-executes the necessary functions and returns the result in the general purpose
-CPU registers and the stack.
+To improve security and robustness, many modern operating systems restrict
+application code from accessing certain peripheral hardware (e.g. storage 
+devices, I/O devices) as well as the control registers of the CPU.
+To accomplish this, many modern CPUs utilise two or more execution levels; each
+level adds more restrictions. The kernel runs in the most privileged execution
+level while application code runs in a more restricted execution level. This 
+prevents application code from having direct access to privileged hardware.
+Application code must then access privileged hardware through the kernel. For
+this, kernels often provide a fixed set of functions that application code may
+call. Calls to these functions are called system calls. System calls must escape
+the unprivileged application level and enter into the privileged kernel. This is
+accomplished by triggering an interrupt that the kernel will catch. By preparing
+a function designator (often just an identification number) and the call arguments
+on the stack and in the general purpose registers before triggering the
+interrupt, application code can signal its' intent to the kernel.
 
+System calls are critical to accomplish ARINC 653\textquotesingle{}s strict 
+space and time separation. Therefore, \arinc\ explicitly specify that partition
+code must be executed in unprivileged mode only\cite{arinc_page_18}. If 
+partition code is not run in an unprivileged mode, it will
+have the ability to change the CPU time and memory space allocated to it. 
 
 \subsection{Error Handling}
 The error handler is designed to give the developers the possibility

@@ -339,13 +339,19 @@ and who saves them.\\
 		xPSR		&	Hardware	& 	Special-purpose Program Status Register\\
 		\hline
 	\end{tabular}
-	\captionof{table}{A table of the CPU registers of a Cortex M4. Notice that register R13 (stack pointer) is banked;
+	\captionof{table}{A table of the CPU registers of a Cortex M4. Notice that
+	register R13 (stack pointer) is banked;
 	there are separate registers for user space and kernel space.
-	For registers, aliases are written in parenthesis, and for purpose, calling convention is written in parenthesis.}
+	Aliases are written in parenthesis in the Registers column, and calling convention is written in parenthesis in the Purpose column.}
 	\label{tab:registers}
 \end{table}
 
-Additionally, the Cortex M4 utilises two different stack pointers, the Master Stack Pointer (MSP) and the Process Stack Pointer (PSP).
+Additionally, the Cortex M4 utilises a banked\footnote{A banked register is a
+logical register implemented across multiple physical registers. The state of 
+the hardware determines which physical register the logical register refers to.
+\cite{register_banking}} stack pointer.
+The logical SP register consists of two physical registers: the Master Stack 
+Pointer (MSP) and the Process Stack Pointer (PSP).
 The MSP is intended for kernel space execution and the PSP is intended for user space execution, but there is no enforcement.
 Switching between the two cannot be done in an exception handler, but must instead be done by the NVIC.
 Since the path to the new context goes through the NVIC, the NVIC is also partially responsible setting the state of the processor.

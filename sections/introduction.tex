@@ -10,17 +10,18 @@ in regards to how dependable they have to be. A wristwatch skipping a second has
 while the failure of a surgical robot has to be avoided at all costs.
 Technical standardization addresses these requirements,
 to better reason about the expected reliability of such systems;
-Some standards such as \arinc{} enforce high reliability while others focus on other metrics.
+some standards such as \arinc{}\cite{arinc_whole_standard} enforce high reliability while others focus on other metrics.
 \\\\
 One might argue that these regulations are loosely formulated and too limited in scope.
 For example, if one compares the existing standards for the avionics and automotive fields,
 there are large discrepancies.
 The standards in use in the automotive industry are applying certain rules from the avionics regulations,
-but only to a certain extent \cite {can_cars_fly}.
+but only to a certain extent\cite{can_cars_fly}.
 These two fields seem to be converging in terms of safety requirements as the automotive industry develops.
-\\
 This gives rise to the idea of applying these avionics safety critical systems to other fields.
-There is potential for reducing weight of products with a single computing device, facilitating more safety procedures
+There is potential for reducing weight of products with a single 
+computing device\cite{boeing_weight_reduction},
+facilitating more safety procedures
 or increasing portability of applications across generations of products.
 \\\\
 This project\textquotesingle s cornerstone is developing an Operating System based on a defined subset of the \arinc{} standard,
@@ -29,7 +30,8 @@ that facilitates running safety critical applications compliant with the \arinc{
 The two main areas of interest are:
 \\
 \begin{itemize}
-\item The standard itself, that specifies an IMA approach to run applications
+\item The standard itself, that specifies an IMA 
+(Integrated Modular Avionics) approach to run applications
 \item The physical platform that would contain the system and serve as a research launchpad
 \end{itemize}
 The \nameref{chap:analysis} chapter provides more details about the software specification that need to be fulfilled,

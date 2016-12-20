@@ -531,6 +531,15 @@ and the stack, the kernel determines what the partition level code requested,
 executes the necessary functions and returns the result in the general purpose 
 CPU registers and the stack.
 
+\subsection{Error Handling}
+The error handler is designed in the context of the 
+Health Monitor function specified in the standard. 
+However, its functionality and specific APEX calls won\textquotesingle t be
+approached, since the goal is only to give the developers the possibility
+to see that something is wrong in the system. The idea is to capture only
+some of the faults or failures and throw an exception that the error
+handler would then catch.
+
 \section{Schema}
 \label{sec:design_schema}
 An ARINC 653 schema specifies the structure 
@@ -710,13 +719,6 @@ One of the core concepts of \arinc\ is partitions. The space and time separation
 defined in \arinc\ is managed at partition-level.
 
 \subsection{Processes}
-
-\subsection{Error Handling}
-The error handler is designed in the context of having part of the 
-Health Monitor specified in the standard taking care of the faults and
-failures. However, its specific APEX calls won\textquotesingle t be
-approached, since the goal is only to give the developers the possibility
-to see that something is wrong in the system.
 
 \section{Agile development}
 The software development process flowed naturally due to previous 

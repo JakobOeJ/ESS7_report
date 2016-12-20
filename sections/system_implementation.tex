@@ -1345,7 +1345,7 @@ identifier.
 One of the features of the Health Monitor of \arinc\ is to handle faults
 occurring in partitions, and do an action that has been defined in the XML
 schema, e.g. restart the partition. As this is not implemented, there is no
-defined fault handling. To keep the implementation simple, \OSname has no 
+defined fault handling. To keep the implementation simple, \OSname\ has no 
 automatic error recovery; all errors detected by the hardware (privilege
 violation, memory access violation, etc.) are handled by halting the system.
 When the hardware throws an exception, \OSname\ handles these by dumping the
@@ -1353,6 +1353,10 @@ values of the CPU registers at the time the exception was trigger over the UART
 connection. To make it more visible that the system has halted, all LEDs are 
 turned on. Finally the system halts. The system can be reset by either cycling
 the power or pressing the dedicated reset button on the Mini-M4 board.
+
+For the drivers, if they are not initialised properly, the HAL library
+would notify the error handler that it encountered an error, and again, turn
+on the LEDs and halt the system.
 
 \section{Partitions and processes}
 

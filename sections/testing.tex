@@ -56,4 +56,23 @@ Part 1 of the standard. The extended services (Part 2), are not being
 tested. This could be done in the future phases of the \OSname{} OS in order
 to demonstrate the compliance of the APEX behavior. 
 
-\section{Message passing}
+\section{Interpartition Communication}
+Interpartition Communication is tested for queuing ports, not sampling ports.
+The test is done with the three partitions \texttt{red\_toggler},
+\texttt{yellow\_toggler} and \texttt{stdio\_sys}. \texttt{red\_toggler} and
+\texttt{yellow\_toggler} broadcast their respective partition name as a string
+to the \texttt{stio\_channel}. The \texttt{stdio\_sys} reads any message in its
+time-frame and transmit the strings by UART to a connected terminal. A sample of
+a recorded output is depicted in figure \ref{fig:message_test}, Showing that the
+communication scheme works as intended.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{message_test.png}
+	\caption{Terminal showing the strings originating from two different
+		partitions.}
+	\label{fig:message_test}
+\end{figure}
+
+Even though modules is implemented in the codebase for sampling ports, it is yet
+to be fully integrated into \OSname{} and therefore isn't tested.

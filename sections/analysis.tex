@@ -25,14 +25,16 @@ where time is critical: military, automotive or avionics.
 In the avionic industry, the devices and subsystems used for
 controlling the peripherals have to be reliable and operate using
 fixed time constraints. Integrated Modular Avionics is a term used
-to describe a distributed real-time c4omputer network,
+to describe a distributed real-time computer network,
 deployed in the avionics industry \cite{ima_description}.
 Modularity, keeping track of the time and criticality levels are
-the main characteristics of such a network.
-This implies that the applications running would share the
-system\textquotesingle s resources following a set of well defined rules.
+the main characteristics of such a network. IMA also aims to centralise data 
+processing by routing sensor data to only a few compute nodes, rather than
+processing data at the sensor. This implies that the applications running would 
+share the system\textquotesingle s resources following a set of well defined 
+rules.
 
-The main  benefits of using the IMA concept are: aircraft weight reduction
+The main benefits of using the IMA concept are: aircraft weight reduction\cite{boeing_weight_reduction}
 and lower maintenance costs\cite{arinc_scarlett}.
 There are certain guidelines how such a system
 should be designed and implemented, as well as standards that specify
@@ -224,10 +226,10 @@ An existing platform could be used as a starting point for
 the implementation of \OSname{}.
 
 \textbf{ARLX}\cite{arlx}
-is an open-source platform available. It is a prototype hypervisor
-for ARINC 653 that uses Linux to partition the system.
+is an open-source platform available. It is a bare-metal hypervisor 
+for ARINC 653 based on the Xen hypervisor, with a Linux partition as the main
+virtual machine (in Xen terminoligy, domain 0).
 It has been developed in accordance with DO-178C.
-\todo{explain this better}
 
 \textbf{Commercial platforms}
 such as VxWorks 653 (DO-178C certified)\cite{vxworks},

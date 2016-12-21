@@ -475,8 +475,7 @@ A simple buffer has to be provided for this by the auto-generated structures.
 
 
 \subsection{Memory Management}
-ARINC 653 advertises time and space separation covered in.
-\todo[inline]{ref to sec in analysis}
+ARINC 653 advertises time and space separation covered in section \ref{anal:arinc}.
 To accommodate for the feature of separating partitions in space,
 this operating system relies on the memory protection unit (MPU)
 to manage permissions across sections of memory,
@@ -659,7 +658,6 @@ Procedure is meant to be used by ports to interact with drivers.
 	\label{fig:arinc653schema}
 \end{figure}
 
-\todo{add ARINC standard reference, grey out unused attributes on diagram}
 The figure shows the intended schema for a fully compliant ARINC 653 implementation
 as found in the \arinc{} standard. The greyed out areas,
 are the aspects of the \OSname{} schema not yet implemented in this project.

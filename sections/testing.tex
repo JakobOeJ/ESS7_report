@@ -1,12 +1,12 @@
 \chapter{Testing}
 
-\section{MPU}
-The sizes of MPU memory regions are powers of two. This means that the more
+\section{Memory Mapping Algorithm}
+The sizes of memory regions are powers of two. This means that the more
 memory a partition uses, the more memory it can potentially waste. To combat
-this waste, partitions can share MPU memory regions, and be separated
+this waste, partitions can share memory regions, and be separated
 into subregions. This will allow the same level of safety, but more control.
 To help optimise the memory layout of partitions a utility program is implemented
-that can sort the memory regions of partitions. Each MPU region can contain 8
+that can sort the memory regions of partitions. Each region can contain 8
 subregions. All subregions within a region are of equal size.
 \\\\
 The following is an example of how this utility program can help optimise a

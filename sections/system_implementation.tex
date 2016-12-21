@@ -655,7 +655,7 @@ The symbols for the functions and variables are written to the file whilst parsi
 The static elements of its generation are handled by two functions and the self.idle\_partition set in the init.
 The static functions are called write\_file\_c\_header and write\_file\_c\_footer.
 These functions write the static code needed at the beginning and the end of the
-\textit{xml\_data.c} file to function, e.g. the includes and the #endif.
+\textit{xml\_data.c} file to function, e.g. the includes and the \#endif.
 The idle partition is not included in the XML.
 It is hard-coded into the partition loop as it is always required to exist.
 For more information about the idle partition refer to section \ref{ssec:idle_part}.
@@ -677,25 +677,25 @@ figure \ref{fig:cstructs}.
 	\label{fig:cstructs}
 \end{figure}
 
-The global structure of ARINC\_653\_Module has been removed,
+The global structure of ARINC\_653\_Module (figure \ref{ig:open653schema}) has been removed,
 its sub elements now exist without a dependency.
 Module\_schedule as also been removed, leaving its attribute majorFrameSeconds as an independent variable definition.
-partition\_memory (part\_mem\_t) and partition\_schedule have maintained their one to many structures with their sub elements.
-Partitions sub elements, sampling and queuing ports, have combined into a single structure called ports.
-The XML element Connection\_Table has been removed, and StandardPartition has
-been transformed into a port reference list which shares an association with the ports.
+partition\_memory (part\_mem\_t) and partition\_schedule have maintained their one-to-many structures with their sub elements.
+Partitions\textquotesingle{} sub elements, sampling and queuing ports, are combined into a single structure called ports.
+The XML element Connection\_Table is removed, and StandardPartition is
+transformed into a port reference list which shares an association with the ports.
 \\\\
 The following structures have been extended to contain an array of its substructures:
 \begin{itemize}
-	\item part\_mem\_t contains an array memory\_arr which references to the memory information of a given partition.
-	\item partition\_schedule contains an array windows\_arr which references to the timing window in which a partition is executed.
-	\item partitions\_t contains an array ports which references to the ports available to the partition.
-	\item and channel\_t contains an array ports which references to the ports available to the partition.
+	\item part\_mem\_t contains an array memory\_arr which references to the memory information of a given partition
+	\item partition\_schedule contains an array windows\_arr which references to the timing window in which a partition is executed
+	\item partitions\_t contains an array ports which references to the ports available to the partition
+	\item and channel\_t contains an array ports which references to the ports available to the channel
 \end{itemize}
 
-each with an associated variable to indicate the number of elements in the array.\\
+Each of these structures has an associated variable to indicate the number of elements in the array.\\
 
-port\_t is a generic structure to define a port independent on its type as
+port\_t is a generic structure defining a port independent of its type as
 detailed in section \ref{impl:ports}.
 
 

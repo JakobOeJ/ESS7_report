@@ -700,12 +700,13 @@ detailed in section \ref{impl:ports}.
 
 
 \section{OS kernel}
-This section gives an overview of the the features in \OSname\ and how they are
-implemented. At the end a feature list is provided to give summery of the features
-and services implemented in \OSname .
+This section gives an overview of the features of \OSname\ and how they are
+implemented. At the end a feature list is provided to give summary of the features
+and services implemented in \OSname{}.
 
-\subsection{OS Initialization}
-\OSname\ is initialized from the \texttt{main()} function in /src/kernel/main.c.
+
+\subsection{OS Initialisation}
+\OSname\ is initialised from the \texttt{main()} function in \textit{/src/kernel/main.c}.
 Its job is to set up the following:
 
 \begin{enumerate}
@@ -718,21 +719,21 @@ Its job is to set up the following:
 	\item Enter unprivileged mode by setting a bit in a register
 \end{enumerate}
 
-A more complete implementation of ARINC 653 would also have to setup the MPU.
-Though the MPU is designed and testable code does exist, it is at this point yet
+A more complete implementation of ARINC 653 would also have to set up the MPU.
+Though the MPU is considered in design (dection \ref{ssec:design_mpu}),
+and testable code does exist, it is at this point yet
 to be included into the kernel as a service and for this reason no setup is done.\\
 
 The setup of the UART is fixed to use port C pin 10 and 11 with a baud-rate of
 115200 baud. Setting it up is a matter of passing these arguments to the HAL
 library and is not covered further in the report.\\
-The same argument can be made about the LEDs which also not will be described.\\
 
-The last action taken by the main function is enabling the SysTick interrupt and
-entering unprivileged mode start the scheduler.\\
+The last action taken by the main function is enabling the SysTick interrupt
+for starting the scheduler and entering unprivileged mode.\\
 
-In the following the sections the main clock setup (section \ref{impl:clock_setup},
+In the following sections the main clock setup (section \ref{impl:clock_setup}),
 the partition and process setup (section \ref{impl:part_proc_setup}), and
-partition schedule setup (section \ref{sssec:build_schedule}) is explained in
+partition schedule setup (section \ref{sssec:schedule_building}) are explained in
 further detail.
 
 
@@ -740,12 +741,12 @@ further detail.
 \label{impl:clock_setup}
 The system clock is setup using its specific driver, explained in
 \ref{ssec:system_clock}. The driver sets the core to run at 168 MHz, as
-well as prescaling this frequency for the peripheral buses.
+well as scaling this frequency for the peripheral buses.
 
 
 \subsubsection{Partition and Process Setup}
 \label{impl:part_proc_setup}
-The idle partition (explained in section \ref{sssec:schedule_building}) is set up
+The idle partition (explained in section \ref{ssec:idle_part}) is set up
 first using its entrypoint \texttt{idle\_main}.\\
 
 The rest of the partitions listed in the auto-generated C file are initialised
@@ -753,30 +754,29 @@ by setting the number of active processes to one, setting up their specified
 entrypoint with a memory address within their memory space and setting the rest
 of the empty process entries to \texttt{DORMANT}.\\
 
-Note that in this implementation every process is given 1KB of RAM to use for
-stack. This can course a fault if partitions initializes more processes than
-their defined memory spaces holds.
+Note that in this implementation every process is given 1 KB of RAM to use for
+stack. This can cause a fault if partitions initialise more processes than
+their defined memory spaces hold.
 
 
 \subsubsection{Building the schedule}
 \label{sssec:schedule_building}
 The partition schedule is defined in the XML schema file as windows (see
-\ref{sssec:impl_windows}). Windows in the XML schema, as well as in xml\_data.c
-file output by the schema parser, are ordered by partition, not chronologically.
-Additionally, windows in the XML schema are not subelements of partitions, but
-are instead separate elements, referencing the partition they belong to by ID.
+\ref{sssec:impl_windows}). Windows output by the parser, are ordered by partition, not in chronological order.
+Additionally, windows in the XML schema are not sub-elements of partitions, but
+are instead separate elements, referencing the partition they belong to by ID.\\
 
 As a result, to do any scheduling of windows, it is necessary to search through
 all windows to find the next one within a major frame, and then search through
 all partitions to find the partition with the same ID. To make matters more
 complicated, the XML schema may contain implicit idle periods (periods with no
 defined windows). To lighten the burden on the scheduler, the work to build a
-schedule by ordering the windows chronologically and inserting explicit idle
+schedule by ordering the windows in chronological order and inserting explicit idle
 periods are done during system initialisation.\\
 
-Provided the same XML schema, the schedule is also always the same; each time
-the system boots, a schedule identical to the one last used will be built.
-In future builds of \OSname , the schedule should ideally be built by the XML
+Provided the same XML schema, the schedule is always the same; each time
+the system boots, a schedule identical to the one last used is built.
+In future builds of \OSname{}, the schedule should ideally be built by the XML
 schema parser, to avoid rebuilding the same schedule during each boot of the
 system.
 
@@ -819,11 +819,9 @@ $matchingWindow \leftarrow NULL$\;
 }
 \end{algorithm}
 
-Provided that the data in the XML schema is valid, i.e. there is window
-referencing a partition that does not exist, and provided that the major frame
-is shorter than 5000 (this number is easily changeable) time units, this
+Provided that the data in the XML schema is valid, this
 algorithm will create a schedule of chronologically ordered windows, including
-windows pointing to the idle partition.\\
+windows pointing to the idle partition.
 
 \begin{figure}
 	\centerline{\includegraphics[width=\paperwidth,angle=90,clip,trim=0 1cm 0 0]{figures/demo_windows.pdf}}
@@ -843,41 +841,39 @@ driven rescheduling. Partitions are exclusively rescheduled because of time,
 whereas processes may be rescheduled because of both time and events.
 As for temporal scheduling, the ARINC 653 specification does not explicitly
 specify a minimum or maximum time resolution for scheduling, though it does
-imply a resolution of 1 nanosecond should be available\cite{arinc_time}.
+imply a resolution of 1 nanosecond should be available\cite{arinc_time}.\\
 
-For \OSname\ the SysTick is used for triggering temporal scheduling. This choice
-also led to the choice of a time resolution of 1 millisecond. Scheduling is
+For \OSname\ the SysTick is used for triggering temporal scheduling. This
+led to a time resolution of 1 millisecond. Scheduling is
 never disabled; every millisecond the scheduler will be invoked and check which
-process of which partition should run next. Therefore, increasing the resolution
-of time, e.g. to 1 nanosecond, would increase the overhead of scheduling; the OS
-would spend a greater amount of time handling scheduling compared to executing
-user code.
+process of which partition should run next.\\
 
-Oppositely, decreasing the resolution would limit the places where \OSname\ is
-viable, as certain tasks require a certain minimum resolution. For example,
-assuming the system is continuously moving, a sorting robot has only a certain
-time to identify objects before they pass by its sensors. If time resolution of
-the underlying operating system of such a robot is too low, object may pass the
-robots sensors before the code checking the sensors are rescheduled.\\
-
-Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
-timed waits, this is not supported in \OSname . Given the maximum frequency of
-168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.\\
+%Oppositely, decreasing the resolution would limit the places where \OSname\ is
+%viable, as certain tasks require a certain minimum resolution. For example,
+%assuming the system is continuously moving, a sorting robot has only a certain
+%time to identify objects before they pass by its sensors. If time resolution of
+%the underlying operating system of such a robot is too low, object may pass the
+%robots sensors before the code checking the sensors are rescheduled.\\
+%
+%Though the \arinc\ specification implies a 1 nanosecond resolution, at least for
+%timed waits, this is not supported in \OSname . Given the maximum frequency of
+%168 MHz for the MINI-M4, a nanosecond resolution would be physically impossible.\\
 
 Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
 function is called directly by the NVIC when the SysTick timer triggers an
-interrupt. \texttt{SysTick\_} \texttt{Handler} function first saves the current
+interrupt. \texttt{SysTick\_} \texttt{Handler} first saves the current
 context, then invokes the partition scheduler, followed by the process scheduler.
 Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
-restores the context of chosen process and returns control to the NVIC.
+restores the context of chosen the process and returns control to the NVIC.
+
 
 \subsubsection{SysTick}
 \label{sssec:systick}
 The SysTick timer is a 24-bit decreasing timer that wraps when reaching zero.
-Unlike other timers on the MINI-M4, this timer is specified as part ARMv7M
+Unlike other timers on the MINI-M4, this timer is specified as part of the ARMv7M
 specification. Other timers are implementation specific; the vendor decides
 which timers to add to a chip. Therefore, between two different boards, there
-may be a different number of timers, and timers may have a different resolution.
+may be a different number of timers, and timers may have a different resolutions.
 This makes it more difficult to port code from one board to another. The SysTick
 timer however, is guaranteed to be 24-bit on any board that implements it. In the
 Cortex-M group of ARM microcontrollers, the SysTick timer is required for M3, M4
@@ -890,8 +886,9 @@ Unless otherwise specified, this timer operates in polling mode; software has to
 poll for wraps, but it is possible to program the SysTick timer to trigger an
 interrupt upon wrapping.
 
-By default the HAL library sets up the SysTick timer to wrap every 1 millisecond
+By default, the HAL library sets up the SysTick timer to wrap every 1 millisecond
 and to trigger an interrupt upon wrapping.
+
 
 \subsubsection{Context Switching}
 There are multiple different states the processor can be in, when a context
@@ -901,20 +898,21 @@ and whether the FPU was used by the process or not. Because of this, the context
 switch algorithm must start by determining the processor state in order to know
 which registers
 to save and which stack to save them to.\\
-The processor state is saved in the LR register, and it can be one of
-the possible six EXC\_RETURN values (see figure \ref{tab:exc-return}).\\
+The processor state is saved in the LR register, and it can have one of
+the possible six EXC\_RETURN values (see table \ref{tab:exc-return}).\\
 If the pre-empted process used the FPU, the FPU registers S16 to S31
 should also be saved by software in addition to the general purpose registers.
-Because of time constraint, this was not implemented.\\
+Because of time constraints, this was not implemented.\\
 The registers are saved entirely on the stack. Therefore, it is important for
 the software to know which
 stack pointer to use when saving the remaining registers. Therefore the first
-thing the interrupt service routine (ISR) used for scheduling must do, is to inspect
+thing the interrupt service routine (ISR) used for scheduling is to inspect
 the \excreturn\ value in the LR register to determine whether to use the
-Master Stack Pointer or the Process Stack Pointer. The software must then, at
-the address denoted by the stack pointer, save the registers that have yet to be
-saved, and update the stack pointer, before saving both the stack pointer and
-the \excreturn\ value to the process structure elsewhere in memory. This is all
+Master Stack Pointer or the Process Stack Pointer.
+Registers are saved at the address denoted by the stack pointer,
+efore saving both the stack pointer and
+the \excreturn\ value to the process structure elsewhere in memory.
+This is all
 done in assembly to make sure that there is complete control over which
 registers are used, so as to avoid overwriting any registers that have yet to be
 saved. This is absolutely necessary, as otherwise the state of register for a
@@ -924,7 +922,7 @@ compiler generated prologue and epilogue. This means that the compiler does not
 save any registers on the stack before using them, and it does not restore them
 before ending a function.}, to avoid the compiler changing registers before the
 context can be saved, and to give complete control over which value is pushed to
-the PC register at the end of the ISR. Listing \ref{list:context_save} show the
+the PC register at the end of the ISR. Listing \ref{list:context_save} shows the
 code that saves contexts on the stack.\\
 \begin{figure}
 \lstset{
@@ -984,7 +982,7 @@ to. Lastly, execution must return to the process by pushing the \excreturn\ valu
 to the PC register. The \excreturn\ value pushed to the PC register must be the
 same as that read from the LR register when the process was interrupted.
 Figure \ref{fig:scheduling_sequence_diagram} shows the flow when switching contexts.
-Listing \ref{list:context_restore} show the source code that restores the
+Listing \ref{list:context_restore} shows the source code that restores the
 context of a process and branches to the \excreturn .
 \begin{figure}[H]
 	\centerline{\includegraphics[width=\paperwidth-2cm,]{figures/scheduling_sequence_diagram.pdf}}
@@ -1030,12 +1028,14 @@ static inline void context_restoreAndSwitch(uint32_t stackpointer, uint8_t exc_r
 }
 \end{lstlisting}
 \end{figure}
+
+
 \subsubsection{Windows}
 \label{sssec:impl_windows}
 Windows are the abstract concept used by system integrators to schedule
 partitions in \arinc . A window consists of a start time, relative to the major
 frame, and a duration. These windows are specified by the system integrator in
-the XML schema (for more, see \ref{sec:design_schema}).\\
+the XML schema (see section \ref{sec:design_schema}).\\
 Time is allocated to partitions according to the windows specified in the XML
 schema, but windows do not have to be contiguous; there may be unused time
 between the end of one window and the start of the next. In that case, this time
@@ -1043,53 +1043,52 @@ is considered to be an implicit idle period.\\
 
 To see an example of how windows from the XML are reordered in the kernel, and
 how implicit idle periods are filled in, see figure \ref{fig:demo_windows}.
+
+
 \subsubsection{Partition Scheduler}
 \label{sssec:impl_partition_scheduler}
-During the initialisation of the system, a static schedule is build based on the
-windows specified in the XML schema. To read more about this, see \ref{sssec:build_schedule}.
+During the initialisation of the system, a static schedule is built based on the
+windows specified in the XML schema (see section \ref{sssec:schedule_building}).\\
 
 The partition scheduler is supposed to keep track of the position within a major
 frame, and based on the position, figure out which window that corresponds to,
-and then schedule the partition of that window.
+and then schedule the partition of that window.\\
 
 The scheduler keeps track of the position within a major frame with the HAL
 tick. This tick is incremented every millisecond. This is the same tick used by
-delay function (see \ref{ssec:delay}). The position within each major frame is
-derived by the tick count modulo divided by the length of a major frame in
+the delay function (section \ref{ssec:delay}). The position within each major frame is
+derived by the tick count modulo the length of a major frame in
 milliseconds. If the result of this operation is zero, it is assumed that a new
 major frame has begun. Otherwise, if the position within the major frame is on
-or after the active window closes, the scheduler switches to the next window,
-and thereby schedules the next partition. Although the time at which a window closes
+or after, the active window closes. The scheduler then switches to the next window,
+and schedules the next partition. Although the time at which a window closes
 can be derived from the start time plus the duration, the end time of the
 active window is cached in memory to avoid repeated calculation of the end time.
 
+
 \subsubsection{Process scheduler}
 Processes are scheduled based on priority and state. Of the processes in the
-READY state, the one with the highest priority should be scheduled. If there are
-two or more processes that are in the READY state and that have the highest
-priority, then the one that transitioned from the DORMANT or the WAITING state
-to the READY state first should be scheduled.
+READY state, the one with the highest priority should be scheduled.\\
 
-To accomplish this goal, the process scheduler first iterates through all the
+The process scheduler first iterates through all the
 processes of a partition and selects the first available process in the READY
 state. However, the processes are not stored in a ready queue, but are instead
 stored only in the order they were created. Therefore, finding the first ready
 processes does not guarantee that it is also the processes with the highest
 priority. The scheduler therefore continues to iterate through the available
-processes to try to find a process better fulfilling the scheduling rules. For
-each iteration, if a process better fulfills the rules, it is selected as the
+processes to try to find a better fitting process. For
+each iteration, if a process is found, it is selected as the
 base for further iterations. At the end of the loop, the process in the READY
-state with the highest priority will be selected, and if there are other
-processes with the same priority, the selected process will be the one that
-transitioned from DORMANT or WAITING among them first.
+state with the highest priority will be selected.\\
 
 If there are no processes in the READY state, none will be selected, and kernel
 will fault, so each partition must have at least one process in the READY state.
 
+
 \subsection{Ports}
 \label{impl:ports}
-Interpartition communication (see section \ref{ssec:interpart_comm} and \ref{design:interpart_comm})
-is implemented with an initialization function and a function for every APEX call to the given port type.
+Interpartition communication (section \ref{design:interpart_comm})
+is implemented with an initialisation function and a function for every APEX call to the given port type.
 
 As described in \ref{design:interpart_comm},
 a generic port struct as referenced in listing \ref{list:port_struct} is used to define a port with all its attributes.
@@ -1330,16 +1329,18 @@ violation, memory access violation, etc.) are handled by halting the system.
 When the hardware throws an exception, \OSname\ handles these by dumping the
 values of the CPU registers at the time the exception was trigger over the UART
 connection. To make it more visible that the system has halted, all LEDs are
-turned on. Finally the system halts. The system can be reset by either cycling
-the power or pressing the dedicated reset button on the Mini-M4 board.
+turned on. Finally the system halts. The system can be reset by either reconnecting
+the power or pressing the dedicated reset button on the Mini-M4 board.\\
 
 For the drivers, if they are not initialised properly, the HAL library
 would notify the error handler that it encountered an error, and again, turn
 on the LEDs and halt the system.
 
+
 \section{Partitions and processes}
 Partitions and processes are implemented data structures as described in section
 \ref{design:part_proc} of \nameref{chap:system_design}.
+
 
 \subsection{Partitions}
 Partitions are wrapped in the struct \texttt{partition\_t} (see listing
@@ -1487,6 +1488,8 @@ else is scheduled, while using the minimum amount of resources possible.
 To keep the partition as lightweight as possible, the partition only does a
 \texttt{NOP}-loop. See figure \ref{list:idle_src} to see the source code of the
 idle partition.\\
+
+\begin{minipage}{\linewidth}
 \begin {lstlisting}[
 	label=list:idle_src,
 	caption=The entire code of the idle partition (excluding the assembly flags)]
@@ -1496,6 +1499,7 @@ idle_main:
 	NOP
 	B   idle_main
 \end{lstlisting}
+\end{minipage}
 
 The partition code is written in assembly to make sure it uses the least possible
 resources. While executing, the code uses no memory, although it needs a at
@@ -1605,18 +1609,20 @@ accessed through an APEX, with added integration with the process scheduler.
 The same is the case for the \texttt{stdio\_sys} partition in section
 \ref{impl:stdio_sys}.
 
-\subsection{evil}
+
+\subsection{The evil partition}
 The evil partition is implemented to validate the space separation of partitions.
 In two ways, it attempts to overcome the space separation and either change
 memory belonging to other partitions or branch to a code belonging to another
 partition.\\
 By default, both of these attempts to overcome the space separation are disabled.
-This is done because the MPU is not currently being used to protect memory, and
-therefore it is moot to check its implementation. Additionally, as the Health
+This is done because the MPU is not currently being used to protect memory.
+Additionally, as the Health
 Monitor is not implemented, issuing an instruction that requires privilege
 or modifying a register that requires privilege will crash the entire system,
 not only the partition. Therefore, there is no test to validate that partitions
 do in fact run in unprivileged mode.
+
 
 \section{Features of the system}
 \label{impl:feature_list}

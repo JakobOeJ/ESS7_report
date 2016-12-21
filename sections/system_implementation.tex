@@ -1612,15 +1612,15 @@ The same is the case for the \texttt{stdio\_sys} partition in section
 
 \subsection{The evil partition}
 The evil partition is implemented to validate the space separation of partitions.
-In two ways, it attempts to overcome the space separation and either change
-memory belonging to other partitions or branch to a code belonging to another
+In two ways, it attempts to break the space separation and change either
+memory belonging to other partitions or branch to code belonging to another
 partition.\\
-By default, both of these attempts to overcome the space separation are disabled.
-This is done because the MPU is not currently being used to protect memory.
+By default, both of these attempts to break the space separation are disabled.
+This is because the MPU is not currently being used to protect memory.
 Additionally, as the Health
 Monitor is not implemented, issuing an instruction that requires privilege
 or modifying a register that requires privilege will crash the entire system,
-not only the partition. Therefore, there is no test to validate that partitions
+not only the partition. Therefore, no test is done to validate that partitions
 do in fact run in unprivileged mode.
 
 

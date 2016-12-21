@@ -863,7 +863,7 @@ Scheduling is triggered within the function \texttt{SysTick\_Handler}. This
 function is called directly by the NVIC when the SysTick timer triggers an
 interrupt. \texttt{SysTick\_} \texttt{Handler} first saves the current
 context, then invokes the partition scheduler, followed by the process scheduler.
-Once the process scheduler finishes, the \texttt{SysTick\_}\texttt{Handler}
+Once the process scheduler finishes, the \texttt{SysTick\_} \texttt{Handler}
 restores the context of chosen the process and returns control to the NVIC.
 
 
@@ -1138,8 +1138,8 @@ Listing \ref{list:port_struct} shows how every \texttt{port\_t} has the four fol
 
 As for the port attributes specific to the port type,
 they are declared as a union of the two different port attribute types
-\texttt{struct queuing\_port} and\\
-\texttt{struct sampling\_port}.
+\texttt{struct queuing\_port} and
+\texttt{struct} \texttt{sampling} \texttt{\_port}.
 Both types contain a byte array to hold buffered messages.
 The buffer of the sampling port is a simple buffer with the size of maximum message size,
 while the buffer of the queuing port is used as a circular buffer,
@@ -1237,7 +1237,7 @@ which makes it simpler to implement than queuing ports, having to use less code 
 System calls are implemented with the ARMv7M instruction \texttt{SVC} (Supervisor
 Call). When this instruction is executed, a interrupt will be triggered. Already
 set up by the CMSIS library, any SVC interrupts will trap into the function
-named \texttt{SVC\_Handler}.
+named \texttt{SVC} \texttt{\_Handler}.
 In order to avoid having to deal with assembly\footnote{It is necessary to use
 assembly code to issue an \texttt{SVC} instruction} code in partition level
 software, system call functions (including the APEX functions) are implemented

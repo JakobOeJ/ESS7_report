@@ -64,16 +64,19 @@ Partitions are additionally padded, in case they can not fill an entire the subr
 \label{fig:ce5}
 \end{figure}
 
-In order to test the memory partition mapping, the sorting memory algortih is applyed and the final memory distribuition printed in the terminal. For 
-that it's setted an amount of free memory and a random initial pointer, representing the begining of the memory free 
-space. It's defined specific sizes for each partition and the sorting memory algorith is applied to those 
-conditions. Everytime that a partition is allocated, in all its memory positions is written the number of 
-the partition. In the the output will be shown the space given to each partition and location in the 
-memory map by the number written in each position.\\
-As the sorting algorithm covers different possibilities of partition distribuitions, according to the 
-number of spare subregions (0, 1, 2 or 3), it is tested for those 4 possibilities. One of the examples is 
-shown in the image below.\\
-  The results printed showed us that the new sizes and subregions distribution of the partitions before and after the algorithm. The results obtained are exactly like the expected from the mapping algorithm.
+In order to test the memory partition mapping, the sorting memory algorithm is applied and the final 
+memory distribution printed in the terminal. For that, the testing environment is setted. Those conditions 
+are: the amount of free memory space, the initial memory pointer (to keep track of the start of each 
+partition) and each partition size. For the different tests the partition sizes are changed, keeping the 
+other 2 unchanged.\\
+Everytime that a partition is allocated, in all its memory positions is written the number of the 
+partition. In the the output will be shown the space given to each partition and location in the memory 
+map by the number written in each position.\\
+As the sorting algorithm covers different possibilities of partition distributions, according to the 
+number of spare subregions (0, 1, 2 or 3), those 4 possibilities were tested, using different 
+partition sizes. One of the examples is shown in the image below.\\
+The results printed showed us the subregions distributions and the partition sizes before and 
+after the algorithm. The results obtained are exactly like the expected from the mapping algorithm.\\
 
 \begin{figure}[H]
 \centering

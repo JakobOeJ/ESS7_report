@@ -1626,34 +1626,39 @@ do in fact run in unprivileged mode.
 
 \section{Features of the system}
 \label{impl:feature_list}
-features is what we have features is what we do features we have a lot of everybody all the time features features features all the time everywhere again and again more features not a bug but a feature your mom! how does magnets even work? nobody knows!
+Presented is a short list of features implemented in \OSname{}.
 
 \begin{center}
-	\begin{tabular} {| c | c |}
+	\begin{tabular} {| c | p{7cm} |}
+		\multicolumn{1}{c}{\textbf{Service}} &
+		\multicolumn{1}{c}{\textbf{Completeness}} \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Schema parser &
+		Parses an XML file to C structs to provide the information required by \OSname \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Partition management &
+		A RT partition scheduler \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Process management &
+		A simple pre-emptive process scheduler \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Memory management &
+		MPU driver \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Time management &
+		Timer with a basetime of ~5 nanoseconds and RTC for error logging \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Interpartition communication &
+		Queuing and sampling ports \\
 		\hline
-		I'm a feature & NOT a bug! \\
+		Intrapartition communication &
+		Not implemented \\
+		\hline
+		Health monitor &
+		Basic error notification \\
+		\hline
+		Debugging &
+		Serial interface and JTAG \\
 		\hline
 	\end{tabular}
 \end{center}
-
-
-\paragraph{Hardware platform}
-\paragraph{Hardware interface}
-\paragraph{Schema parser}
-\paragraph{Partition scheduler}
-\paragraph{Process scheduler}
-\paragraph{System calls}
-\paragraph{Message parsing}
-\paragraph{Memory partitioning}

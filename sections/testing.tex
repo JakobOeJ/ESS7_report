@@ -31,7 +31,7 @@ Assume five partitions with the sizes 20, 65, 120, 80 and 40 bytes, as seen in f
 
 Some of these partitions will waste a lot of memory space if they are allocated their
 own memory region. Two of the partitions in particular, the ones with the sizes
-65 and 80 bytes, because only they barely cross the 64-byte barrier, needs to be
+65 and 80 bytes, because they only barely cross the 64-byte barrier, needs to be
 allocated 128 bytes each.\\
 Without optimising the memory layout of the partitions, the memory needed for
 all of these would be 480 bytes, which leaves 155 bytes unused. Figure

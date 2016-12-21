@@ -906,11 +906,11 @@ Because of time constraints, this was not implemented.\\
 The registers are saved entirely on the stack. Therefore, it is important for
 the software to know which
 stack pointer to use when saving the remaining registers. Therefore the first
-thing the interrupt service routine (ISR) used for scheduling is to inspect
+thing the interrupt service routine (ISR) used for scheduling does, is to inspect
 the \excreturn\ value in the LR register to determine whether to use the
 Master Stack Pointer or the Process Stack Pointer.
 Registers are saved at the address denoted by the stack pointer,
-efore saving both the stack pointer and
+before saving both the stack pointer and
 the \excreturn\ value to the process structure elsewhere in memory.
 This is all
 done in assembly to make sure that there is complete control over which

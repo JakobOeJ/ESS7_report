@@ -9,7 +9,7 @@ To help optimise the memory layout of partitions a utility program is implemente
 that can sort the memory regions of partitions. Each MPU region can contain 8
 subregions. All subregions within an MPU region are of equal size.
 \\\\
-The following is an example of how this utility program can help optimise the 
+The following is an example of how this utility program can help optimise the
 memory layout:
 \\
 
@@ -34,7 +34,7 @@ own MPU memory region. Two of the partitions in particular, the ones with the si
 65 and 80 bytes, because only barely cross the 64-byte barrier, need to be
 allocated 128 bytes each.\\
 Without optimising the memory layout of the partitions, the memory needed for
-all of these would be of 480 bytes, which leaves 155 bytes unused. Figure 
+all of these would be of 480 bytes, which leaves 155 bytes unused. Figure
 \ref{fig:ce3} illustrate how each partition would fit in a memory region, and how
 much of that memory would be wasted.\\
 \begin{figure}[H]
@@ -64,25 +64,48 @@ Partitions are additionally padded, in case they can not fill an entire the subr
 \label{fig:ce5}
 \end{figure}
 
-In order to test the memory partition mapping, the sorting memory algorithm is applied and the final 
-memory distribution printed in the terminal. For that, the testing environment is setted. Those conditions 
-are: the amount of free memory space, the initial memory pointer (to keep track of the start of each 
-partition) and each partition size. For the different tests the partition sizes are changed, keeping the 
-other 2 unchanged.\\
-Everytime that a partition is allocated, in all its memory positions is written the number of the 
-partition. In the the output will be shown the space given to each partition and location in the memory 
-map by the number written in each position.\\
-As the sorting algorithm covers different possibilities of partition distributions, according to the 
-number of spare subregions (0, 1, 2 or 3), those 4 possibilities were tested, using different 
-partition sizes. One of the examples is shown in the image below.\\
-The results printed showed us the subregions distributions and the partition sizes before and 
-after the algorithm. The results obtained are exactly like the expected from the mapping algorithm.\\
-
+%In order to test the memory partition mapping, the sorting memory algorithm is applied and the final 
+%memory distribution printed in the terminal. For that, the testing environment is setted. Those conditions 
+%are: the amount of free memory space, the initial memory pointer (to keep track of the start of each 
+%partition) and each partition size. For the different tests the partition sizes are changed, keeping the 
+%other 2 unchanged.\\
+%Everytime that a partition is allocated, in all its memory positions is written the number of the 
+%partition. In the the output will be shown the space given to each partition and location in the memory 
+%map by the number written in each position.\\
+%As the sorting algorithm covers different possibilities of partition distributions, according to the 
+%number of spare subregions (0, 1, 2 or 3), those 4 possibilities were tested, using different 
+%partition sizes. One of the examples is shown in the image below.\\
+%The results printed showed us the subregions distributions and the partition sizes before and 
+%after the algorithm. The results obtained are exactly like the expected from the mapping algorithm.\\
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=15cm]{mpu_test.png}
+%\captionof{figure}{Terminal displaying the results}
+%\label{fig:testing_mpu}
+%\end{figure}
+%
+In order to test the memory partition mapping,
+the sorting memory algorithm is applied and the final memory distribution printed in the terminal.
+For that, the testing environment is setted.
+Those conditions are: the free memory space,
+the initial memory pointer (to keep track of the start of each partition) and each partition size.
+For the different tests the partition sizes are changed, keeping the other 2 unchanged.\\
+Everytime that a partition is allocated,
+in all its memory positions is written the number of the partition.
+In the the output will be shown the space given to each partition and location
+in the memory map by the number written in each position.\\
+As the sorting algorithm covers different possibilities of partition distributions,
+according to thenumber of spare subregions (0, 1, 2 or 3),
+it is tested for those 4 possibilities, using diferente partition sizes.
+One of the examples is shown in the image below.\\
+The results printed showed us that the new sizes and subregions distribution of
+the partitions before and after the algorithm. The results obtained are exactly
+like the expected from the mapping algorithm.\\
 \begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{mpu_test.png}
-\captionof{figure}{Terminal displaying the results}
-\label{fig:testing_mpu}
+	\centering\includegraphics[width=15cm]{mpu_test.png}
+	\captionof{figure}{Terminal displaying the results}
+	\label{fig:testing_mpu}
 \end{figure}
 
 

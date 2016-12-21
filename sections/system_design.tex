@@ -363,8 +363,8 @@ When an ISR is used for context switching, the EXC\_RETURN denoting the state of
 previous context may be different from the state of the next context. Therefore,
 the compiler is not be allowed to automatically conclude the ISR by putting
 the value of the LR register in to the PC register.\\
-Additionally, to be able to later restore a context, the kernel records the
-EXC\_RETURN value from the LR register.
+Additionally, for restoring contexts, the kernel records the EXC\_RETURN value 
+from the LR register.
 
 \begin{table}[H]
 	\centering

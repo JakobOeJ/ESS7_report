@@ -1,49 +1,66 @@
 \chapter{Testing}
 
 \section{MPU}
-The regions are a power of two, as shown in the figure \ref{fig:ce1}. The bigger a partition is, the more likely it is
-to have unallocated space, since it becomes harder to effectively utilize.\\
+The sizes of MPU memory regions are powers of two. This means that the more
+memory a partition uses, the more memory it can potentially waste. To combat
+this waste, partitions can share MPU memory regions, and instead be separated
+by subregions. This will allow the same level of safety, but more control.
+To help optimise the memory layout of partitions a utility program is implemented
+that can sort the memory regions of partitions. Each MPU region can contain 8
+subregions. All subregions within an MPU region are of equal size.
+\\\\
+The following is an example of how this utility program can help optimise the 
+memory layout:
+\\
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=15cm]{partitions/partitions2.png}
-\captionof{figure}{Example of 3 memory region sizes}
-\label{fig:ce1}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[width=15cm]{partitions/partitions2.png}
+%\captionof{figure}{Example of 3 memory region sizes}
+%\label{fig:ce1}
+%\end{figure}
 
-As an example, five partitions with a size of 20, 65, 120, 80 and 40 bytes are shown in figure \ref{fig:ce2}.\\
+Assume five partitions with the sizes 20, 65, 120, 80 and 40 bytes, as seen in figure \ref{fig:ce2}.\\
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{partitions/partitions1.png}
-\captionof{figure}{Example of 5 partitions sizes}
+\captionof{figure}{An example of 5 partitions of different sizes}
 \label{fig:ce2}
 \end{figure}
 
-If they were just allocated in the most suited region for each, the memory needed would be of 480 bytes,
-leaving 155 bytes unused.\\
+Some of these partitions will waste a lot of memory space if are allocated their
+own MPU memory region. Two of the partitions in particular, the ones with the sizes
+65 and 80 bytes, because only barely cross the 64-byte barrier, need to be
+allocated 128 bytes each.\\
+Without optimising the memory layout of the partitions, the memory needed for
+all of these would be of 480 bytes, which leaves 155 bytes unused. Figure 
+\ref{fig:ce3} illustrate how each partition would fit in a memory region, and how
+much of that memory would be wasted.\\
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{partitions/partitions3.png}
-\captionof{figure}{Partition memory distribution in different regions}
+\captionof{figure}{An example of a partition memory layout when no partition share a single MPU memory region}
 \label{fig:ce3}
 \end{figure}
-The first allocate are the biggest partitions and if there are empty subregions, the system tries to
-allocate smaller partitions in those gaps, like shown in the figure, using only 384bits.\\
+
+The algorithm for optimising the memory layout is simple. First, allocate an
+memory region to the biggest partition. If this partition leaves any unused
+subregions, attempt to find the biggest partition fitting into those. Continue
+doing this until all regions partitions are allocated space.
+Once optimised, the five example partitions will only use 384 bytes of memory.
+Figure \ref{fig:ce4} shows the optimised memory layout.\\
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{partitions/partitions4.png}
-\captionof{figure}{Partition memory distribution in the same regions}
+\captionof{figure}{An example of an optimised partition memory layout}
 \label{fig:ce4}
 \end{figure}
-In case that a certain partition doesn't full fill the subregion, their size gets updated with the full
-remaining subregion area,
-instead of leaving those parts always empty. That can also help to avoid some errors, for example if the
-initial defined size wasn't enough for the different processes allocated by that partition.\\
+Partitions are additionally padded, in case they can not fill an entire the subregion.\\
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{partitions/partitions5.png}
-\captionof{figure}{Memory extension of the partitions sizes}
+\captionof{figure}{An example of how partition memory is padded to fill entire subregions}
 \label{fig:ce5}
 \end{figure}
 
